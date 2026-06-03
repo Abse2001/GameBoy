@@ -266,7 +266,7 @@ const HeaderFanout = ({
 export default () => (
   <board
     title="absePico RP2040-compatible development board"
-    width="30mm"
+    width="34mm"
     height="70mm"
     layers={2}
     minViaHoleDiameter="0.3mm"
@@ -300,46 +300,46 @@ export default () => (
     <RP2040
       name="U1"
       showPinAliases
-      pcbX={3}
-      pcbY={-8}
+      pcbX={0}
+      pcbY={0.5}
     />
     <W25Q16JVUXIQ
       name="U2"
-      pcbX={8.5}
-      pcbY={5.5}
+      pcbX={0}
+      pcbY={10.8}
       pcbRotation={90}
     />
     <AP2112K_3_3TRG1
       name="U3"
-      pcbX={-8}
-      pcbY={17}
+      pcbX={-7.2}
+      pcbY={20.2}
       pcbRotation={0}
     />
 
     <X322512MSB4SI
       name="Y1"
-      pcbX={-4}
-      pcbY={-12}
+      pcbX={-6.5}
+      pcbY={-16}
     />
-    <SKRPACE010 name="SW_BOOT" pcbX={7.5} pcbY={9} />
+    <SKRPACE010 name="SW_BOOT" pcbX={7.5} pcbY={20.5} />
     <SKRPACE010 name="SW_RUN" pcbX={-6} pcbY={-25} pcbRotation={90} />
-    <led name="D1" color="green" footprint="0603" pcbX={8} pcbY={-3} pcbRotation={270} />
+    <led name="D1" color="green" footprint="0603" pcbX={10} pcbY={4.2} pcbRotation={270} />
     
 
-    <resistor name="R_BOOT" resistance="10k" footprint="0402" pcbX={4.5} pcbY={5.5} pcbRotation={90} />
-    <resistor name="R_LED" resistance="330" footprint="0402" pcbX={8} pcbY={1} />
-    <resistor name="R_CC1" resistance="5.1k" footprint="0402" pcbX={-4} pcbY={24} />
+    <resistor name="R_BOOT" resistance="10k" footprint="0402" pcbX={3.7} pcbY={18.1} pcbRotation={90} />
+    <resistor name="R_LED" resistance="330" footprint="0402" pcbX={7.8} pcbY={1.2} pcbRotation={90} />
+    <resistor name="R_CC1" resistance="5.1k" footprint="0402" pcbX={-0.2} pcbY={25.6} />
     <resistor name="R_CC2" resistance="5.1k" footprint="0402" pcbX={4} pcbY={24} />
-    <resistor name="R_USB1" resistance="27" footprint="0402" pcbX={2} pcbY={12} pcbRotation={90} />
-    <resistor name="R_USB2" resistance="27" footprint="0402" pcbX={5} pcbY={12} pcbRotation={90} />
+    <resistor name="R_USB1" resistance="27" footprint="0402" pcbX={-2.4} pcbY={16.5} pcbRotation={90} />
+    <resistor name="R_USB2" resistance="27" footprint="0402" pcbX={2.4} pcbY={16.5} pcbRotation={90} />
 
-    <capacitor name="C_VBUS" capacitance="10uF" footprint="0603" pcbX={-9} pcbY={24} pcbRotation={90} />
-    <capacitor name="C_3V3" capacitance="10uF" footprint="0603" pcbX={-2.5} pcbY={2.5} />
-    <capacitor name="C_CORE" capacitance="1uF" footprint="0402" pcbX={-1.5} pcbY={-17} />
-    <capacitor name="C_USB" capacitance="1uF" footprint="0402" pcbX={10} pcbY={12} />
-    <capacitor name="C_XIN" capacitance="18pF" footprint="0402" pcbX={-8} pcbY={-9.5} />
-    <capacitor name="C_XOUT" capacitance="18pF" footprint="0402" pcbX={-8} pcbY={-14.5} />
-    <inductor name="L_AVDD" inductance="600ohm@100MHz" footprint="0603" pcbX={9.5} pcbY={-8} pcbRotation={90} />
+    <capacitor name="C_VBUS" capacitance="10uF" footprint="0603" pcbX={-2.8} pcbY={26.3} pcbRotation={90} />
+    <capacitor name="C_3V3" capacitance="10uF" footprint="0603" pcbX={-8.5} pcbY={4.2} />
+    <capacitor name="C_CORE" capacitance="1uF" footprint="0402" pcbX={3.8} pcbY={-5.5} />
+    <capacitor name="C_USB" capacitance="1uF" footprint="0402" pcbX={9.8} pcbY={24} />
+    <capacitor name="C_XIN" capacitance="18pF" footprint="0402" pcbX={-10.4} pcbY={-13.8} />
+    <capacitor name="C_XOUT" capacitance="18pF" footprint="0402" pcbX={-10.4} pcbY={-19} />
+    <inductor name="L_AVDD" inductance="600ohm@100MHz" footprint="0603" pcbX={9.5} pcbY={-1.8} pcbRotation={90} />
 
     <testpoint name="TP_SWCLK" footprintVariant="pad" padShape="circle" padDiameter="1.1mm" pcbX={-6} pcbY={-31} />
     <testpoint name="TP_GND" footprintVariant="pad" padShape="circle" padDiameter="1.1mm" pcbX={-2} pcbY={-31} />
@@ -352,7 +352,7 @@ export default () => (
 
     {headerSignalConnections.map(([chipName, chipPin, headerName, headerPin]) => (
       <trace
-        {...denseTraceProps}
+        {...(chipPin === "GPIO12" ? { thickness: "0.15mm" } : denseTraceProps)}
         from={`.${chipName} > .${chipPin}`}
         to={`.${headerName} > .${headerPin}`}
       />
@@ -380,11 +380,8 @@ export default () => (
     <trace from=".J_USB > .A5" to=".R_CC1 > .pin1" />
     <trace from=".J_USB > .B5" to=".R_CC2 > .pin1" />
     <trace from=".J_USB > .A1B12" to="net.GND" />
-    <trace from=".J_USB > .B1A12" to="net.GND" />
     <trace from=".J_USB > .EH1" to="net.GND" />
     <trace from=".J_USB > .EH2" to="net.GND" />
-    <trace from=".J_USB > .pin13_alt1" to="net.GND" />
-    <trace from=".J_USB > .pin14_alt1" to="net.GND" />
     <trace from=".R_CC1 > .pin2" to="net.GND" />
     <trace from=".R_CC2 > .pin2" to="net.GND" />
 
@@ -431,7 +428,7 @@ export default () => (
     <trace from=".TP_GND > .pin1" to="net.GND" />
     <trace from=".TP_3V3 > .pin1" to="net.V3V3" />
 
-
+    <copperpour connectsTo="net.GND" layer="top" clearance="0.18mm" />
     <copperpour connectsTo="net.GND" layer="bottom" clearance="0.18mm" />
 
     <silkscreentext text="absePico" fontSize="2mm" pcbX={-10} pcbY={-33} pcbRotation={0} />
