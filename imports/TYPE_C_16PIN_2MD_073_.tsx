@@ -30,8 +30,8 @@ export const TYPE_C_16PIN_2MD_073_ = (props: ChipProps<typeof pinLabels>) => {
 }}
       manufacturerPartNumber="TYPE_C_16PIN_2MD_073_"
       footprint={<footprint>
-        <hole pcbX="-2.889885mm" pcbY="1.05492555mm" diameter="0.700024mm" />
-<hole pcbX="2.890139mm" pcbY="1.05492555mm" diameter="0.700024mm" />
+<platedhole pcbX="-2.889885mm" shape="circle" pcbY="1.05492555mm" holeDiameter="0.700024mm" outerDiameter={0.700024} />
+<platedhole pcbX="2.890139mm" shape="circle" pcbY="1.05492555mm" holeDiameter="0.700024mm" outerDiameter={0.700024} />
 <platedhole  portHints={["pin13"]} pcbX="-4.324985mm" pcbY="1.57511755mm" holeWidth="0.5999988mm" holeHeight="1.499997mm" outerWidth="1.0999978mm" outerHeight="1.999996mm" shape="pill" />
 <platedhole  portHints={["pin14"]} pcbX="4.324985mm" pcbY="1.57511755mm" holeWidth="0.5999988mm" holeHeight="1.499997mm" outerWidth="1.0999978mm" outerHeight="1.999996mm" shape="pill" />
 <platedhole  portHints={["pin15"]} pcbX="-4.324985mm" pcbY="-2.62502645mm" holeWidth="0.5999988mm" holeHeight="1.1999976mm" outerWidth="1.1999976mm" outerHeight="1.7999964mm" shape="pill" />

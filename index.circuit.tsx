@@ -39,7 +39,7 @@ const rightHeaderPins = [
   "GND",
   "GP27_ADC1",
   "GP26_ADC0",
-  "RUN_NC",
+  "RUN",
   "GP22",
   "GND",
   "GP21",
@@ -62,6 +62,17 @@ const rightHeaderPortLabels = makeUniquePinLabels(rightHeaderPins)
 const leftHeaderPinLabels = makePcbPinLabels(leftHeaderPortLabels)
 const rightHeaderPinLabels = makePcbPinLabels(rightHeaderPortLabels)
 const denseTraceProps = { thickness: "0.1mm" } as const
+const schSections = {
+  rp2040: "rp2040",
+  headers: "headers",
+  usb: "usb",
+  power: "power",
+  flash: "flash",
+  clock: "clock",
+  controls: "controls",
+  status: "status",
+  debug: "debug",
+} as const
 
 const leftHeaderNetConnections = leftHeaderPortLabels
   .map((portName, index) => [portName, leftHeaderPins[index]])
@@ -69,7 +80,9 @@ const leftHeaderNetConnections = leftHeaderPortLabels
 
 const rightHeaderNetConnections = rightHeaderPortLabels
   .map((portName, index) => [portName, rightHeaderPins[index]])
-  .filter(([, netName]) => ["VBUS", "VSYS", "GND", "V3V3_EN", "ADC_VREF", "RUN_NC"].includes(netName))
+  .filter(([, netName]) =>
+  ["VBUS", "VSYS", "GND", "V3V3_EN", "ADC_VREF", "RUN"].includes(netName)
+)
 
 const headerSignalConnections = [
   ["U1", "GPIO0", "J_LEFT", "GP0"],
@@ -101,62 +114,63 @@ const headerSignalConnections = [
 ]
 
 const rp2040Pins = {
-  pin1: "IOVDD",
-  pin2: "GP0",
-  pin3: "GP1",
-  pin4: "GP2",
-  pin5: "GP3",
-  pin6: "GP4",
-  pin7: "IOVDD",
-  pin8: "GP5",
-  pin9: "GP6",
-  pin10: "GP7",
-  pin11: "GP8",
-  pin12: "GP9",
-  pin13: "GND",
-  pin14: "GP10",
-  pin15: "GP11",
-  pin16: "GP12",
-  pin17: "GP13",
-  pin18: "GP14",
-  pin19: "GP15",
-  pin20: "TESTEN",
-  pin21: "XIN",
-  pin22: "XOUT",
-  pin23: "IOVDD",
-  pin24: "DVDD",
-  pin25: "SWCLK",
-  pin26: "SWDIO",
-  pin27: "RUN",
-  pin28: "GP16",
-  pin29: "GP17",
-  pin30: "GND",
-  pin31: "GP18",
-  pin32: "GP19",
-  pin33: "GP20",
-  pin34: "GP21",
-  pin35: "IOVDD",
-  pin36: "GP22",
-  pin37: "GP23",
-  pin38: "GP24",
-  pin39: "GP25_LED",
-  pin40: "GP26_ADC0",
-  pin41: "GP27_ADC1",
-  pin42: "GP28_ADC2",
-  pin43: "ADC_AVDD",
-  pin44: "VREG_VIN",
-  pin45: "VREG_VOUT",
-  pin46: "USB_DM",
-  pin47: "USB_DP",
-  pin48: "USB_VDD",
-  pin49: "DVDD",
-  pin50: "QSPI_SS",
-  pin51: "QSPI_SD0",
-  pin52: "QSPI_SD1",
-  pin53: "QSPI_SD2",
-  pin54: "QSPI_SD3",
-  pin55: "QSPI_SCLK",
-  pin56: "GND",
+  pin1: ["IOVDD6"],
+  pin2: ["GPIO0"],
+  pin3: ["GPIO1"],
+  pin4: ["GPIO2"],
+  pin5: ["GPIO3"],
+  pin6: ["GPIO4"],
+  pin7: ["GPIO5"],
+  pin8: ["GPIO6"],
+  pin9: ["GPIO7"],
+  pin10: ["IOVDD5"],
+  pin11: ["GPIO8"],
+  pin12: ["GPIO9"],
+  pin13: ["GPIO10"],
+  pin14: ["GPIO11"],
+  pin15: ["GPIO12"],
+  pin16: ["GPIO13"],
+  pin17: ["GPIO14"],
+  pin18: ["GPIO15"],
+  pin19: ["TESTEN"],
+  pin20: ["XIN"],
+  pin21: ["XOUT"],
+  pin22: ["IOVDD4"],
+  pin23: ["DVDD2"],
+  pin24: ["SWCLK"],
+  pin25: ["SWD"],
+  pin26: ["RUN"],
+  pin27: ["GPIO16"],
+  pin28: ["GPIO17"],
+  pin29: ["GPIO18"],
+  pin30: ["GPIO19"],
+  pin31: ["GPIO20"],
+  pin32: ["GPIO21"],
+  pin33: ["IOVDD3"],
+  pin34: ["GPIO22"],
+  pin35: ["GPIO23"],
+  pin36: ["GPIO24"],
+  pin37: ["GPIO25"],
+  pin38: ["GPIO26_ADC0"],
+  pin39: ["GPIO27_ADC1"],
+  pin40: ["GPIO28_ADC2"],
+  pin41: ["GPIO29_ADC3"],
+  pin42: ["IOVDD2"],
+  pin43: ["ADC_AVDD"],
+  pin44: ["VREG_IN"],
+  pin45: ["VREG_VOUT"],
+  pin46: ["USB_DM"],
+  pin47: ["USB_DP"],
+  pin48: ["USB_VDD"],
+  pin49: ["IOVDD1"],
+  pin50: ["DVDD1"],
+  pin51: ["QSPI_SD3"],
+  pin52: ["QSPI_SCLK"],
+  pin53: ["QSPI_SD0"],
+  pin54: ["QSPI_SD2"],
+  pin55: ["QSPI_SD1"],
+  pin56: ["QSPI_SS"],
+  pin57: ["GND"]
 }
 
 const rp2040HeaderNets = [
@@ -273,11 +287,150 @@ export default () => (
     minViaPadDiameter="0.45mm"
     borderRadius="1.5mm"
   >
+    <schematicsection name={schSections.rp2040} displayName="RP2040" />
+    <schematicsection name={schSections.headers} displayName="Headers" />
+    <schematicsection name={schSections.usb} displayName="USB-C" />
+    <schematicsection name={schSections.power} displayName="Power" />
+    <schematicsection name={schSections.flash} displayName="Flash" />
+    <schematicsection name={schSections.clock} displayName="Clock" />
+    <schematicsection name={schSections.controls} displayName="Controls" />
+    <schematicsection name={schSections.status} displayName="Status" />
+    <schematicsection name={schSections.debug} displayName="Debug" />
+
+
+    <trace from=".Y1 > .GND1" to="net.GND" />
+<trace from=".Y1 > .GND2" to="net.GND" />
+
+    <trace from=".J_USB > .B7" to=".R_USB1 > .pin1" />
+<trace from=".J_USB > .B6" to=".R_USB2 > .pin1" />
+
+    <diode
+  name="D_VBUS"
+  footprint="sod123"
+  schSectionName={schSections.power}
+  pcbX={-2
+  }
+      supplierPartNumbers={{ jlcpcb: ["C8598"] }}
+  pcbY={21}
+  pcbRotation={-90}
+/>
+    <trace from="net.VBUS" to=".D_VBUS > .anode" />
+<trace from=".D_VBUS > .cathode" to="net.VSYS" />
+
+      <resistor name="R_3V3_EN" resistance="100k" footprint="0402" schSectionName={schSections.power} pcbX={-4.2} pcbY={19} pcbRotation={90} />
+
+<trace from=".R_3V3_EN > .pin1" to="net.VSYS" />
+<trace from=".R_3V3_EN > .pin2" to=".U3 > .EN" />
+<trace from=".J_RIGHT > .V3V3_EN" to=".U3 > .EN" />
+
+
+    
+    
+    <capacitor name="C_IOVDD5" capacitance="100nF" footprint="0402" schSectionName={schSections.rp2040} pcbRotation={-90} pcbX={-6} pcbY={-10} />
+<capacitor name="C_IOVDD6" capacitance="100nF" footprint="0402" schSectionName={schSections.rp2040} pcbX={-8} pcbY={2} />
+
+
+    
+<trace from=".C_IOVDD5 > .pin1" to="net.V3V3" />
+<trace from=".C_IOVDD5 > .pin2" to="net.GND" />
+<trace from=".C_IOVDD6 > .pin1" to="net.V3V3" />
+<trace from=".C_IOVDD6 > .pin2" to="net.GND" />
+
+    <capacitor name="C_IOVDD3" capacitance="100nF" footprint="0402" schSectionName={schSections.rp2040} pcbRotation={-90} pcbX={-8} pcbY={-1} />
+<capacitor name="C_IOVDD4" capacitance="100nF" footprint="0402" schSectionName={schSections.rp2040} pcbX={-2} pcbY={-10} />
+
+    <trace from=".C_IOVDD3 > .pin1" to="net.V3V3" />
+<trace from=".C_IOVDD3 > .pin2" to="net.GND" />
+<trace from=".C_IOVDD4 > .pin1" to="net.V3V3" />
+<trace from=".C_IOVDD4 > .pin2" to="net.GND" />
+    
+    <resistor
+  name="R_RUN"
+  resistance="10k"
+  footprint="0402"
+  schSectionName={schSections.controls}
+  pcbX={10.4}
+  pcbY={-5.5}
+/>
+
+<capacitor
+  name="C_FLASH"
+  capacitance="100nF"
+  footprint="0402"
+  schSectionName={schSections.flash}
+  pcbX={-5.5}
+  pcbY={10.8}
+  pcbRotation={180}
+/>
+
+<capacitor
+  name="C_IOVDD1"
+  capacitance="100nF"
+  footprint="0402"
+  schSectionName={schSections.rp2040}
+  pcbX={-3}
+  pcbY={-6}
+/>
+
+<capacitor
+  name="C_IOVDD2"
+  capacitance="100nF"
+  footprint="0402"
+  schSectionName={schSections.rp2040}
+  pcbX={-3}
+  pcbY={6}
+/>
+
+<capacitor
+  name="C_USB_VDD"
+  capacitance="100nF"
+  footprint="0402"
+  schSectionName={schSections.usb}
+  pcbX={7.2}
+  pcbY={14.5}
+/>
+
+<capacitor
+  name="C_ADC"
+  capacitance="100nF"
+  footprint="0402"
+  schSectionName={schSections.power}
+  pcbX={8}
+  pcbY={-4}
+/>
+    {/* RUN pullup */}
+<trace {...denseTraceProps} from=".R_RUN > .pin1" to=".U1 > .RUN" />
+<trace from=".R_RUN > .pin2" to="net.V3V3" />
+<trace {...denseTraceProps} from=".J_RIGHT > .RUN" to=".R_RUN > .pin1" />
+
+{/* TESTEN */}
+<trace from=".U1 > .TESTEN" to="net.GND" />
+
+{/* Flash decoupling */}
+<trace from=".C_FLASH > .pin1" to="net.V3V3" />
+<trace from=".C_FLASH > .pin2" to="net.GND" />
+
+{/* IOVDD decoupling */}
+<trace from=".C_IOVDD1 > .pin1" to="net.V3V3" />
+<trace from=".C_IOVDD1 > .pin2" to="net.GND" />
+
+<trace from=".C_IOVDD2 > .pin1" to="net.V3V3" />
+<trace from=".C_IOVDD2 > .pin2" to="net.GND" />
+
+{/* USB_VDD decoupling */}
+<trace from=".C_USB_VDD > .pin1" to="net.V3V3" />
+<trace from=".C_USB_VDD > .pin2" to="net.GND" />
+
+{/* ADC decoupling */}
+<trace from=".C_ADC > .pin1" to="net.ADC_VREF" />
+<trace from=".C_ADC > .pin2" to="net.GND" />
+    
     <connector
       name="J_LEFT"
       manufacturerPartNumber="PICO-LEFT-20P"
       footprint={<PicoHeaderFootprint ports={leftHeaderPortLabels} />}
       pinLabels={leftHeaderPinLabels}
+      schSectionName={schSections.headers}
       pcbX={-12.5}
       pcbY={0}
     />
@@ -286,31 +439,36 @@ export default () => (
       manufacturerPartNumber="PICO-RIGHT-20P"
       footprint={<PicoHeaderFootprint ports={rightHeaderPortLabels} />}
       pinLabels={rightHeaderPinLabels}
+      schSectionName={schSections.headers}
       pcbX={12.5}
       pcbY={0}
     />
 
     <TYPE_C_16PIN_2MD_073_
       name="J_USB"
+      schSectionName={schSections.usb}
       pcbX={0}
-      pcbY={31.4}
+      pcbY={31.0}
       pcbRotation={180}
     />
 
     <RP2040
       name="U1"
       showPinAliases
+      schSectionName={schSections.rp2040}
       pcbX={0}
       pcbY={0.5}
     />
     <W25Q16JVUXIQ
       name="U2"
-      pcbX={0}
-      pcbY={10.8}
+      schSectionName={schSections.flash}
+      pcbX={3.5}
+      pcbY={9.5}
       pcbRotation={90}
     />
     <AP2112K_3_3TRG1
       name="U3"
+      schSectionName={schSections.power}
       pcbX={-7.2}
       pcbY={20.2}
       pcbRotation={0}
@@ -318,41 +476,43 @@ export default () => (
 
     <X322512MSB4SI
       name="Y1"
+      schSectionName={schSections.clock}
       pcbX={-6.5}
       pcbY={-16}
     />
-    <SKRPACE010 name="SW_BOOT" pcbX={7.5} pcbY={20.5} />
-    <SKRPACE010 name="SW_RUN" pcbX={-6} pcbY={-25} pcbRotation={90} />
-    <led name="D1" color="green" footprint="0603" pcbX={10} pcbY={4.2} pcbRotation={270} />
+    <SKRPACE010 name="SW_BOOT" schSectionName={schSections.controls} pcbX={8.6} pcbY={21.8} />
+    <SKRPACE010 name="SW_RUN" schSectionName={schSections.controls} pcbX={5.5} pcbY={-12.5} pcbRotation={90} />
+    <led name="D1" color="green" footprint="0603" schSectionName={schSections.status} pcbX={10} pcbY={4.2} pcbRotation={270} />
     
 
-    <resistor name="R_BOOT" resistance="10k" footprint="0402" pcbX={3.7} pcbY={18.1} pcbRotation={90} />
-    <resistor name="R_LED" resistance="330" footprint="0402" pcbX={7.8} pcbY={1.2} pcbRotation={90} />
-    <resistor name="R_CC1" resistance="5.1k" footprint="0402" pcbX={-0.2} pcbY={25.6} />
-    <resistor name="R_CC2" resistance="5.1k" footprint="0402" pcbX={4} pcbY={24} />
-    <resistor name="R_USB1" resistance="27" footprint="0402" pcbX={-2.4} pcbY={16.5} pcbRotation={90} />
-    <resistor name="R_USB2" resistance="27" footprint="0402" pcbX={2.4} pcbY={16.5} pcbRotation={90} />
+    <resistor name="R_BOOT" resistance="10k" footprint="0402" schSectionName={schSections.controls} pcbX={5.1} pcbY={17.8} pcbRotation={90} />
+    <resistor name="R_LED" resistance="330" footprint="0402" schSectionName={schSections.status} pcbX={7.2} pcbY={1.2} pcbRotation={90} />
+    <resistor name="R_CC1" resistance="5.1k" footprint="0402" schSectionName={schSections.usb} pcbX={-0.2} pcbY={25.6} />
+    <resistor name="R_CC2" resistance="5.1k" footprint="0402" schSectionName={schSections.usb} pcbX={3.6} pcbY={26.5} />
+    <resistor name="R_USB1" resistance="27" footprint="0402" schSectionName={schSections.usb} pcbX={-2.4} pcbY={16.5} pcbRotation={90} />
+    <resistor name="R_USB2" resistance="27" footprint="0402" schSectionName={schSections.usb} pcbX={2.4} pcbY={16.5} pcbRotation={90} />
 
-    <capacitor name="C_VBUS" capacitance="10uF" footprint="0603" pcbX={-2.8} pcbY={26.3} pcbRotation={90} />
-    <capacitor name="C_3V3" capacitance="10uF" footprint="0603" pcbX={-8.5} pcbY={4.2} />
-    <capacitor name="C_CORE" capacitance="1uF" footprint="0402" pcbX={3.8} pcbY={-5.5} />
-    <capacitor name="C_USB" capacitance="1uF" footprint="0402" pcbX={9.8} pcbY={24} />
-    <capacitor name="C_XIN" capacitance="18pF" footprint="0402" pcbX={-10.4} pcbY={-13.8} />
-    <capacitor name="C_XOUT" capacitance="18pF" footprint="0402" pcbX={-10.4} pcbY={-19} />
-    <inductor name="L_AVDD" inductance="600ohm@100MHz" footprint="0603" pcbX={9.5} pcbY={-1.8} pcbRotation={90} />
+    <capacitor name="C_VBUS" capacitance="10uF" footprint="0603" schSectionName={schSections.usb} pcbX={-2.8} pcbY={26.3} pcbRotation={90} />
+    <capacitor name="C_3V3" capacitance="10uF" footprint="0603" schSectionName={schSections.power} pcbX={-8.5} pcbY={4.2} />
+    <capacitor name="C_CORE" capacitance="1uF" footprint="0402" schSectionName={schSections.rp2040} pcbX={3.8} pcbY={-5.5} />
+    <capacitor name="C_USB" capacitance="1uF" footprint="0402" schSectionName={schSections.usb} pcbX={9.8} pcbY={18.4} />
+    <capacitor name="C_XIN" capacitance="18pF" footprint="0402" schSectionName={schSections.clock} pcbX={-8.4} pcbY={-11.8} />
+    <capacitor name="C_XOUT" capacitance="18pF" footprint="0402" schSectionName={schSections.clock} pcbX={-2.4} pcbY={-21
+    } />
+    <inductor name="L_AVDD" inductance="600ohm@100MHz" footprint="0603" schSectionName={schSections.power} pcbX={8.5} pcbY={-1.8} supplierPartNumbers={{ jlcpcb: ["C1002"] }} pcbRotation={90} />
 
-    <testpoint name="TP_SWCLK" footprintVariant="pad" padShape="circle" padDiameter="1.1mm" pcbX={-6} pcbY={-31} />
-    <testpoint name="TP_GND" footprintVariant="pad" padShape="circle" padDiameter="1.1mm" pcbX={-2} pcbY={-31} />
-    <testpoint name="TP_SWDIO" footprintVariant="pad" padShape="circle" padDiameter="1.1mm" pcbX={2} pcbY={-31} />
-    <testpoint name="TP_3V3" footprintVariant="pad" padShape="circle" padDiameter="1.1mm" pcbX={6} pcbY={-31} />
+    <testpoint name="TP_SWCLK" footprintVariant="pad" padShape="circle" padDiameter="1.1mm" schSectionName={schSections.debug} pcbX={-6} pcbY={-31} />
+    <testpoint name="TP_GND" footprintVariant="pad" padShape="circle" padDiameter="1.1mm" schSectionName={schSections.debug} pcbX={-2} pcbY={-31} />
+    <testpoint name="TP_SWDIO" footprintVariant="pad" padShape="circle" padDiameter="1.1mm" schSectionName={schSections.debug} pcbX={2} pcbY={-31} />
+    <testpoint name="TP_3V3" footprintVariant="pad" padShape="circle" padDiameter="1.1mm" schSectionName={schSections.debug} pcbX={6} pcbY={-31} />
 
     <HeaderFanout headerName="J_LEFT" connections={leftHeaderNetConnections} />
     <HeaderFanout headerName="J_RIGHT" connections={rightHeaderNetConnections} />
-    <trace from=".J_RIGHT > .V3V3" to=".C_USB > .pin1" />
+    <trace {...denseTraceProps} from=".J_RIGHT > .V3V3" to=".C_USB > .pin1" />
 
     {headerSignalConnections.map(([chipName, chipPin, headerName, headerPin]) => (
       <trace
-        {...(chipPin === "GPIO12" ? { thickness: "0.15mm" } : denseTraceProps)}
+        {...denseTraceProps}
         from={`.${chipName} > .${chipPin}`}
         to={`.${headerName} > .${headerPin}`}
       />
@@ -377,19 +537,20 @@ export default () => (
     <trace {...denseTraceProps} from=".R_USB1 > .pin2" to=".U1 > .USB_DM" />
     <trace from=".J_USB > .A6" to=".R_USB2 > .pin1" />
     <trace {...denseTraceProps} from=".R_USB2 > .pin2" to=".U1 > .USB_DP" />
-    <trace from=".J_USB > .A5" to=".R_CC1 > .pin1" />
-    <trace from=".J_USB > .B5" to=".R_CC2 > .pin1" />
-    <trace from=".J_USB > .A1B12" to="net.GND" />
-    <trace from=".J_USB > .EH1" to="net.GND" />
-    <trace from=".J_USB > .EH2" to="net.GND" />
+    <trace {...denseTraceProps} from=".J_USB > .A5" to=".R_CC1 > .pin1" />
+    <trace {...denseTraceProps} from=".J_USB > .B5" to=".R_CC2 > .pin1" />
+    <trace {...denseTraceProps} from=".J_USB > .A1B12" to="net.GND" />
+    <trace {...denseTraceProps} from=".J_USB > .EH1" to="net.GND" />
+    <trace {...denseTraceProps} from=".J_USB > .EH2" to="net.GND" />
     <trace from=".R_CC1 > .pin2" to="net.GND" />
     <trace from=".R_CC2 > .pin2" to="net.GND" />
 
     <trace from="net.VBUS" to=".C_VBUS > .pin1" />
     <trace from=".C_VBUS > .pin2" to="net.GND" />
-    <trace from="net.VBUS" to="net.VSYS" />
+
     <trace from="net.VSYS" to=".U3 > .VIN" />
-    <trace from=".U3 > .EN" to="net.V3V3_EN" />
+
+
     <trace from=".U3 > .VOUT" to="net.V3V3" />
     <trace from=".U3 > .GND" to="net.GND" />
     <trace from=".C_3V3 > .pin1" to="net.V3V3" />
@@ -431,8 +592,9 @@ export default () => (
     <copperpour connectsTo="net.GND" layer="top" clearance="0.18mm" />
     <copperpour connectsTo="net.GND" layer="bottom" clearance="0.18mm" />
 
-    <silkscreentext text="absePico" fontSize="2mm" pcbX={-10} pcbY={-33} pcbRotation={0} />
-    <silkscreentext text="RP2040 C2040" fontSize="0.9mm" pcbX={8} pcbY={-33} />
+    <silkscreentext text="Abse-Pico" fontSize="2mm" pcbX={-8} pcbY={-33} pcbRotation={0} />
+    <silkscreentext text="Tscircuit" fontSize="7mm" pcbX={0} pcbY={0} pcbRotation={90} layer="bottom" />
+    <silkscreentext text="TSC" isKnockout  fontSize="2mm" pcbX={12} pcbY={-33} />
     <silkscreentext text="BOOT" fontSize="0.8mm" pcbX={12} pcbY={14} />
     <silkscreentext text="RUN" fontSize="0.8mm" pcbX={-12} pcbY={-30} />
     <silkscreentext text="USB-C" fontSize="0.9mm" pcbX={0} pcbY={25} />
