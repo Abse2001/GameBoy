@@ -574,11 +574,11 @@ export default () => (
     <trace from=".C_XOUT > .pin2" to="net.GND" />
 
     <trace from=".SW_BOOT > .pin1" to=".U1 > .QSPI_SS" />
-    <trace from=".SW_BOOT > .pin2" to="net.GND" />
+    <trace from=".SW_BOOT > .pin3" to="net.GND" />
     <trace from=".R_BOOT > .pin1" to=".U1 > .QSPI_SS" />
     <trace from=".R_BOOT > .pin2" to="net.V3V3" />
     <trace from=".SW_RUN > .pin1" to=".U1 > .RUN" />
-    <trace from=".SW_RUN > .pin2" to="net.GND" />
+    <trace from=".SW_RUN > .pin4" to="net.GND" />
 
     <trace from=".U1 > .GPIO25" to=".R_LED > .pin1" />
     <trace from=".R_LED > .pin2" to=".D1 > .pin1" />

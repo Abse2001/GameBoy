@@ -1,6 +1,6 @@
 {
   "name": "@tsci/abse.abse-pico",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "absePico RP2040-compatible development board",
   "main": "index.tsx",
   "keywords": [
