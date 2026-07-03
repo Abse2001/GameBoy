@@ -4,6 +4,8 @@ import { W25Q16JVUXIQ } from "./imports/W25Q16JVUXIQ"
 import { AP2112K_3_3TRG1 } from "./imports/AP2112K_3_3TRG1"
 import { X322512MSB4SI } from "./imports/X322512MSB4SI"
 import { SKRPACE010 } from "./imports/SKRPACE010"
+import { B5819W_SL } from "./imports/B5819W_SL"
+import { XL_1608SURC_06 } from "./imports/XL_1608SURC_06"
 
 const denseTraceProps = { thickness: "0.1mm" } as const
 const gndLabel = { displayName: "GND", schDisplayLabel: "GND" } as const
@@ -122,16 +124,13 @@ export const PicoGroup = (props: PicoGroupProps) => (
     <trace name="USB_DN_B" from=".J_USB > .B7" to=".R_USB1 > .pin1" />
 <trace name="USB_DP_B" from=".J_USB > .B6" to=".R_USB2 > .pin1" />
 
-    <diode
-  name="D_VBUS"
-  footprint="sod123"
-  schSectionName={schSections.power}
-  pcbX={-2
-  }
-      supplierPartNumbers={{ jlcpcb: ["C8598"] }}
-  pcbY={21}
-  pcbRotation={-90}
-/>
+    <B5819W_SL
+      name="D_VBUS"
+      schSectionName={schSections.power}
+      pcbX={-2}
+      pcbY={21}
+      pcbRotation={90}
+    />
     <trace name="VBUS_D" from="net.VBUS" to=".D_VBUS > .anode" {...vbusLabel} />
 <trace name="D_VSYS" from=".D_VBUS > .cathode" to="net.VSYS" {...vsysLabel} />
 
@@ -300,8 +299,8 @@ export const PicoGroup = (props: PicoGroupProps) => (
     />
     <SKRPACE010 name="SW_BOOT" schSectionName={schSections.controls} pcbX={8.6} pcbY={21.8} />
     <SKRPACE010 name="SW_RUN" schSectionName={schSections.controls} pcbX={5.5} pcbY={-12.5} pcbRotation={90} />
-    <led name="D1" color="green" footprint="0603" schSectionName={schSections.status} pcbX={10} pcbY={4.2} pcbRotation={270} />
-    <led name="D_PWR" color="green" footprint="0603" schSectionName={schSections.status} pcbX={-9.8} pcbY={24.8} pcbRotation={270} schX={10.2} schY={-18.52} />
+    <XL_1608SURC_06 name="D1" color="green" schSectionName={schSections.status} pcbX={10} pcbY={4.2} pcbRotation={90} />
+    <XL_1608SURC_06 name="D_PWR" color="green" schSectionName={schSections.status} pcbX={-9.8} pcbY={24.8} pcbRotation={90} schX={10.2} schY={-18.52} />
 
     <resistor name="R_BOOT" resistance="10k" footprint="0402" schSectionName={schSections.controls} pcbX={5.1} pcbY={17.8} pcbRotation={90} />
     <resistor name="R_LED" resistance="330" footprint="0402" schSectionName={schSections.status} pcbX={7.2} pcbY={1.2} pcbRotation={90} />
