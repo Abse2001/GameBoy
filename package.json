@@ -1,6 +1,6 @@
 {
   "name": "@tsci/abse.gameboy",
-  "version": "1.0.14",
+  "version": "1.0.15",
   "description": "absePico RP2040-compatible development board",
   "main": "index.tsx",
   "keywords": [

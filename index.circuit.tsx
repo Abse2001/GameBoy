@@ -19,7 +19,7 @@ import { AO3401A } from "./imports/AO3401A"
 import { BLM18PG121SN1D } from "./imports/BLM18PG121SN1D"
 import { RK10J12E002L } from "./imports/RK10J12E002L"
 
-const denseTraceProps = { thickness: "0.08mm" } as const
+const denseTraceProps = { thickness: "0.1mm" } as const
 const batteryTraceProps = { thickness: "0.3mm" } as const
 const powerTraceProps = { thickness: "0.4mm" } as const
 const speakerTraceProps = { thickness: "0.25mm" } as const
@@ -97,21 +97,17 @@ export default () => (
       schX={-39}
       schY={8}
     />
-    <cutout
+    <platedhole
       name="BAT_CABLE_SLOT_STRAIGHT"
-      shape="rect"
-      width="5mm"
-      height="8mm"
+      shape="pill"
+      holeWidth="5mm"
+      holeHeight="11mm"
+      outerWidth="5.1mm"
+      outerHeight="11.1mm"
       pcbX="-32mm"
       pcbY="61mm"
     />
-    <cutout
-      name="BAT_CABLE_SLOT_ROUND"
-      shape="circle"
-      radius="2.5mm"
-      pcbX="-32mm"
-      pcbY="57mm"
-    />
+
     <SK_12E12_G5
       name="J_PWR_SW"
       schSectionName={schSections.power}
@@ -292,7 +288,7 @@ export default () => (
       name="J_SPK"
       schSectionName={schSections.audio}
       pcbX={0}
-      pcbY={0}
+      pcbY={-1.9999999999999996}
       pcbRotation={0}
       schX={17}
       schY={8}
@@ -393,7 +389,7 @@ export default () => (
       name="FB_SPK_POS"
       schSectionName={schSections.audio}
       pcbX={-4}
-      pcbY={-9}
+      pcbY={-11}
       pcbRotation={90}
       schX={27.83}
       schY={16}
@@ -401,8 +397,8 @@ export default () => (
     <BLM18PG121SN1D
       name="FB_SPK_NEG"
       schSectionName={schSections.audio}
-      pcbX={4}
-      pcbY={-9}
+      pcbX={7}
+      pcbY={-10}
       pcbRotation={90}
       schX={28}
       schY={18}

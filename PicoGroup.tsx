@@ -153,7 +153,7 @@ export const PicoGroup = (props: PicoGroupProps) => (
 <trace name="IO6_G" from=".C_IOVDD6 > .pin2" to="net.GND" {...gndLabel} />
 
 <capacitor name="C_IOVDD3" capacitance="100nF" footprint="0402" schSectionName={schSections.rp2040} schOrientation="vertical" pcbRotation={-90} pcbX={-8} pcbY={-1} schX={-7.2} schY={-2.31} />
-<capacitor name="C_IOVDD4" capacitance="100nF" footprint="0402" schSectionName={schSections.rp2040} schOrientation="vertical" pcbX={-2} pcbY={-10} schX={-7.9} schY={0} />
+<capacitor name="C_IOVDD4" capacitance="100nF" footprint="0402" schSectionName={schSections.rp2040} schOrientation="vertical" pcbX={-4} pcbY={-6} schX={-7.9} schY={0} />
 
     <trace name="IO3_3V3" from=".C_IOVDD3 > .pin1" to="net.V3V3" {...v3v3Label} />
 <trace name="IO3_G" from=".C_IOVDD3 > .pin2" to="net.GND" {...gndLabel} />
@@ -188,8 +188,8 @@ export const PicoGroup = (props: PicoGroupProps) => (
   footprint="0402"
   schSectionName={schSections.rp2040}
   schOrientation="vertical"
-  pcbX={-3}
-  pcbY={-6}
+  pcbX={-5}
+  pcbY={-5}
   schX={-10.8}
   schY={-2.31}
 />
@@ -275,7 +275,7 @@ export const PicoGroup = (props: PicoGroupProps) => (
     <W25Q16JVUXIQ
       name="U2"
       schSectionName={schSections.flash}
-      pcbX={3.5}
+      pcbX={3.4}
       pcbY={9.5}
       pcbRotation={90}
       schX={18.02}
@@ -294,8 +294,8 @@ export const PicoGroup = (props: PicoGroupProps) => (
     <X322512MSB4SI
       name="Y1"
       schSectionName={schSections.clock}
-      pcbX={-6.5}
-      pcbY={-16}
+      pcbX={0}
+      pcbY={-6}
     />
     <SKRPACE010 name="SW_BOOT" schSectionName={schSections.controls} pcbX={8.6} pcbY={21.8} />
     <SKRPACE010 name="SW_RUN" schSectionName={schSections.controls} pcbX={5.5} pcbY={-12.5} pcbRotation={90} />
