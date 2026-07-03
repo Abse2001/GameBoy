@@ -1,6 +1,6 @@
 {
-  "name": "@tsci/abse.abse-pico",
-  "version": "1.0.2",
+  "name": "@tsci/abse.gameboy",
+  "version": "1.0.14",
   "description": "absePico RP2040-compatible development board",
   "main": "index.tsx",
   "keywords": [
@@ -19,7 +19,7 @@
   },
   "devDependencies": {
     "@types/react": "^19.2.14",
-    "tscircuit": "^0.0.1808",
+    "tscircuit": "^0.0.1985",
     "typescript": "^5.0.0"
   },
   "author": "abse"
