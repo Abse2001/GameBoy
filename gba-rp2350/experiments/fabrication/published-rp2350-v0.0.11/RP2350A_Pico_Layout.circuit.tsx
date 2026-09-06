@@ -74,6 +74,7 @@ export interface RP2350AEssentialKiCadReferenceProps {
 	mcuPassiveEscape?: boolean;
 	clockPassiveEscape?: boolean;
 	westDecouplerEscape?: boolean;
+	eastSupplyCapEscape?: boolean;
 	clockResistorEscape?: boolean;
 	children?: ReactNode;
 }
@@ -94,6 +95,7 @@ export const RP2350AEssentialKiCadReference = ({
 	mcuPassiveEscape = false,
 	clockPassiveEscape = false,
 	westDecouplerEscape = false,
+	eastSupplyCapEscape = false,
 	clockResistorEscape = false,
 	children,
 	...props
@@ -231,8 +233,8 @@ export const RP2350AEssentialKiCadReference = ({
 			footprint="res_p0.8402mm_pw0.5mm_ph0.54mm"
 			supplierPartNumbers={{ jlcpcb: ["C76950"] }}
 			maxVoltageRating="50V"
-			pcbX={-2.3}
-			pcbY={-6.2}
+			pcbX={eastSupplyCapEscape ? -3 : -2.3}
+			pcbY={eastSupplyCapEscape ? -7.3 : -6.2}
 			pcbRotation={180}
 		/>
 		<capacitor
@@ -320,9 +322,9 @@ export const RP2350AEssentialKiCadReference = ({
 			supplierPartNumbers={{ jlcpcb: ["C77014"] }}
 			maxVoltageRating="25V"
 			maxDecouplingTraceLength={5.5}
-			pcbX={2.8}
-			pcbY={-7.7}
-			pcbRotation={270}
+			pcbX={eastSupplyCapEscape ? -1.8 : 2.8}
+			pcbY={eastSupplyCapEscape ? -5.8 : -7.7}
+			pcbRotation={eastSupplyCapEscape ? 180 : 270}
 		/>
 		<capacitor
 			name="C11"
