@@ -24,10 +24,8 @@ jobs:
         include:
           - candidate: baseline
             entry: placement-published-mcu-storage-global
-          - candidate: mcu-spacing
-            entry: placement-storage-mcu-spacing
-          - candidate: mcu-usb-spacing
-            entry: placement-storage-mcu-usb-spacing
+          - candidate: clock-spacing
+            entry: placement-storage-clock-spacing
     defaults:
       run:
         working-directory: gba-rp2350
@@ -125,4 +123,4 @@ jobs:
           pattern: gba-*
           path: routing-results
       - name: Compare electrical identity and routing reports
-        run: bun gba-rp2350/checks/compare-route-reports.ts routing-results/gba-baseline/reports/route.json routing-results/gba-mcu-spacing/reports/route.json routing-results/gba-mcu-usb-spacing/reports/route.json
+        run: bun gba-rp2350/checks/compare-route-reports.ts routing-results/gba-baseline/reports/route.json routing-results/gba-clock-spacing/reports/route.json

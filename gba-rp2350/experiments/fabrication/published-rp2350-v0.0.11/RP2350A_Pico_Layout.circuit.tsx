@@ -72,6 +72,7 @@ export interface RP2350AEssentialKiCadReferenceProps {
 	inlineSignalLabels?: boolean;
 	usbResistorEscape?: boolean;
 	mcuPassiveEscape?: boolean;
+	clockPassiveEscape?: boolean;
 	children?: ReactNode;
 }
 
@@ -89,6 +90,7 @@ export const RP2350AEssentialKiCadReference = ({
 	inlineSignalLabels = false,
 	usbResistorEscape = false,
 	mcuPassiveEscape = false,
+	clockPassiveEscape = false,
 	children,
 	...props
 }: RP2350AEssentialKiCadReferenceProps = {}) => (
@@ -173,7 +175,7 @@ export const RP2350AEssentialKiCadReference = ({
 			tolerance="1%"
 			pcbX={0}
 			pcbY={-5.8}
-			pcbRotation={180}
+			pcbRotation={clockPassiveEscape ? 0 : 180}
 		/>
 		<resistor
 			name="R3"
@@ -239,8 +241,8 @@ export const RP2350AEssentialKiCadReference = ({
 			footprint="res_p0.8402mm_pw0.5mm_ph0.54mm"
 			supplierPartNumbers={{ jlcpcb: ["C76950"] }}
 			maxVoltageRating="50V"
-			pcbX={2.3}
-			pcbY={-6.2}
+			pcbX={clockPassiveEscape ? 2.45 : 2.3}
+			pcbY={clockPassiveEscape ? -9.4 : -6.2}
 		/>
 		<capacitor
 			name="C6"

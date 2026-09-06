@@ -70,3 +70,7 @@ if (process.env.GITHUB_OUTPUT) {
 console.log("GBA_ROUTE_REPORT_START")
 console.log(JSON.stringify(report, null, 2))
 console.log("GBA_ROUTE_REPORT_END")
+// Preserve the actual generated copper for inspection without artifact uploads.
+console.log("GBA_CIRCUIT_JSON_START")
+console.log(JSON.stringify(elements, null, 2))
+console.log("GBA_CIRCUIT_JSON_END")
