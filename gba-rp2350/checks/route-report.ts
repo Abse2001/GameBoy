@@ -1,6 +1,7 @@
 import assert from "node:assert/strict"
-import { appendFileSync, readFileSync, writeFileSync } from "node:fs"
+import { appendFileSync, existsSync, readFileSync, writeFileSync } from "node:fs"
 import { createHash } from "node:crypto"
+import { dirname, join } from "node:path"
 import { getSourcePortConnectivityMapFromCircuitJson } from "circuit-json-to-connectivity-map"
 import type { AnyCircuitElement } from "circuit-json"
 
@@ -74,3 +75,11 @@ console.log("GBA_ROUTE_REPORT_END")
 console.log("GBA_CIRCUIT_JSON_START")
 console.log(JSON.stringify(elements, null, 2))
 console.log("GBA_CIRCUIT_JSON_END")
+
+// Keep the CLI-generated PCB image reviewable when artifact storage is full.
+const pcbSvgPath = join(dirname(file), "pcb.svg")
+if (existsSync(pcbSvgPath)) {
+  console.log("GBA_PCB_SVG_START")
+  console.log(readFileSync(pcbSvgPath, "utf8"))
+  console.log("GBA_PCB_SVG_END")
+}

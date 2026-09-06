@@ -31,6 +31,7 @@
     "experiments/fabrication/placement-storage-west-decouplers.circuit.tsx",
     "experiments/fabrication/placement-storage-clock-resistor.circuit.tsx",
     "experiments/fabrication/placement-storage-sd-detect.circuit.tsx",
+    "experiments/fabrication/placement-storage-debug-testpoint.circuit.tsx",
     "checks/*.ts"
   ],
   "exclude": [

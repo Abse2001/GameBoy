@@ -23,11 +23,9 @@ jobs:
       matrix:
         include:
           - candidate: baseline
-            entry: placement-storage-west-decouplers
-          - candidate: clock-resistor
-            entry: placement-storage-clock-resistor
-          - candidate: sd-detect
             entry: placement-storage-sd-detect
+          - candidate: debug-testpoint
+            entry: placement-storage-debug-testpoint
     defaults:
       run:
         working-directory: gba-rp2350
@@ -125,4 +123,4 @@ jobs:
           pattern: gba-*
           path: routing-results
       - name: Compare electrical identity and routing reports
-        run: bun gba-rp2350/checks/compare-route-reports.ts routing-results/gba-baseline/reports/route.json routing-results/gba-clock-resistor/reports/route.json routing-results/gba-sd-detect/reports/route.json
+        run: bun gba-rp2350/checks/compare-route-reports.ts routing-results/gba-baseline/reports/route.json routing-results/gba-debug-testpoint/reports/route.json
