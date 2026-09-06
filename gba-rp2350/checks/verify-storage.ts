@@ -106,7 +106,7 @@ for (const [name, part] of Object.entries(parts)) {
   const cad = elements.find((e) => e.type === "cad_component" && e.source_component_id === c.source_component_id)
   assert(cad?.type === "cad_component", `${name}: missing CAD model`)
   for (const url of [cad.model_obj_url, cad.model_step_url]) {
-    assert(url?.startsWith("./experiments/fabrication/imports/"), `${name}: expected local imported model`)
+    assert(url && url.startsWith("./experiments/fabrication/imports/"), `${name}: expected local imported model`)
     assert(statSync(resolve(url)).size > 0, `${name}: empty CAD file`)
   }
 }
