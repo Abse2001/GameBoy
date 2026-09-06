@@ -179,6 +179,7 @@ export interface RP2350CompactLayoutProps {
   westDecouplerEscape?: boolean
   clockResistorEscape?: boolean
   debugTestpointEscape?: boolean
+  flashCapEscape?: boolean
   usbResistorEscape?: boolean
   segmentedSupplyPours?: boolean
   headers?: boolean
@@ -197,6 +198,7 @@ export const RP2350CompactLayout = ({
   westDecouplerEscape = false,
   clockResistorEscape = false,
   debugTestpointEscape = false,
+  flashCapEscape = false,
   usbResistorEscape = false,
   segmentedSupplyPours = false,
   headers = true,
@@ -384,8 +386,8 @@ export const RP2350CompactLayout = ({
         schX={2}
         schY={3.5}
         schOrientation="vertical"
-        pcbX={mcuPassiveEscape ? -4.8 : -5}
-        pcbY={mcuPassiveEscape ? 9.3 : 10.3}
+        pcbX={flashCapEscape ? -0.7 : mcuPassiveEscape ? -4.8 : -5}
+        pcbY={flashCapEscape ? 8.55 : mcuPassiveEscape ? 9.3 : 10.3}
         pcbRotation={90}
       />
       <testpoint

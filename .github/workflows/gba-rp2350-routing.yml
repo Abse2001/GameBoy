@@ -24,8 +24,8 @@ jobs:
         include:
           - candidate: baseline
             entry: placement-storage-sd-detect
-          - candidate: debug-testpoint
-            entry: placement-storage-debug-testpoint
+          - candidate: flash-cap
+            entry: placement-storage-flash-cap
     defaults:
       run:
         working-directory: gba-rp2350
@@ -123,4 +123,4 @@ jobs:
           pattern: gba-*
           path: routing-results
       - name: Compare electrical identity and routing reports
-        run: bun gba-rp2350/checks/compare-route-reports.ts routing-results/gba-baseline/reports/route.json routing-results/gba-debug-testpoint/reports/route.json
+        run: bun gba-rp2350/checks/compare-route-reports.ts routing-results/gba-baseline/reports/route.json routing-results/gba-flash-cap/reports/route.json
