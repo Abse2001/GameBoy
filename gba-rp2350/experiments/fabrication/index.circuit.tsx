@@ -35,6 +35,7 @@ export default ({
   psramCapEscape = false,
   mcuPassiveEscape = false,
   clockPassiveEscape = false,
+  westDecouplerEscape = false,
   usbResistorEscape = false,
   segmentedSupplyPours = false,
   mcuHeaders = true,
@@ -72,7 +73,7 @@ export default ({
   topLeftMountingHole = { x: -50, y: -32 },
   powerSwitchX = 60,
   effort,
-}: { mcuSubcircuit?: boolean; publishedMcuModule?: boolean; storage?: boolean; psramCapEscape?: boolean; mcuPassiveEscape?: boolean; clockPassiveEscape?: boolean; usbResistorEscape?: boolean; segmentedSupplyPours?: boolean; mcuHeaders?: boolean; allGlobal?: boolean; innerButtonContacts?: boolean; layers?: 2 | 4; copperIslands?: boolean; routeClockFirst?: boolean; routeHighSpeedFirst?: boolean; routeDecouplingFirst?: boolean; routeRegulatorFirst?: boolean; routeSupplyNetsFirst?: boolean; routeDisplayFirst?: boolean; feedMcuAtInputCap?: boolean; routingSafetyMargin?: boolean; router?: "auto" | "beta-pipeline9"; edgeConnectors?: boolean; spreadMcuPassives?: boolean; compactCoreIsland?: boolean; coreIslandOffsetX?: number; coreIslandOffsetY?: number; coreIslandRotation?: 0 | 90 | 180 | 270; clearUsbEscape?: boolean; mcuPlacements?: Partial<Record<string, McuPlacement>>; audioVrefPlacement?: { pcbX: number; pcbY: number; pcbRotation: number }; audioPlacements?: Partial<Record<"R_AMP_IN" | "C_AMP_PWM_FILTER" | "C_AMP_IN_COUPLE" | "C_AMP_VDD" | "C_AMP_VDD_BULK" | "FB_SPK_POS", { pcbX: number; pcbY: number; pcbRotation: number }>>; ldoOffset?: { x: number; y: number }; ldoFlipped?: boolean; ldoPlacements?: Partial<Record<"U_3V3" | "C_3V3_IN" | "C_3V3_OUT", { pcbX: number; pcbY: number; pcbRotation: number }>>; usbDiodeOffset?: { x: number; y: number }; powerOffsetX?: number; powerOffsetY?: number; powerPlacements?: Partial<Record<"R_BOOST_EN_PULLUP" | "R_BAT_GATE_PULLUP" | "D_BAT_BOOST" | "C_BAT_OUT" | "C_BAT_OUT_BULK" | "R_BOOST_TOP" | "R_BOOST_BOT" | "R_USB_BOOST_OFF" | "Q_USB_BOOST_OFF" | "R_USB_BOOST_OFF_PULLDOWN", { pcbX: number; pcbY: number; pcbRotation: number }>>; audioOffsetX?: number; topLeftMountingHole?: { x: number; y: number }; powerSwitchX?: number; effort?: "1x" | "2x" | "5x" | "10x" | "100x" } = {}) => (
+}: { mcuSubcircuit?: boolean; publishedMcuModule?: boolean; storage?: boolean; psramCapEscape?: boolean; mcuPassiveEscape?: boolean; clockPassiveEscape?: boolean; westDecouplerEscape?: boolean; usbResistorEscape?: boolean; segmentedSupplyPours?: boolean; mcuHeaders?: boolean; allGlobal?: boolean; innerButtonContacts?: boolean; layers?: 2 | 4; copperIslands?: boolean; routeClockFirst?: boolean; routeHighSpeedFirst?: boolean; routeDecouplingFirst?: boolean; routeRegulatorFirst?: boolean; routeSupplyNetsFirst?: boolean; routeDisplayFirst?: boolean; feedMcuAtInputCap?: boolean; routingSafetyMargin?: boolean; router?: "auto" | "beta-pipeline9"; edgeConnectors?: boolean; spreadMcuPassives?: boolean; compactCoreIsland?: boolean; coreIslandOffsetX?: number; coreIslandOffsetY?: number; coreIslandRotation?: 0 | 90 | 180 | 270; clearUsbEscape?: boolean; mcuPlacements?: Partial<Record<string, McuPlacement>>; audioVrefPlacement?: { pcbX: number; pcbY: number; pcbRotation: number }; audioPlacements?: Partial<Record<"R_AMP_IN" | "C_AMP_PWM_FILTER" | "C_AMP_IN_COUPLE" | "C_AMP_VDD" | "C_AMP_VDD_BULK" | "FB_SPK_POS", { pcbX: number; pcbY: number; pcbRotation: number }>>; ldoOffset?: { x: number; y: number }; ldoFlipped?: boolean; ldoPlacements?: Partial<Record<"U_3V3" | "C_3V3_IN" | "C_3V3_OUT", { pcbX: number; pcbY: number; pcbRotation: number }>>; usbDiodeOffset?: { x: number; y: number }; powerOffsetX?: number; powerOffsetY?: number; powerPlacements?: Partial<Record<"R_BOOST_EN_PULLUP" | "R_BAT_GATE_PULLUP" | "D_BAT_BOOST" | "C_BAT_OUT" | "C_BAT_OUT_BULK" | "R_BOOST_TOP" | "R_BOOST_BOT" | "R_USB_BOOST_OFF" | "Q_USB_BOOST_OFF" | "R_USB_BOOST_OFF_PULLDOWN", { pcbX: number; pcbY: number; pcbRotation: number }>>; audioOffsetX?: number; topLeftMountingHole?: { x: number; y: number }; powerSwitchX?: number; effort?: "1x" | "2x" | "5x" | "10x" | "100x" } = {}) => (
   <board
     title="Game Boy Advance RP2350 handheld circuit"
     autorouter={router}
@@ -180,6 +181,7 @@ export default ({
       psramCapEscape={psramCapEscape}
       mcuPassiveEscape={mcuPassiveEscape}
       clockPassiveEscape={clockPassiveEscape}
+      westDecouplerEscape={westDecouplerEscape}
       usbResistorEscape={usbResistorEscape}
       segmentedSupplyPours={segmentedSupplyPours}
       headers={mcuHeaders}

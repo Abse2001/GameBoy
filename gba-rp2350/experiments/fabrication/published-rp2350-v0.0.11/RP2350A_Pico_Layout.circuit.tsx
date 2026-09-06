@@ -73,6 +73,7 @@ export interface RP2350AEssentialKiCadReferenceProps {
 	usbResistorEscape?: boolean;
 	mcuPassiveEscape?: boolean;
 	clockPassiveEscape?: boolean;
+	westDecouplerEscape?: boolean;
 	children?: ReactNode;
 }
 
@@ -91,6 +92,7 @@ export const RP2350AEssentialKiCadReference = ({
 	usbResistorEscape = false,
 	mcuPassiveEscape = false,
 	clockPassiveEscape = false,
+	westDecouplerEscape = false,
 	children,
 	...props
 }: RP2350AEssentialKiCadReferenceProps = {}) => (
@@ -331,7 +333,7 @@ export const RP2350AEssentialKiCadReference = ({
 			supplierPartNumbers={{ jlcpcb: ["C77014"] }}
 			maxVoltageRating="25V"
 			maxDecouplingTraceLength={5.5}
-			pcbX={5.1}
+			pcbX={westDecouplerEscape ? 6.4 : 5.1}
 			pcbY={-0.7}
 		/>
 		<capacitor
@@ -375,7 +377,7 @@ export const RP2350AEssentialKiCadReference = ({
 			supplierPartNumbers={{ jlcpcb: ["C77014"] }}
 			maxVoltageRating="25V"
 			maxDecouplingTraceLength={5.5}
-			pcbX={5.1}
+			pcbX={westDecouplerEscape ? 6.4 : 5.1}
 			pcbY={-1.5}
 		/>
 		<capacitor

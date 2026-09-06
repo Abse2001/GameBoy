@@ -28,6 +28,7 @@
     "experiments/fabrication/placement-storage-mcu-spacing.circuit.tsx",
     "experiments/fabrication/placement-storage-mcu-usb-spacing.circuit.tsx",
     "experiments/fabrication/placement-storage-clock-spacing.circuit.tsx",
+    "experiments/fabrication/placement-storage-west-decouplers.circuit.tsx",
     "checks/*.ts"
   ],
   "exclude": [

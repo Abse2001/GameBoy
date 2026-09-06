@@ -5,15 +5,17 @@ export default ({
   psramCapEscape = false,
   mcuPassiveEscape = false,
   clockPassiveEscape = false,
+  westDecouplerEscape = false,
   usbResistorEscape = false,
   segmentedSupplyPours = false,
-}: { mcuSubcircuit?: boolean; psramCapEscape?: boolean; mcuPassiveEscape?: boolean; clockPassiveEscape?: boolean; usbResistorEscape?: boolean; segmentedSupplyPours?: boolean } = {}) => (
+}: { mcuSubcircuit?: boolean; psramCapEscape?: boolean; mcuPassiveEscape?: boolean; clockPassiveEscape?: boolean; westDecouplerEscape?: boolean; usbResistorEscape?: boolean; segmentedSupplyPours?: boolean } = {}) => (
   <Board
     publishedMcuModule
     storage
     psramCapEscape={psramCapEscape}
     mcuPassiveEscape={mcuPassiveEscape}
     clockPassiveEscape={clockPassiveEscape}
+    westDecouplerEscape={westDecouplerEscape}
     usbResistorEscape={usbResistorEscape}
     segmentedSupplyPours={segmentedSupplyPours}
     mcuHeaders={false}
