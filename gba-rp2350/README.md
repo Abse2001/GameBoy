@@ -24,7 +24,8 @@ metadata does not represent disconnected polygon regions, so an assumed plane
 connection is insufficient evidence of physical continuity.
 
 GitHub PR CI performs typechecking, full native routing, netlist/component/
-protected-placement comparisons, and Gerber shorts checks at 50 and 100 pixels/mm.
+protected-placement comparisons, and Gerber shorts checks at 50 pixels/mm,
+followed by 100 pixels/mm when the first check finds no shorts.
 It uploads Circuit JSON, SVGs, reports and logs even when a candidate fails.
 The zero-DRC acceptance gate deliberately fails if any reported error, missing
 connection or overlength warning remains. A lower count is not an orderable board.

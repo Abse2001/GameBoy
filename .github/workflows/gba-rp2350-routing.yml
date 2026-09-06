@@ -46,7 +46,7 @@ jobs:
           ENTRY: ${{ matrix.entry }}
         run: |
           mkdir -p reports
-          bunx --no-install tsci build "experiments/fabrication/${ENTRY}.circuit.tsx" --autorouter-timeout 40m --autorouter-debug --pcb-svgs 2>&1 | tee reports/routing.log
+          bunx --no-install tsci build "experiments/fabrication/${ENTRY}.circuit.tsx" --autorouter-timeout 40m --autorouter-debug --autorouter-dump-srj all --pcb-svgs 2>&1 | tee reports/routing.log
       - name: Record all errors and electrical identity
         if: always()
         env:
@@ -58,15 +58,28 @@ jobs:
           ENTRY: ${{ matrix.entry }}
         run: bun checks/verify-storage.ts "dist/experiments/fabrication/${ENTRY}/circuit.json" 2>&1 | tee reports/storage.log
       - name: Gerber shorts at 50 pixels per mm
+        id: shorts50
         if: always()
         env:
           ENTRY: ${{ matrix.entry }}
         run: bunx --no-install tsci check shorts "dist/experiments/fabrication/${ENTRY}/circuit.json" --mode gerber --layer all --pixels-per-mm 50 2>&1 | tee reports/shorts-50.log
-      - name: Gerber shorts at 100 pixels per mm
+      - name: Preserve 50-pixel shorts images
         if: always()
+        run: |
+          if [ -d checks/check-shorts ]; then
+            mv checks/check-shorts reports/shorts-50
+          fi
+      - name: Gerber shorts at 100 pixels per mm
+        if: always() && steps.shorts50.outcome == 'success'
         env:
           ENTRY: ${{ matrix.entry }}
         run: bunx --no-install tsci check shorts "dist/experiments/fabrication/${ENTRY}/circuit.json" --mode gerber --layer all --pixels-per-mm 100 2>&1 | tee reports/shorts-100.log
+      - name: Preserve 100-pixel shorts images
+        if: always()
+        run: |
+          if [ -d checks/check-shorts ]; then
+            mv checks/check-shorts reports/shorts-100
+          fi
       - name: Require zero reported errors and critical warnings
         if: always()
         run: bun checks/route-gate.ts reports/route.json
