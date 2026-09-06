@@ -74,6 +74,7 @@ export interface RP2350AEssentialKiCadReferenceProps {
 	mcuPassiveEscape?: boolean;
 	clockPassiveEscape?: boolean;
 	westDecouplerEscape?: boolean;
+	clockResistorEscape?: boolean;
 	children?: ReactNode;
 }
 
@@ -93,6 +94,7 @@ export const RP2350AEssentialKiCadReference = ({
 	mcuPassiveEscape = false,
 	clockPassiveEscape = false,
 	westDecouplerEscape = false,
+	clockResistorEscape = false,
 	children,
 	...props
 }: RP2350AEssentialKiCadReferenceProps = {}) => (
@@ -175,8 +177,8 @@ export const RP2350AEssentialKiCadReference = ({
 			footprint="res_p0.8656mm_pw0.5657mm_ph0.54mm"
 			supplierPartNumbers={{ jlcpcb: ["C106235"] }}
 			tolerance="1%"
-			pcbX={0}
-			pcbY={-5.8}
+			pcbX={clockResistorEscape ? 1.6 : 0}
+			pcbY={clockResistorEscape ? -5.95 : -5.8}
 			pcbRotation={clockPassiveEscape ? 0 : 180}
 		/>
 		<resistor

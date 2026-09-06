@@ -177,6 +177,7 @@ export interface RP2350CompactLayoutProps {
   mcuPassiveEscape?: boolean
   clockPassiveEscape?: boolean
   westDecouplerEscape?: boolean
+  clockResistorEscape?: boolean
   usbResistorEscape?: boolean
   segmentedSupplyPours?: boolean
   headers?: boolean
@@ -193,6 +194,7 @@ export const RP2350CompactLayout = ({
   mcuPassiveEscape = false,
   clockPassiveEscape = false,
   westDecouplerEscape = false,
+  clockResistorEscape = false,
   usbResistorEscape = false,
   segmentedSupplyPours = false,
   headers = true,
@@ -332,6 +334,7 @@ export const RP2350CompactLayout = ({
       mcuPassiveEscape={mcuPassiveEscape}
       clockPassiveEscape={clockPassiveEscape}
       westDecouplerEscape={westDecouplerEscape}
+      clockResistorEscape={clockResistorEscape}
     >
       {/* Keep the QSPI boot circuit in the MCU routing scope. */}
       <W25Q16JVUXIQ

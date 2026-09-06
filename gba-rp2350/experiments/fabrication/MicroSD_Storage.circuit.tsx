@@ -6,7 +6,7 @@ import { CL10A106KP8NNNC } from "./imports/CL10A106KP8NNNC/CL10A106KP8NNNC"
 import { SRV05_4_P_T7 } from "./imports/SRV05_4_P_T7/SRV05_4_P_T7"
 
 // Normal group: these connections are routed together with the parent board.
-export const MicroSDStorage = (props: GroupProps) => (
+export const MicroSDStorage = ({ sdDetectEscape = false, ...props }: GroupProps & { sdDetectEscape?: boolean }) => (
   <group {...props}>
     {/* The mouth faces +Y in this group's local coordinates. The parent rotates
         the whole group 180 degrees to face outward at the bottom board edge. */}
@@ -18,7 +18,7 @@ export const MicroSDStorage = (props: GroupProps) => (
     <A_0402WGF1002TCE name="R_SD_CMD" pcbX={-1.3} pcbY={-8.2} pcbRotation={90} schX={0} schY={5} />
     <A_0402WGF1002TCE name="R_SD_DAT0" pcbX={4.1} pcbY={-8.2} pcbRotation={90} schX={3} schY={5} />
     <A_0402WGF1002TCE name="R_SD_DAT1" pcbX={5.7} pcbY={-8.2} pcbRotation={90} schX={6} schY={5} />
-    <A_0402WGF1002TCE name="R_SD_CD" pcbX={7.3} pcbY={-8.5} pcbRotation={90} schX={9} schY={5} />
+    <A_0402WGF1002TCE name="R_SD_CD" pcbX={sdDetectEscape ? 28.6 : 7.3} pcbY={sdDetectEscape ? -40.2 : -8.5} pcbRotation={90} schX={9} schY={5} />
     <SRV05_4_P_T7 name="U_SD_ESD" pcbX={1.5} pcbY={-12} schX={8} schY={-2} />
 
     <trace name="SD_VDD" from=".J_SD > .VDD" to="net.V3V3" thickness="0.3mm" />
