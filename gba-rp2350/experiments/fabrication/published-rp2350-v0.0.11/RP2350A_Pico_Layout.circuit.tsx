@@ -71,6 +71,7 @@ export interface RP2350AEssentialKiCadReferenceProps {
 	noConnectUnusedPins?: boolean;
 	inlineSignalLabels?: boolean;
 	usbResistorEscape?: boolean;
+	mcuPassiveEscape?: boolean;
 	children?: ReactNode;
 }
 
@@ -87,6 +88,7 @@ export const RP2350AEssentialKiCadReference = ({
 	noConnectUnusedPins = true,
 	inlineSignalLabels = false,
 	usbResistorEscape = false,
+	mcuPassiveEscape = false,
 	children,
 	...props
 }: RP2350AEssentialKiCadReferenceProps = {}) => (
@@ -414,7 +416,7 @@ export const RP2350AEssentialKiCadReference = ({
 			supplierPartNumbers={{ jlcpcb: ["C77014"] }}
 			maxVoltageRating="25V"
 			maxDecouplingTraceLength={5.5}
-			pcbX={5.3}
+			pcbX={mcuPassiveEscape ? 6.4 : 5.3}
 			pcbY={0.9}
 		/>
 		<capacitor
@@ -444,7 +446,7 @@ export const RP2350AEssentialKiCadReference = ({
 			supplierPartNumbers={{ jlcpcb: ["C77014"] }}
 			maxVoltageRating="25V"
 			maxDecouplingTraceLength={5.5}
-			pcbX={5.3}
+			pcbX={mcuPassiveEscape ? 6.4 : 5.3}
 			pcbY={2.1}
 		/>
 			{/* Route the dense MCU rails with the pad escapes so pipeline9 can

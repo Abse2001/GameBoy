@@ -174,6 +174,7 @@ export interface RP2350CompactLayoutProps {
   subcircuit?: boolean
   psram?: boolean
   psramCapEscape?: boolean
+  mcuPassiveEscape?: boolean
   usbResistorEscape?: boolean
   segmentedSupplyPours?: boolean
   headers?: boolean
@@ -187,6 +188,7 @@ export const RP2350CompactLayout = ({
   subcircuit = true,
   psram = false,
   psramCapEscape = false,
+  mcuPassiveEscape = false,
   usbResistorEscape = false,
   segmentedSupplyPours = false,
   headers = true,
@@ -323,14 +325,15 @@ export const RP2350CompactLayout = ({
       pcbRotation={180}
       noConnectUnusedPins={false}
       usbResistorEscape={usbResistorEscape}
+      mcuPassiveEscape={mcuPassiveEscape}
     >
       {/* Keep the QSPI boot circuit in the MCU routing scope. */}
       <W25Q16JVUXIQ
         name="U2"
         schSheetName="interfaces"
         schSectionName="flash"
-        pcbX={-2.5}
-        pcbY={7}
+        pcbX={mcuPassiveEscape ? -3.5 : -2.5}
+        pcbY={mcuPassiveEscape ? 6.5 : 7}
         pcbRotation={270}
         schX={-1}
         schY={5.5}
@@ -370,8 +373,8 @@ export const RP2350CompactLayout = ({
         schX={2}
         schY={3.5}
         schOrientation="vertical"
-        pcbX={-5}
-        pcbY={10.3}
+        pcbX={mcuPassiveEscape ? -4.8 : -5}
+        pcbY={mcuPassiveEscape ? 9.3 : 10.3}
         pcbRotation={90}
       />
       <testpoint

@@ -25,6 +25,8 @@
     "experiments/fabrication/placement-storage-cap-escape.circuit.tsx",
     "experiments/fabrication/placement-storage-supply-pours.circuit.tsx",
     "experiments/fabrication/placement-storage-usb-escape.circuit.tsx",
+    "experiments/fabrication/placement-storage-mcu-spacing.circuit.tsx",
+    "experiments/fabrication/placement-storage-mcu-usb-spacing.circuit.tsx",
     "checks/*.ts"
   ],
   "exclude": [

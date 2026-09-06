@@ -24,12 +24,10 @@ jobs:
         include:
           - candidate: baseline
             entry: placement-published-mcu-storage-global
-          - candidate: cap-escape
-            entry: placement-storage-cap-escape
-          - candidate: supply-pours
-            entry: placement-storage-supply-pours
-          - candidate: usb-escape
-            entry: placement-storage-usb-escape
+          - candidate: mcu-spacing
+            entry: placement-storage-mcu-spacing
+          - candidate: mcu-usb-spacing
+            entry: placement-storage-mcu-usb-spacing
     defaults:
       run:
         working-directory: gba-rp2350
@@ -41,6 +39,9 @@ jobs:
           bun-version: '1.3.8'
       - name: Install locked dependencies
         run: bun install --frozen-lockfile
+      - name: Record installed routing packages
+        run: |
+          bun -e 'for (const name of ["tscircuit", "@tscircuit/core", "@tscircuit/eval", "@tscircuit/capacity-autorouter", "@tscircuit/copper-pour-solver"]) console.log(name, JSON.parse(await Bun.file(`node_modules/${name}/package.json`).text()).version)'
       - name: Typecheck candidate sources
         run: bunx --no-install tsc --noEmit
       - name: Route full board with Pipeline 9
@@ -124,4 +125,4 @@ jobs:
           pattern: gba-*
           path: routing-results
       - name: Compare electrical identity and routing reports
-        run: bun gba-rp2350/checks/compare-route-reports.ts routing-results/gba-baseline/reports/route.json routing-results/gba-cap-escape/reports/route.json routing-results/gba-supply-pours/reports/route.json routing-results/gba-usb-escape/reports/route.json
+        run: bun gba-rp2350/checks/compare-route-reports.ts routing-results/gba-baseline/reports/route.json routing-results/gba-mcu-spacing/reports/route.json routing-results/gba-mcu-usb-spacing/reports/route.json

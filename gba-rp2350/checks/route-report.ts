@@ -66,4 +66,7 @@ if (process.env.GITHUB_OUTPUT) {
   const routeReady = report.pcbTraces > 0 && !(report.errors.pcb_autorouting_error > 0)
   appendFileSync(process.env.GITHUB_OUTPUT, `route_ready=${routeReady}\n`)
 }
-console.log(JSON.stringify({ ...report, errorDetails: undefined, criticalWarnings: undefined, protectedPlacements: undefined, parts: undefined, componentNames: undefined }, null, 2))
+// Keep a readable, complete copy even if GitHub's artifact storage is full.
+console.log("GBA_ROUTE_REPORT_START")
+console.log(JSON.stringify(report, null, 2))
+console.log("GBA_ROUTE_REPORT_END")
