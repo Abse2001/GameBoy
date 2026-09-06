@@ -1,0 +1,97 @@
+name: GBA RP2350 routing
+
+on:
+  pull_request:
+    paths:
+      - 'gba-rp2350/**'
+      - '.github/workflows/gba-rp2350-routing.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: gba-routing-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  route:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - candidate: baseline
+            entry: placement-published-mcu-storage-global
+          - candidate: cap-escape
+            entry: placement-storage-cap-escape
+          - candidate: supply-pours
+            entry: placement-storage-supply-pours
+    defaults:
+      run:
+        working-directory: gba-rp2350
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: '1.3.8'
+      - name: Install locked dependencies
+        run: bun install --frozen-lockfile
+      - name: Typecheck candidate sources
+        run: bunx --no-install tsc --noEmit
+      - name: Route full board with Pipeline 9
+        env:
+          ENTRY: ${{ matrix.entry }}
+        run: |
+          mkdir -p reports
+          bunx --no-install tsci build "experiments/fabrication/${ENTRY}.circuit.tsx" --autorouter-timeout 40m --autorouter-debug --pcb-svgs 2>&1 | tee reports/routing.log
+      - name: Record all errors and electrical identity
+        if: always()
+        env:
+          ENTRY: ${{ matrix.entry }}
+        run: bun checks/route-report.ts "dist/experiments/fabrication/${ENTRY}/circuit.json" reports/route.json
+      - name: Verify storage netlist and imported parts
+        if: always()
+        env:
+          ENTRY: ${{ matrix.entry }}
+        run: bun checks/verify-storage.ts "dist/experiments/fabrication/${ENTRY}/circuit.json" 2>&1 | tee reports/storage.log
+      - name: Gerber shorts at 50 pixels per mm
+        if: always()
+        env:
+          ENTRY: ${{ matrix.entry }}
+        run: bunx --no-install tsci check shorts "dist/experiments/fabrication/${ENTRY}/circuit.json" --mode gerber --layer all --pixels-per-mm 50 2>&1 | tee reports/shorts-50.log
+      - name: Gerber shorts at 100 pixels per mm
+        if: always()
+        env:
+          ENTRY: ${{ matrix.entry }}
+        run: bunx --no-install tsci check shorts "dist/experiments/fabrication/${ENTRY}/circuit.json" --mode gerber --layer all --pixels-per-mm 100 2>&1 | tee reports/shorts-100.log
+      - name: Require zero reported errors and critical warnings
+        if: always()
+        run: bun checks/route-gate.ts reports/route.json
+      - name: Upload routed board and diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gba-${{ matrix.candidate }}
+          path: |
+            gba-rp2350/dist/
+            gba-rp2350/reports/
+            gba-rp2350/checks/check-shorts/
+          retention-days: 14
+  compare:
+    if: always()
+    needs: route
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: '1.3.8'
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: gba-*
+          path: routing-results
+      - name: Compare electrical identity and routing reports
+        run: bun gba-rp2350/checks/compare-route-reports.ts routing-results/gba-baseline/reports/route.json routing-results/gba-cap-escape/reports/route.json routing-results/gba-supply-pours/reports/route.json
