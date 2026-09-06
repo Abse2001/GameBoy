@@ -11,7 +11,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: gba-routing-${{ github.ref }}
+  group: gba-routing-${{ github.ref }}-${{ github.sha }}
   cancel-in-progress: true
 
 jobs:
@@ -28,6 +28,8 @@ jobs:
             entry: placement-storage-cap-escape
           - candidate: supply-pours
             entry: placement-storage-supply-pours
+          - candidate: usb-escape
+            entry: placement-storage-usb-escape
     defaults:
       run:
         working-directory: gba-rp2350
@@ -48,6 +50,7 @@ jobs:
           mkdir -p reports
           bunx --no-install tsci build "experiments/fabrication/${ENTRY}.circuit.tsx" --autorouter-timeout 40m --autorouter-debug --autorouter-dump-srj all --pcb-svgs 2>&1 | tee reports/routing.log
       - name: Record all errors and electrical identity
+        id: report
         if: always()
         env:
           ENTRY: ${{ matrix.entry }}
@@ -57,9 +60,18 @@ jobs:
         env:
           ENTRY: ${{ matrix.entry }}
         run: bun checks/verify-storage.ts "dist/experiments/fabrication/${ENTRY}/circuit.json" 2>&1 | tee reports/storage.log
+      - name: Preserve board output before raster shorts checks
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gba-${{ matrix.candidate }}
+          path: |
+            gba-rp2350/dist/
+            gba-rp2350/reports/
+          retention-days: 14
       - name: Gerber shorts at 50 pixels per mm
         id: shorts50
-        if: always()
+        if: always() && steps.report.outputs.route_ready == 'true'
         env:
           ENTRY: ${{ matrix.entry }}
         run: bunx --no-install tsci check shorts "dist/experiments/fabrication/${ENTRY}/circuit.json" --mode gerber --layer all --pixels-per-mm 50 2>&1 | tee reports/shorts-50.log
@@ -70,10 +82,16 @@ jobs:
             mv checks/check-shorts reports/shorts-50
           fi
       - name: Gerber shorts at 100 pixels per mm
-        if: always() && steps.shorts50.outcome == 'success'
+        if: always() && steps.report.outputs.route_ready == 'true' && steps.shorts50.outcome == 'success'
         env:
           ENTRY: ${{ matrix.entry }}
-        run: bunx --no-install tsci check shorts "dist/experiments/fabrication/${ENTRY}/circuit.json" --mode gerber --layer all --pixels-per-mm 100 2>&1 | tee reports/shorts-100.log
+        run: |
+          for layer in top inner1 inner2 bottom; do
+            bunx --no-install tsci check shorts "dist/experiments/fabrication/${ENTRY}/circuit.json" --mode gerber --layer "$layer" --pixels-per-mm 100 2>&1 | tee "reports/shorts-100-${layer}.log"
+            if [ -d checks/check-shorts ]; then
+              mv checks/check-shorts "reports/shorts-100-${layer}"
+            fi
+          done
       - name: Preserve 100-pixel shorts images
         if: always()
         run: |
@@ -87,9 +105,8 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: gba-${{ matrix.candidate }}
+          name: gba-${{ matrix.candidate }}-shorts
           path: |
-            gba-rp2350/dist/
             gba-rp2350/reports/
             gba-rp2350/checks/check-shorts/
           retention-days: 14
@@ -107,4 +124,4 @@ jobs:
           pattern: gba-*
           path: routing-results
       - name: Compare electrical identity and routing reports
-        run: bun gba-rp2350/checks/compare-route-reports.ts routing-results/gba-baseline/reports/route.json routing-results/gba-cap-escape/reports/route.json routing-results/gba-supply-pours/reports/route.json
+        run: bun gba-rp2350/checks/compare-route-reports.ts routing-results/gba-baseline/reports/route.json routing-results/gba-cap-escape/reports/route.json routing-results/gba-supply-pours/reports/route.json routing-results/gba-usb-escape/reports/route.json

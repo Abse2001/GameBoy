@@ -174,6 +174,7 @@ export interface RP2350CompactLayoutProps {
   subcircuit?: boolean
   psram?: boolean
   psramCapEscape?: boolean
+  usbResistorEscape?: boolean
   segmentedSupplyPours?: boolean
   headers?: boolean
   pcbX?: number
@@ -186,6 +187,7 @@ export const RP2350CompactLayout = ({
   subcircuit = true,
   psram = false,
   psramCapEscape = false,
+  usbResistorEscape = false,
   segmentedSupplyPours = false,
   headers = true,
   ...props
@@ -232,7 +234,7 @@ export const RP2350CompactLayout = ({
         layer="top"
         connectsTo="net.V3V3"
         clearance="0.2mm"
-        outline={rectangleOutline(6.7, -11.8, 12.2, -8.5)}
+        outline={rectangleOutline(6, -12.3, 12.2, -8.5)}
       />
     )}
     <copperpour
@@ -320,6 +322,7 @@ export const RP2350CompactLayout = ({
       pcbY={0}
       pcbRotation={180}
       noConnectUnusedPins={false}
+      usbResistorEscape={usbResistorEscape}
     >
       {/* Keep the QSPI boot circuit in the MCU routing scope. */}
       <W25Q16JVUXIQ
@@ -418,7 +421,7 @@ export const RP2350CompactLayout = ({
               CS1n. This is RAM, not a replacement for the boot flash. */}
           <APS6404L_3SQR_SN name="U_PSRAM" pcbX={-11} pcbY={7} pcbRotation={270} schX={0} schY={0} />
           <CL10A105KB8NNNC name="C_PSRAM_BULK" pcbX={-11} pcbY={11.2} schX={-3} schY={-3} maxVoltageRating="50V" maxDecouplingTraceLength="5.5mm" />
-          <CL05B104KO5NNNC name="C_PSRAM_HF" pcbX={psramCapEscape ? -7.2 : -6.5} pcbY={psramCapEscape ? 10.5 : 7} pcbRotation={270} schX={0} schY={-3} maxVoltageRating="16V" maxDecouplingTraceLength="5.5mm" />
+          <CL05B104KO5NNNC name="C_PSRAM_HF" pcbX={psramCapEscape ? -6.7 : -6.5} pcbY={psramCapEscape ? 10.65 : 7} pcbRotation={psramCapEscape ? 180 : 270} schX={0} schY={-3} maxVoltageRating="16V" maxDecouplingTraceLength="5.5mm" />
           <A_0402WGF1002TCE name="R_PSRAM_CS" pcbX={-16} pcbY={7} pcbRotation={90} schX={3} schY={-3} />
           <trace name="PSRAM_CS1" from=".U_PSRAM > .N_CE" to=".U1 > .GPIO0" thickness="0.12mm" />
           <trace name="PSRAM_CLK" from=".U_PSRAM > .SCLK" to=".U1 > .QSPI_SCLK" thickness="0.12mm" />

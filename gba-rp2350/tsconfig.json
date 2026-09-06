@@ -24,6 +24,7 @@
     "experiments/fabrication/placement-published-mcu-storage-global.circuit.tsx",
     "experiments/fabrication/placement-storage-cap-escape.circuit.tsx",
     "experiments/fabrication/placement-storage-supply-pours.circuit.tsx",
+    "experiments/fabrication/placement-storage-usb-escape.circuit.tsx",
     "checks/*.ts"
   ],
   "exclude": [

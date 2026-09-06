@@ -2,7 +2,7 @@ import assert from "node:assert/strict"
 import { readFileSync } from "node:fs"
 
 const files = process.argv.slice(2)
-assert.equal(files.length, 3, "Expected baseline, placement and pour reports")
+assert(files.length >= 2, "Expected a baseline and candidate reports")
 const reports = files.map(file => JSON.parse(readFileSync(file, "utf8")))
 const baseline = reports[0]
 for (const report of reports) {

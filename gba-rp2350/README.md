@@ -15,6 +15,11 @@ require them.
 | baseline | Current full storage/RAM global route |
 | cap-escape | Move only C_PSRAM_HF out of the flash/PSRAM corridor |
 | supply-pours | Same move plus native V3V3/VSYS inner-2 regions and local PSRAM supply copper |
+| usb-escape | Swap only the USB series resistor positions to follow the MCU D+/D− pad order |
+
+The first capacitor trial was rejected before routing due to a PSRAM courtyard
+overlap. Its corrected board position is (6.7, -10.65), rotation 0. The imported
+courtyards are separated at this position; CI still verifies the actual layout.
 
 Ordinary pours fill after routing. `unbroken` reserves the two supply regions
 from unrelated same-layer traces, but does not eliminate the associated net

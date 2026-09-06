@@ -3,12 +3,14 @@ import Board from "./index.circuit"
 export default ({
   mcuSubcircuit = true,
   psramCapEscape = false,
+  usbResistorEscape = false,
   segmentedSupplyPours = false,
-}: { mcuSubcircuit?: boolean; psramCapEscape?: boolean; segmentedSupplyPours?: boolean } = {}) => (
+}: { mcuSubcircuit?: boolean; psramCapEscape?: boolean; usbResistorEscape?: boolean; segmentedSupplyPours?: boolean } = {}) => (
   <Board
     publishedMcuModule
     storage
     psramCapEscape={psramCapEscape}
+    usbResistorEscape={usbResistorEscape}
     segmentedSupplyPours={segmentedSupplyPours}
     mcuHeaders={false}
     mcuSubcircuit={mcuSubcircuit}

@@ -1,5 +1,5 @@
 import assert from "node:assert/strict"
-import { readFileSync, writeFileSync } from "node:fs"
+import { appendFileSync, readFileSync, writeFileSync } from "node:fs"
 import { createHash } from "node:crypto"
 import { getSourcePortConnectivityMapFromCircuitJson } from "circuit-json-to-connectivity-map"
 import type { AnyCircuitElement } from "circuit-json"
@@ -62,4 +62,8 @@ const report = {
   criticalWarnings,
 }
 writeFileSync(reportPath, JSON.stringify(report, null, 2) + "\n")
+if (process.env.GITHUB_OUTPUT) {
+  const routeReady = report.pcbTraces > 0 && !(report.errors.pcb_autorouting_error > 0)
+  appendFileSync(process.env.GITHUB_OUTPUT, `route_ready=${routeReady}\n`)
+}
 console.log(JSON.stringify({ ...report, errorDetails: undefined, criticalWarnings: undefined, protectedPlacements: undefined, parts: undefined, componentNames: undefined }, null, 2))

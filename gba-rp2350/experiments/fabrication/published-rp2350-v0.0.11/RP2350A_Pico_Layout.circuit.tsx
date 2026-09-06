@@ -70,6 +70,7 @@ export interface RP2350AEssentialKiCadReferenceProps {
 	schSheetName?: string;
 	noConnectUnusedPins?: boolean;
 	inlineSignalLabels?: boolean;
+	usbResistorEscape?: boolean;
 	children?: ReactNode;
 }
 
@@ -85,6 +86,7 @@ export const RP2350AEssentialKiCadReference = ({
 	schSheetName,
 	noConnectUnusedPins = true,
 	inlineSignalLabels = false,
+	usbResistorEscape = false,
 	children,
 	...props
 }: RP2350AEssentialKiCadReferenceProps = {}) => (
@@ -193,7 +195,7 @@ export const RP2350AEssentialKiCadReference = ({
 			footprint="res_p0.8656mm_pw0.5657mm_ph0.54mm"
 			supplierPartNumbers={{ jlcpcb: ["C138021"] }}
 			tolerance="1%"
-			pcbX={1.5}
+			pcbX={usbResistorEscape ? 0.4 : 1.5}
 			pcbY={7}
 			pcbRotation={90}
 		/>
@@ -206,7 +208,7 @@ export const RP2350AEssentialKiCadReference = ({
 			footprint="res_p0.8656mm_pw0.5657mm_ph0.54mm"
 			supplierPartNumbers={{ jlcpcb: ["C138021"] }}
 			tolerance="1%"
-			pcbX={0.4}
+			pcbX={usbResistorEscape ? 1.5 : 0.4}
 			pcbY={7}
 			pcbRotation={90}
 		/>
