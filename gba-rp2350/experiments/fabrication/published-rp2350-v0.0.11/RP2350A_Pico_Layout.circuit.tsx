@@ -73,6 +73,7 @@ export interface RP2350AEssentialKiCadReferenceProps {
 	usbResistorEscape?: boolean;
 	mcuPassiveEscape?: boolean;
 	clockPassiveEscape?: boolean;
+	clockRoutingPhase?: number;
 	westDecouplerEscape?: boolean;
 	eastSupplyCapEscape?: boolean;
 	clockResistorEscape?: boolean;
@@ -94,6 +95,7 @@ export const RP2350AEssentialKiCadReference = ({
 	usbResistorEscape = false,
 	mcuPassiveEscape = false,
 	clockPassiveEscape = false,
+	clockRoutingPhase,
 	westDecouplerEscape = false,
 	eastSupplyCapEscape = false,
 	clockResistorEscape = false,
@@ -516,12 +518,12 @@ export const RP2350AEssentialKiCadReference = ({
 		<trace name="VREG_AVDD_R_OUT" from=".R3 > .pin2" to=".U1 > .VREG_AVDD" maxViaCount={0} thickness="0.1mm" />
 		<trace name="VREG_AVDD_C" from=".C9 > .pin1" to=".U1 > .VREG_AVDD" maxViaCount={0} thickness="0.1mm" />
 
-		<trace name="XIN" from=".U1 > .XIN" to=".X1 > .pin1" thickness="0.1mm" />
-		<trace name="XOUT_MCU" from=".U1 > .XOUT" to=".R2 > .pin1" thickness="0.1mm" />
-		<trace name="XOUT_CRYSTAL" from=".R2 > .pin2" to=".X1 > .pin3" thickness="0.1mm" />
-		<trace name="C3_XIN" from=".C3 > .pin1" to=".U1 > .XIN" thickness="0.1mm" />
+		<trace name="XIN" routingPhaseIndex={clockRoutingPhase} from=".U1 > .XIN" to=".X1 > .pin1" thickness="0.1mm" />
+		<trace name="XOUT_MCU" routingPhaseIndex={clockRoutingPhase} from=".U1 > .XOUT" to=".R2 > .pin1" thickness="0.1mm" />
+		<trace name="XOUT_CRYSTAL" routingPhaseIndex={clockRoutingPhase} from=".R2 > .pin2" to=".X1 > .pin3" thickness="0.1mm" />
+		<trace name="C3_XIN" routingPhaseIndex={clockRoutingPhase} from=".C3 > .pin1" to=".U1 > .XIN" thickness="0.1mm" />
 		<trace name="C3_GND" from=".C3 > .pin2" to=".X1 > .pin4" thickness="0.1mm" />
-		<trace name="C4_XOUT" from=".C4 > .pin1" to=".X1 > .pin3" thickness="0.1mm" />
+		<trace name="C4_XOUT" routingPhaseIndex={clockRoutingPhase} from=".C4 > .pin1" to=".X1 > .pin3" thickness="0.1mm" />
 		<trace name="C4_GND" from=".C4 > .pin2" to="net.GND" thickness="0.1mm" />
 		<trace name="X1_GND1" from=".X1 > .pin2" to="net.GND" thickness="0.1mm" />
 		<trace name="X1_GND2" from=".X1 > .pin4" to="net.GND" thickness="0.1mm" />

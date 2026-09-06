@@ -176,6 +176,7 @@ export interface RP2350CompactLayoutProps {
   psramCapEscape?: boolean
   mcuPassiveEscape?: boolean
   clockPassiveEscape?: boolean
+  clockRoutingPhase?: number
   westDecouplerEscape?: boolean
   eastSupplyCapEscape?: boolean
   clockResistorEscape?: boolean
@@ -196,6 +197,7 @@ export const RP2350CompactLayout = ({
   psramCapEscape = false,
   mcuPassiveEscape = false,
   clockPassiveEscape = false,
+  clockRoutingPhase,
   westDecouplerEscape = false,
   eastSupplyCapEscape = false,
   clockResistorEscape = false,
@@ -339,6 +341,7 @@ export const RP2350CompactLayout = ({
       usbResistorEscape={usbResistorEscape}
       mcuPassiveEscape={mcuPassiveEscape}
       clockPassiveEscape={clockPassiveEscape}
+      clockRoutingPhase={clockRoutingPhase}
       westDecouplerEscape={westDecouplerEscape}
       eastSupplyCapEscape={eastSupplyCapEscape}
       clockResistorEscape={clockResistorEscape}

@@ -188,6 +188,7 @@ export default ({
       clockPassiveEscape={clockPassiveEscape}
       westDecouplerEscape={westDecouplerEscape}
       eastSupplyCapEscape={eastSupplyCapEscape}
+      clockRoutingPhase={routeClockFirst ? 0 : undefined}
       clockResistorEscape={clockResistorEscape}
       debugTestpointEscape={debugTestpointEscape}
       flashCapEscape={flashCapEscape}
