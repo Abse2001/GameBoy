@@ -27,6 +27,7 @@ Heavy routing and Gerber short checks run only in GitHub CI.
 | `524f887` / C12 + C17 channel | 277 PCB traces, 284 vias; routing completed, regressed | 30, plus 17 length warnings | 4 detected at 50 pixels/mm; rejected |
 | `6ce06c8` / C12 + SD capacitor rotation | 277 PCB traces, 255 vias; mixed result | 17, plus 18 length warnings | 2 detected at 50 pixels/mm, MISO against XIN and V3V3 near the crystal; not accepted |
 | `524f887` / C12 clock first | Canceled at user direction after approximately 45 minutes; no completed full-board result | Not available, not zero | Not checked: canceled before finished copper |
+| `fec3553` / C12 ordinary-group repeat | 277 PCB traces, 261 vias, 96 copper regions; full routing build took 20m55s | 11, plus 18 length warnings; matches the earlier C12 result | 3 detected at 50 pixels/mm; 100 pixels/mm skipped after failure, not passed |
 
 Evidence: [single-phase run and broad-plane comparison](https://github.com/Abse2001/GameBoy/actions/runs/34096366893),
 [corrected-plane run](https://github.com/Abse2001/GameBoy/actions/runs/34097162607).
@@ -38,6 +39,7 @@ Evidence: [single-phase run and broad-plane comparison](https://github.com/Abse2
 [C18 result](https://github.com/Abse2001/GameBoy/actions/runs/34109015255).
 [C17 result](https://github.com/Abse2001/GameBoy/actions/runs/34111058889/job/101707165934).
 [SD capacitor result](https://github.com/Abse2001/GameBoy/actions/runs/34113209572/job/101713939428).
+[Ordinary-group repeat](https://github.com/Abse2001/GameBoy/actions/runs/34115710932/job/101721879869).
 
 Later contact and capacitor-placement jobs are separate trials. Their local
 routing-disabled renders pass placement, type and netlist checks; that is not a
@@ -62,8 +64,34 @@ UTC and was still there at 11:06:45 UTC, reporting 71% throughout those 20
 minutes. This identifies the observed stage bottleneck, not a proven inner
 solver defect. No engine change or manual routing bypass was made.
 
-The next CI run repeats the C12 layout with the hierarchy guard. The group
-cleanup preserves component identities, values, netlist and protected positions.
+The C12 repeat with the hierarchy guard completed and reproduced 11 Core errors:
+five trace errors (two maximum-via violations and three accidental contacts),
+one pad/trace clearance, two via/trace clearances and three via/pad clearances.
+Its 18 trace-length warnings and three reported Gerber shorts still fail signoff.
+The group cleanup preserves component identities, values, netlist and protected
+positions; it does not by itself fix the generated copper.
+
+The root `index.circuit.tsx` and package `main` now select this same C12 board,
+matching CI instead of the older storage layout. Local routing-disabled renders
+verify identical parts, source connectivity and protected positions. The board
+is a symmetric 131.32 x 72.42 mm outline; that is not a certified stock-shell fit.
+The standalone RP2350 project and the separate legacy project at the repository
+root are untouched. Cloud CI performs the full routing and physical shorts checks.
+
+The next isolated trial moves only C14 to `(4.9, -1.1)` in the MCU essentials'
+coordinate system, maintaining its rotation, value and connections. Its board
+position becomes `(-4.9, 8.1)`. This aligns its supply pad with U1.IOVDD2 and
+reduces their straight-line distance to 0.905 mm. It opens a pad-clear path on
+the MCU side of C11 toward C17, beside the two existing V3V3/GND crossings.
+The smallest component pad gap is 0.1598 mm, above the unchanged 0.1 mm rule.
+Routing-disabled checks pass with only C14's placement changed; the complete
+cloud route, length constraints and all-layer Gerber checks still determine
+acceptance. This is not yet an improved or fabrication-ready result.
+
+No child subcircuits, fanout stages, manual traces, explicit vias, relaxed checks
+or modified router packages are introduced. Native fanout would add a routing
+stage with its own default solver; it is left off for this fully global Pipeline
+9 placement comparison.
 
 - Replace concave comb contacts whose inferred route endpoints fell in empty
   gaps with the actual OpenTendo contact geometry. All 22 new endpoints are

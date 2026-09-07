@@ -2,7 +2,7 @@
   "name": "@tsci/abse.gameboy-advance",
   "version": "0.0.2",
   "description": "Game Boy Advance circuit",
-  "main": "experiments/fabrication/placement-published-mcu-storage-global.circuit.tsx",
+  "main": "index.circuit.tsx",
   "keywords": [
     "tscircuit",
     "circuit",
