@@ -22,10 +22,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - candidate: separated-mcu-peripherals
-            entry: placement-storage-separated-mcu-peripherals
-          - candidate: separated-mcu-peripherals-reset-east
-            entry: placement-storage-separated-mcu-peripherals-reset-east
+          - candidate: separated-mcu-peripherals-clock-first
+            entry: placement-storage-separated-mcu-peripherals-clock-first
+          - candidate: separated-mcu-peripherals-reset-east-clock-first
+            entry: placement-storage-separated-mcu-peripherals-reset-east-clock-first
     defaults:
       run:
         working-directory: gba-rp2350
@@ -91,3 +91,13 @@ jobs:
       - name: Require zero reported errors and critical warnings
         if: always()
         run: bun checks/route-gate.ts reports/route.json
+      - name: Preserve routing evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gba-routing-${{ matrix.candidate }}
+          path: |
+            gba-rp2350/reports
+            gba-rp2350/dist/experiments/fabrication/${{ matrix.entry }}
+          if-no-files-found: warn
+          retention-days: 14
