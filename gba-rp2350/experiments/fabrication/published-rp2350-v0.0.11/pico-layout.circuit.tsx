@@ -177,6 +177,7 @@ export interface RP2350CompactLayoutProps {
   mcuPassiveEscape?: boolean
   clockPassiveEscape?: boolean
   clockRoutingPhase?: number
+  decouplingRoutingPhase?: number
   westDecouplerEscape?: boolean
   eastSupplyCapEscape?: boolean
   clockResistorEscape?: boolean
@@ -208,6 +209,7 @@ export const RP2350CompactLayout = ({
   mcuPassiveEscape = false,
   clockPassiveEscape = false,
   clockRoutingPhase,
+  decouplingRoutingPhase,
   westDecouplerEscape = false,
   eastSupplyCapEscape = false,
   clockResistorEscape = false,
@@ -355,6 +357,7 @@ export const RP2350CompactLayout = ({
       mcuPassiveEscape={mcuPassiveEscape}
       clockPassiveEscape={clockPassiveEscape}
       clockRoutingPhase={clockRoutingPhase}
+      decouplingRoutingPhase={decouplingRoutingPhase}
       westDecouplerEscape={westDecouplerEscape}
       eastSupplyCapEscape={eastSupplyCapEscape}
       clockResistorEscape={clockResistorEscape}
@@ -443,8 +446,8 @@ export const RP2350CompactLayout = ({
       <trace name="FLASH_VCC" from=".U2 > .VCC" to="net.V3V3" />
       <trace name="FLASH_GND" from=".U2 > .GND" to="net.GND" thickness="0.1mm" />
       <trace name="FLASH_EP" from=".U2 > .EP" to="net.GND" thickness="0.1mm" />
-      <trace name="C_FLASH_P" from=".C_FLASH > .pin1" to=".U2 > .VCC" thickness="0.1mm" />
-      <trace name="C_FLASH_G" from=".C_FLASH > .pin2" to="net.GND" thickness="0.1mm" />
+      <trace name="C_FLASH_P" routingPhaseIndex={decouplingRoutingPhase} from=".C_FLASH > .pin1" to=".U2 > .VCC" thickness="0.1mm" />
+      <trace name="C_FLASH_G" routingPhaseIndex={decouplingRoutingPhase} from=".C_FLASH > .pin2" to="net.GND" thickness="0.1mm" />
       <trace name="BOOT_PULLUP" from=".R_BOOT > .pin1" to=".U1 > .QSPI_SS" />
       <trace name="BOOT_PULLUP_3V3" from=".R_BOOT > .pin2" to="net.V3V3" />
       <trace name="BOOTSEL" from=".U_BOOTSEL > .pin1" to=".R_BOOT_SERIES > .pin1" />
@@ -467,10 +470,10 @@ export const RP2350CompactLayout = ({
           <trace name="PSRAM_IO3" from=".U_PSRAM > .SIO3" to=".U1 > .QSPI_SD3" thickness="0.12mm" />
           <trace name="PSRAM_VDD" from=".U_PSRAM > .VDD" to="net.V3V3" thickness="0.3mm" />
           <trace name="PSRAM_GND" from=".U_PSRAM > .VSS" to="net.GND" thickness="0.1mm" />
-          <trace name="PSRAM_BULK" from=".C_PSRAM_BULK > .pin1" to=".U_PSRAM > .VDD" maxLength="5.5mm" />
-          <trace name="PSRAM_HF" from=".C_PSRAM_HF > .pin1" to=".U_PSRAM > .VDD" maxLength="5.5mm" />
-          <trace name="PSRAM_BULK_GND" from=".C_PSRAM_BULK > .pin2" to="net.GND" />
-          <trace name="PSRAM_HF_GND" from=".C_PSRAM_HF > .pin2" to="net.GND" />
+          <trace name="PSRAM_BULK" routingPhaseIndex={decouplingRoutingPhase} from=".C_PSRAM_BULK > .pin1" to=".U_PSRAM > .VDD" maxLength="5.5mm" />
+          <trace name="PSRAM_HF" routingPhaseIndex={decouplingRoutingPhase} from=".C_PSRAM_HF > .pin1" to=".U_PSRAM > .VDD" maxLength="5.5mm" />
+          <trace name="PSRAM_BULK_GND" routingPhaseIndex={decouplingRoutingPhase} from=".C_PSRAM_BULK > .pin2" to="net.GND" />
+          <trace name="PSRAM_HF_GND" routingPhaseIndex={decouplingRoutingPhase} from=".C_PSRAM_HF > .pin2" to="net.GND" />
           <trace name="PSRAM_CS_PULLUP" from=".R_PSRAM_CS > .pin1" to=".U_PSRAM > .N_CE" />
           <trace name="PSRAM_CS_PULLUP_VDD" from=".R_PSRAM_CS > .pin2" to="net.V3V3" />
         </group>
@@ -632,18 +635,18 @@ export const RP2350CompactLayout = ({
     <trace name="PWR_LED_3V3" from="net.V3V3" to=".R_PWR_LED > .pin1" {...v3v3Label} />
     <trace name="PWR_LED_D" from=".R_PWR_LED > .pin2" to=".D_PWR > .anode" />
     <trace name="PWR_LED_GND" from=".D_PWR > .cathode" to="net.GND" {...groundPlaneTraceProps} />
-    <trace name="RGB_BUF_VBUS" from=".U_RGB_BUF > .VCC" to=".C_RGB_BUF > .pin1" {...vbusLabel} {...powerTraceProps} />
+    <trace name="RGB_BUF_VBUS" routingPhaseIndex={decouplingRoutingPhase} from=".U_RGB_BUF > .VCC" to=".C_RGB_BUF > .pin1" {...vbusLabel} {...powerTraceProps} />
     <trace name="RGB_VBUS_DISTRIBUTION" from=".U_RGB_BUF > .VCC" to=".D_RGB > .VDD" {...vbusLabel} {...powerTraceProps} />
     <trace name="RGB_BUF_DECOUPLING_VBUS" from=".U_RGB_BUF > .VCC" to="net.VBUS" {...vbusLabel} />
-    <trace name="RGB_BUF_GND" from=".U_RGB_BUF > .GND" to=".C_RGB_BUF > .pin2" {...gndLabel} thickness="0.1mm" />
-    <trace name="RGB_BUF_OE" from=".U_RGB_BUF > .OE" to=".C_RGB_BUF > .pin2" {...gndLabel} thickness="0.1mm" />
-    <trace name="RGB_BUF_DECOUPLING_GND" from=".C_RGB_BUF > .pin2" to="net.GND" {...groundPlaneTraceProps} />
+    <trace name="RGB_BUF_GND" routingPhaseIndex={decouplingRoutingPhase} from=".U_RGB_BUF > .GND" to=".C_RGB_BUF > .pin2" {...gndLabel} thickness="0.1mm" />
+    <trace name="RGB_BUF_OE" routingPhaseIndex={decouplingRoutingPhase} from=".U_RGB_BUF > .OE" to=".C_RGB_BUF > .pin2" {...gndLabel} thickness="0.1mm" />
+    <trace name="RGB_BUF_DECOUPLING_GND" routingPhaseIndex={decouplingRoutingPhase} from=".C_RGB_BUF > .pin2" to="net.GND" {...groundPlaneTraceProps} />
     <trace name="RGB_GPIO15" from=".MCU_CORE .U1 > .GPIO15" to=".U_RGB_BUF > .A" />
     <trace name="RGB_BUFFERED_DATA" from=".U_RGB_BUF > .Y" to=".R_RGB_DATA > .pin1" />
     <trace name="RGB_DATA_IN" from=".R_RGB_DATA > .pin2" to=".D_RGB > .DI" />
-    <trace name="RGB_VBUS" from=".D_RGB > .VDD" to=".C_RGB > .pin1" {...vbusLabel} {...powerTraceProps} />
+    <trace name="RGB_VBUS" routingPhaseIndex={decouplingRoutingPhase} from=".D_RGB > .VDD" to=".C_RGB > .pin1" {...vbusLabel} {...powerTraceProps} />
     <trace name="RGB_DECOUPLING_VBUS" from=".D_RGB > .VDD" to="net.VBUS" {...vbusLabel} {...powerTraceProps} />
-    <trace name="RGB_GND" from=".D_RGB > .GND" to=".C_RGB > .pin2" {...gndLabel} {...powerTraceProps} />
+    <trace name="RGB_GND" routingPhaseIndex={decouplingRoutingPhase} from=".D_RGB > .GND" to=".C_RGB > .pin2" {...gndLabel} {...powerTraceProps} />
     <trace name="RGB_DECOUPLING_GND" from=".D_RGB > .GND" to="net.GND" {...gndLabel} {...powerTraceProps} />
     {/* Reset, USB-C, and SWD connect to the ordinary MCU placement group. */}
     <trace name="RUN_PULLUP" from=".R_RUN > .pin1" to=".MCU_CORE .U1 > .RUN" />

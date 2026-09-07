@@ -192,6 +192,7 @@ export default ({
       westDecouplerEscape={westDecouplerEscape}
       eastSupplyCapEscape={eastSupplyCapEscape}
       clockRoutingPhase={routeClockFirst ? 0 : undefined}
+      decouplingRoutingPhase={routeDecouplingFirst ? 1 : undefined}
       clockResistorEscape={clockResistorEscape}
       localSameLayerEscapes={mcuLocalSameLayerEscapes}
       peripheralPlacements={mcuPeripheralPlacements}
@@ -347,7 +348,14 @@ export default ({
 
     {storage && publishedMcuModule && (
       <group name="STORAGE" schX={26} schY={32}>
-        <MicroSDStorage name="SD" pcbX={34} pcbY={-33.7} pcbRotation={180} sdDetectEscape={sdDetectEscape} />
+        <MicroSDStorage
+          name="SD"
+          pcbX={34}
+          pcbY={-33.7}
+          pcbRotation={180}
+          sdDetectEscape={sdDetectEscape}
+          decouplingRoutingPhase={routeDecouplingFirst ? 1 : undefined}
+        />
         <trace name="SD_SCK" from=".SD .J_SD > .CLK" to={mcuHeaders ? ".MCU .J_LEFT > .pin17" : ".MCU .MCU_CORE .U1 > .GPIO18"} />
         <trace name="SD_MOSI" from=".SD .J_SD > .MOSI" to={mcuHeaders ? ".MCU .J_LEFT > .pin15" : ".MCU .MCU_CORE .U1 > .GPIO19"} />
         <trace name="SD_MISO" from=".SD .J_SD > .MISO" to={mcuHeaders ? ".MCU .J_LEFT > .pin19" : ".MCU .MCU_CORE .U1 > .GPIO16"} />

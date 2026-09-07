@@ -74,6 +74,7 @@ export interface RP2350AEssentialKiCadReferenceProps {
 	mcuPassiveEscape?: boolean;
 	clockPassiveEscape?: boolean;
 	clockRoutingPhase?: number;
+	decouplingRoutingPhase?: number;
 	westDecouplerEscape?: boolean;
 	eastSupplyCapEscape?: boolean;
 	clockResistorEscape?: boolean;
@@ -97,6 +98,7 @@ export const RP2350AEssentialKiCadReference = ({
 	mcuPassiveEscape = false,
 	clockPassiveEscape = false,
 	clockRoutingPhase,
+	decouplingRoutingPhase,
 	westDecouplerEscape = false,
 	eastSupplyCapEscape = false,
 	clockResistorEscape = false,
@@ -463,10 +465,10 @@ export const RP2350AEssentialKiCadReference = ({
 		/>
 			{/* Route the dense MCU rails with the pad escapes so pipeline9 can
 			    solve their shared channels instead of freezing the escapes first. */}
-			<trace name="C_IOVDD1_V3V3" from=".C_IOVDD1 > .pin1" to=".U1 > .IOVDD1" thickness="0.1mm" />
-			<trace name="C_IOVDD1_GND" from=".C_IOVDD1 > .pin2" to="net.GND" thickness="0.1mm" />
-			<trace name="U1_GND" from=".U1 > .GND" to="net.GND" thickness="0.1mm" />
-			<trace name="U1_VREG_PGND" from=".U1 > .VREG_PGND" to=".C6 > .pin2" maxViaCount={localVregGroundSameLayer ? 0 : undefined} thickness="0.1mm" />
+			<trace name="C_IOVDD1_V3V3" routingPhaseIndex={decouplingRoutingPhase} from=".C_IOVDD1 > .pin1" to=".U1 > .IOVDD1" thickness="0.1mm" />
+			<trace name="C_IOVDD1_GND" routingPhaseIndex={decouplingRoutingPhase} from=".C_IOVDD1 > .pin2" to="net.GND" thickness="0.1mm" />
+			<trace name="U1_GND" routingPhaseIndex={decouplingRoutingPhase} from=".U1 > .GND" to="net.GND" thickness="0.1mm" />
+			<trace name="U1_VREG_PGND" routingPhaseIndex={decouplingRoutingPhase} from=".U1 > .VREG_PGND" to=".C6 > .pin2" maxViaCount={localVregGroundSameLayer ? 0 : undefined} thickness="0.1mm" />
 
 			<trace name="U1_IOVDD1" from=".U1 > .IOVDD1" to="net.V3V3" />
 			<trace name="U1_IOVDD2" from=".U1 > .IOVDD2" to="net.V3V3" />
@@ -480,45 +482,45 @@ export const RP2350AEssentialKiCadReference = ({
 			<trace name="U1_QSPI_IOVDD" from=".U1 > .QSPI_IOVDD" to="net.V3V3" />
 
 			{/* Complete core-voltage distribution after local decoupling routes. */}
-			<trace name="U1_DVDD1" from=".C11 > .pin1" to="net.V1V1" />
-			<trace name="U1_DVDD2" from=".C10 > .pin1" to="net.V1V1" />
-			<trace name="U1_DVDD3" from=".C8 > .pin1" to="net.V1V1" />
-			<trace name="U1_VREG_FB" from=".U1 > .VREG_FB" to=".C7 > .pin1" thickness="0.1mm" />
+			<trace name="U1_DVDD1" routingPhaseIndex={decouplingRoutingPhase} from=".C11 > .pin1" to="net.V1V1" />
+			<trace name="U1_DVDD2" routingPhaseIndex={decouplingRoutingPhase} from=".C10 > .pin1" to="net.V1V1" />
+			<trace name="U1_DVDD3" routingPhaseIndex={decouplingRoutingPhase} from=".C8 > .pin1" to="net.V1V1" />
+			<trace name="U1_VREG_FB" routingPhaseIndex={decouplingRoutingPhase} from=".U1 > .VREG_FB" to=".C7 > .pin1" thickness="0.1mm" />
 
-			<trace name="VREG_CORE" from=".L1 > .pin1" to="net.V1V1" />
+			<trace name="VREG_CORE" routingPhaseIndex={decouplingRoutingPhase} from=".L1 > .pin1" to="net.V1V1" />
 			<trace name="VREG_AVDD_R_IN" from=".R3 > .pin1" to="net.V3V3" />
-			<trace name="VREG_AVDD_C_GND" from=".C9 > .pin2" to="net.GND" thickness="0.1mm" />
+			<trace name="VREG_AVDD_C_GND" routingPhaseIndex={decouplingRoutingPhase} from=".C9 > .pin2" to="net.GND" thickness="0.1mm" />
 
-			<trace name="C6_V3V3" from=".C6 > .pin1" to=".U1 > .VREG_VIN" maxViaCount={0} thickness="0.1mm" />
-			<trace name="C6_GND" from=".C6 > .pin2" to="net.GND" thickness="0.1mm" />
-			<trace name="C7_V1V1" from=".C7 > .pin1" to=".L1 > .pin1" maxViaCount={0} thickness="0.1mm" />
-			<trace name="C7_GND" from=".C7 > .pin2" to=".C6 > .pin2" thickness="0.1mm" />
-			<trace name="C8_V1V1" from=".C8 > .pin1" to=".U1 > .DVDD3" thickness="0.1mm" />
-			<trace name="C8_GND" from=".C8 > .pin2" to="net.GND" thickness="0.1mm" />
-			<trace name="C10_V1V1" from=".C10 > .pin1" to=".U1 > .DVDD2" thickness="0.1mm" />
-			<trace name="C10_GND" from=".C10 > .pin2" to="net.GND" thickness="0.1mm" />
-			<trace name="C11_V1V1" from=".C11 > .pin1" to=".U1 > .DVDD1" thickness="0.1mm" />
-			<trace name="C11_GND" from=".C11 > .pin2" to="net.GND" thickness="0.1mm" />
-			<trace name="C12_V3V3" from=".C12 > .pin1" to=".U1 > .USB_OTP_VDD" thickness="0.1mm" />
-			<trace name="C12_GND" from=".C12 > .pin2" to="net.GND" thickness="0.1mm" />
-			<trace name="C13_V3V3" from=".C13 > .pin1" to=".U1 > .IOVDD6" thickness="0.1mm" />
-			<trace name="C13_GND" from=".C13 > .pin2" to="net.GND" thickness="0.1mm" />
-			<trace name="C14_V3V3" from=".C14 > .pin1" to=".U1 > .IOVDD2" thickness="0.1mm" />
-			<trace name="C14_GND" from=".C14 > .pin2" to="net.GND" thickness="0.1mm" />
-			<trace name="C15_V3V3" from=".C15 > .pin1" to=".U1 > .IOVDD5" thickness="0.1mm" />
-			<trace name="C15_GND" from=".C15 > .pin2" to="net.GND" thickness="0.1mm" />
-			<trace name="C16_V3V3" from=".C16 > .pin1" to=".U1 > .IOVDD3" thickness="0.1mm" />
-			<trace name="C16_GND" from=".C16 > .pin2" to="net.GND" thickness="0.1mm" />
-			<trace name="C17_V3V3" from=".C17 > .pin1" to=".U1 > .ADC_AVDD" thickness="0.1mm" />
-			<trace name="C17_GND" from=".C17 > .pin2" to="net.GND" thickness="0.1mm" />
-			<trace name="C18_V3V3" from=".C18 > .pin1" to=".U1 > .IOVDD4" thickness="0.1mm" />
-			<trace name="C18_GND" from=".C18 > .pin2" to="net.GND" thickness="0.1mm" />
+			<trace name="C6_V3V3" routingPhaseIndex={decouplingRoutingPhase} from=".C6 > .pin1" to=".U1 > .VREG_VIN" maxViaCount={0} thickness="0.1mm" />
+			<trace name="C6_GND" routingPhaseIndex={decouplingRoutingPhase} from=".C6 > .pin2" to="net.GND" thickness="0.1mm" />
+			<trace name="C7_V1V1" routingPhaseIndex={decouplingRoutingPhase} from=".C7 > .pin1" to=".L1 > .pin1" maxViaCount={0} thickness="0.1mm" />
+			<trace name="C7_GND" routingPhaseIndex={decouplingRoutingPhase} from=".C7 > .pin2" to=".C6 > .pin2" thickness="0.1mm" />
+			<trace name="C8_V1V1" routingPhaseIndex={decouplingRoutingPhase} from=".C8 > .pin1" to=".U1 > .DVDD3" thickness="0.1mm" />
+			<trace name="C8_GND" routingPhaseIndex={decouplingRoutingPhase} from=".C8 > .pin2" to="net.GND" thickness="0.1mm" />
+			<trace name="C10_V1V1" routingPhaseIndex={decouplingRoutingPhase} from=".C10 > .pin1" to=".U1 > .DVDD2" thickness="0.1mm" />
+			<trace name="C10_GND" routingPhaseIndex={decouplingRoutingPhase} from=".C10 > .pin2" to="net.GND" thickness="0.1mm" />
+			<trace name="C11_V1V1" routingPhaseIndex={decouplingRoutingPhase} from=".C11 > .pin1" to=".U1 > .DVDD1" thickness="0.1mm" />
+			<trace name="C11_GND" routingPhaseIndex={decouplingRoutingPhase} from=".C11 > .pin2" to="net.GND" thickness="0.1mm" />
+			<trace name="C12_V3V3" routingPhaseIndex={decouplingRoutingPhase} from=".C12 > .pin1" to=".U1 > .USB_OTP_VDD" thickness="0.1mm" />
+			<trace name="C12_GND" routingPhaseIndex={decouplingRoutingPhase} from=".C12 > .pin2" to="net.GND" thickness="0.1mm" />
+			<trace name="C13_V3V3" routingPhaseIndex={decouplingRoutingPhase} from=".C13 > .pin1" to=".U1 > .IOVDD6" thickness="0.1mm" />
+			<trace name="C13_GND" routingPhaseIndex={decouplingRoutingPhase} from=".C13 > .pin2" to="net.GND" thickness="0.1mm" />
+			<trace name="C14_V3V3" routingPhaseIndex={decouplingRoutingPhase} from=".C14 > .pin1" to=".U1 > .IOVDD2" thickness="0.1mm" />
+			<trace name="C14_GND" routingPhaseIndex={decouplingRoutingPhase} from=".C14 > .pin2" to="net.GND" thickness="0.1mm" />
+			<trace name="C15_V3V3" routingPhaseIndex={decouplingRoutingPhase} from=".C15 > .pin1" to=".U1 > .IOVDD5" thickness="0.1mm" />
+			<trace name="C15_GND" routingPhaseIndex={decouplingRoutingPhase} from=".C15 > .pin2" to="net.GND" thickness="0.1mm" />
+			<trace name="C16_V3V3" routingPhaseIndex={decouplingRoutingPhase} from=".C16 > .pin1" to=".U1 > .IOVDD3" thickness="0.1mm" />
+			<trace name="C16_GND" routingPhaseIndex={decouplingRoutingPhase} from=".C16 > .pin2" to="net.GND" thickness="0.1mm" />
+			<trace name="C17_V3V3" routingPhaseIndex={decouplingRoutingPhase} from=".C17 > .pin1" to=".U1 > .ADC_AVDD" thickness="0.1mm" />
+			<trace name="C17_GND" routingPhaseIndex={decouplingRoutingPhase} from=".C17 > .pin2" to="net.GND" thickness="0.1mm" />
+			<trace name="C18_V3V3" routingPhaseIndex={decouplingRoutingPhase} from=".C18 > .pin1" to=".U1 > .IOVDD4" thickness="0.1mm" />
+			<trace name="C18_GND" routingPhaseIndex={decouplingRoutingPhase} from=".C18 > .pin2" to="net.GND" thickness="0.1mm" />
 
 		</group>
 
 		<trace name="VREG_LX" from=".U1 > .VREG_LX" to=".L1 > .pin2" maxViaCount={0} thickness="0.1mm" />
 		<trace name="VREG_AVDD_R_OUT" from=".R3 > .pin2" to=".U1 > .VREG_AVDD" maxViaCount={0} thickness="0.1mm" />
-		<trace name="VREG_AVDD_C" from=".C9 > .pin1" to=".U1 > .VREG_AVDD" maxViaCount={0} thickness="0.1mm" />
+		<trace name="VREG_AVDD_C" routingPhaseIndex={decouplingRoutingPhase} from=".C9 > .pin1" to=".U1 > .VREG_AVDD" maxViaCount={0} thickness="0.1mm" />
 
 		<trace name="XIN" routingPhaseIndex={clockRoutingPhase} from=".U1 > .XIN" to=".X1 > .pin1" thickness="0.1mm" />
 		<trace name="XOUT_MCU" routingPhaseIndex={clockRoutingPhase} from=".U1 > .XOUT" to=".R2 > .pin1" thickness="0.1mm" />
