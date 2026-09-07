@@ -62,6 +62,21 @@ const rp2350InlineSchematicPinArrangement = {
 	bottomSide: ["DVDD3", "DVDD2", "DVDD1", "VREG_PGND", "GND"],
 };
 
+const U1RoutingScope = ({
+	automaticFanout,
+	children,
+}: {
+	automaticFanout: boolean;
+	children: ReactNode;
+}) =>
+	automaticFanout ? (
+		<breakout name="U1_FANOUT" fanoutBoundaryPadding="1.2mm">
+			{children}
+		</breakout>
+	) : (
+		<group name="U1_FANOUT">{children}</group>
+	);
+
 export interface RP2350AEssentialKiCadReferenceProps {
 	name?: string;
 	pcbX?: number;
@@ -77,6 +92,7 @@ export interface RP2350AEssentialKiCadReferenceProps {
 	westDecouplerEscape?: boolean;
 	eastSupplyCapEscape?: boolean;
 	clockResistorEscape?: boolean;
+	automaticU1Fanout?: boolean;
 	children?: ReactNode;
 }
 
@@ -99,6 +115,7 @@ export const RP2350AEssentialKiCadReference = ({
 	westDecouplerEscape = false,
 	eastSupplyCapEscape = false,
 	clockResistorEscape = false,
+	automaticU1Fanout = false,
 	children,
 	...props
 }: RP2350AEssentialKiCadReferenceProps = {}) => (
@@ -120,11 +137,7 @@ export const RP2350AEssentialKiCadReference = ({
 		/>
 		{/* Keep placement grouping, but route the MCU with the complete board.
 		    There is no separate breakout route to freeze before local signals. */}
-		<group
-			name="U1_FANOUT"
-			pcbX={0}
-			pcbY={0}
-		>
+		<U1RoutingScope automaticFanout={automaticU1Fanout}>
 			<RP2350A
 				name="U1"
 				schSectionName="rp2350"
@@ -512,7 +525,7 @@ export const RP2350AEssentialKiCadReference = ({
 			<trace name="C18_V3V3" from=".C18 > .pin1" to=".U1 > .IOVDD4" thickness="0.1mm" />
 			<trace name="C18_GND" from=".C18 > .pin2" to="net.GND" thickness="0.1mm" />
 
-		</group>
+		</U1RoutingScope>
 
 		<trace name="VREG_LX" from=".U1 > .VREG_LX" to=".L1 > .pin2" maxViaCount={0} thickness="0.1mm" />
 		<trace name="VREG_AVDD_R_OUT" from=".R3 > .pin2" to=".U1 > .VREG_AVDD" maxViaCount={0} thickness="0.1mm" />

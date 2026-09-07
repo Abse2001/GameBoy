@@ -180,6 +180,7 @@ export interface RP2350CompactLayoutProps {
   westDecouplerEscape?: boolean
   eastSupplyCapEscape?: boolean
   clockResistorEscape?: boolean
+  automaticU1Fanout?: boolean
   debugTestpointEscape?: boolean
   debugTestpointPlacements?: Partial<
     Record<"TP_SWDIO" | "TP_SWCLK", { pcbX: number; pcbY: number }>
@@ -204,6 +205,7 @@ export const RP2350CompactLayout = ({
   westDecouplerEscape = false,
   eastSupplyCapEscape = false,
   clockResistorEscape = false,
+  automaticU1Fanout = false,
   debugTestpointEscape = false,
   debugTestpointPlacements,
   flashCapEscape = false,
@@ -349,6 +351,7 @@ export const RP2350CompactLayout = ({
       westDecouplerEscape={westDecouplerEscape}
       eastSupplyCapEscape={eastSupplyCapEscape}
       clockResistorEscape={clockResistorEscape}
+      automaticU1Fanout={automaticU1Fanout}
     >
       {/* Keep the QSPI boot circuit in the MCU routing scope. */}
       <W25Q16JVUXIQ
