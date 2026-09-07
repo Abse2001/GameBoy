@@ -18,6 +18,7 @@ import { RP2350CompactLayout } from "./published-rp2350-v0.0.11/pico-layout.circ
 import { MicroSDStorage } from "./MicroSD_Storage.circuit"
 import {
   gbaHousingOutline,
+  gbaHousingTopGroundOutline,
 } from "./gba-housing-mechanics"
 
 const denseTraceProps = { thickness: "0.1mm" } as const
@@ -457,6 +458,7 @@ export default ({
       layer="top"
       clearance="0.18mm"
       boardEdgeMargin="0.25mm"
+      outline={gbaHousingFit ? [...gbaHousingTopGroundOutline] : undefined}
     />
     <copperpour
       name="GND_POUR_BOTTOM"

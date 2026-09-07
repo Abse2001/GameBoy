@@ -14,10 +14,12 @@ Heavy routing and Gerber short checks run only in GitHub CI.
 | `66c5aa6` / corrected planes, clock first | Main phase failed on a V1V1 branch after the clock phase | 1 routing failure and 416 consequent missing-connection errors | Not checked: no completed routed output |
 | `66c5aa6` / corrected planes, global | Routing timeout after 2411 seconds; no completed circuit emitted | Not available, not zero | Not checked: no completed routed output |
 | `f8690c3` / reference contacts, single phase | 277 PCB traces, 262 vias; routing completed | 29, plus 20 length warnings | 12 detected at 50 pixels/mm; rejected despite lower Core error count |
+| `d3e9752` / closer decouplers, single phase | 277 PCB traces, 270 vias; routing completed | 18, plus 18 length warnings | 8 detected at 50 pixels/mm; not ready |
 
 Evidence: [single-phase run and broad-plane comparison](https://github.com/Abse2001/GameBoy/actions/runs/34096366893),
 [corrected-plane run](https://github.com/Abse2001/GameBoy/actions/runs/34097162607).
 [Reference-contact result](https://github.com/Abse2001/GameBoy/actions/runs/34099225875/job/101669578145).
+[Closer-decoupler result](https://github.com/Abse2001/GameBoy/actions/runs/34099573916/job/101670670212).
 
 Later contact and capacitor-placement jobs are separate trials. Their local
 routing-disabled renders pass placement, type and netlist checks; that is not a
@@ -40,6 +42,10 @@ physical routing or short-check pass.
 - A separate manufacturing-margin trial asks the routing phase for 0.15 mm
   trace-to-pad and 0.2 mm via-to-pad clearance, above the existing 0.1 mm board
   minimum. It does not disable checks or edit the resulting copper.
+- Keep broad top ground fill outside the membrane-contact fields. The latest
+  generated GND pour touched SW_A signal copper along its boundary, despite
+  the reference signal and ground electrode polygons being isolated. Buttons,
+  logical connections and the bottom/inner ground coverage are unchanged.
 
 ## Remaining signoff items
 

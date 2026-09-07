@@ -14,3 +14,21 @@ export const gbaHousingOutline = [
   { x: 65.66, y: 36.21 },
   { x: -65.66, y: 36.21 },
 ] as const
+
+// Keep broad top-layer fill away from the membrane-contact fields. Their
+// exposed electrodes and autorouted connections remain; bottom/inner ground
+// can still serve as the return plane. Do not fill gaps between button lobes.
+export const gbaHousingTopGroundOutline = [
+  { x: -65.41, y: -35.96 },
+  { x: 65.41, y: -35.96 },
+  { x: 65.41, y: -2 },
+  { x: 42, y: -2 },
+  { x: 42, y: 13 },
+  { x: 65.41, y: 13 },
+  { x: 65.41, y: 35.96 },
+  { x: -65.41, y: 35.96 },
+  { x: -65.41, y: 20 },
+  { x: -39, y: 20 },
+  { x: -39, y: -27 },
+  { x: -65.41, y: -27 },
+] as const
