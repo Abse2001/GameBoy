@@ -181,8 +181,6 @@ export interface RP2350CompactLayoutProps {
   eastSupplyCapEscape?: boolean
   clockResistorEscape?: boolean
   localSameLayerEscapes?: boolean
-  parentOwnsSharedSpiTraces?: boolean
-  multiTerminalRunTrace?: boolean
   peripheralPlacements?: Partial<
     Record<
       "U_RUN" | "R_RUN" | "U_RGB_BUF" | "C_RGB_BUF" | "R_RGB_DATA",
@@ -214,8 +212,6 @@ export const RP2350CompactLayout = ({
   eastSupplyCapEscape = false,
   clockResistorEscape = false,
   localSameLayerEscapes = false,
-  parentOwnsSharedSpiTraces = false,
-  multiTerminalRunTrace = false,
   peripheralPlacements,
   debugTestpointEscape = false,
   debugTestpointPlacements,
@@ -650,15 +646,9 @@ export const RP2350CompactLayout = ({
     <trace name="RGB_GND" from=".D_RGB > .GND" to=".C_RGB > .pin2" {...gndLabel} {...powerTraceProps} />
     <trace name="RGB_DECOUPLING_GND" from=".D_RGB > .GND" to="net.GND" {...gndLabel} {...powerTraceProps} />
     {/* Reset, USB-C, and SWD connect to the ordinary MCU placement group. */}
-    {multiTerminalRunTrace ? (
-      <trace name="RUN_SIGNAL" path={[".R_RUN > .pin1", ".MCU_CORE .U1 > .RUN", ".U_RUN > .pin1"]} />
-    ) : (
-      <>
-        <trace name="RUN_PULLUP" from=".R_RUN > .pin1" to=".MCU_CORE .U1 > .RUN" />
-        <trace name="RUN_SWITCH" from=".U_RUN > .pin1" to=".MCU_CORE .U1 > .RUN" />
-      </>
-    )}
+    <trace name="RUN_PULLUP" from=".R_RUN > .pin1" to=".MCU_CORE .U1 > .RUN" />
     <trace name="RUN_PULLUP_3V3" from=".R_RUN > .pin2" to="net.V3V3" {...v3v3Label} />
+    <trace name="RUN_SWITCH" from=".U_RUN > .pin1" to=".MCU_CORE .U1 > .RUN" />
     <trace name="RUN_SWITCH_GND" from=".U_RUN > .pin3" to="net.GND" {...groundPlaneTraceProps} />
     <trace name="VBUS_A" from=".J_USB > .A4B9" to="net.VBUS" {...vbusLabel} />
     <trace name="VBUS_B" from=".J_USB > .B4A9" to="net.VBUS" {...vbusLabel} />
@@ -734,14 +724,10 @@ export const RP2350CompactLayout = ({
     <trace name="STEMMA_QT_SCL" from=".J_STEMMA_QT > .SCL" to=".MCU_CORE .U1 > .GPIO3" {...signalTraceProps} />
     <trace name="SPI_JST_GND" from=".J_SPI > .GND" to="net.GND" {...groundPlaneTraceProps} />
     <trace name="SPI_JST_3V3" from=".J_SPI > .V3V3" to="net.V3V3" {...v3v3Label} {...powerTraceProps} />
-    {!parentOwnsSharedSpiTraces && (
-      <>
-        <trace name="SPI_JST_SCK" from=".J_SPI > .SCK" to=".MCU_CORE .U1 > .GPIO18" {...signalTraceProps} />
-        <trace name="SPI_JST_MOSI" from=".J_SPI > .MOSI" to=".MCU_CORE .U1 > .GPIO19" {...signalTraceProps} />
-        <trace name="SPI_JST_MISO" from=".J_SPI > .MISO" to=".MCU_CORE .U1 > .GPIO16" {...signalTraceProps} />
-        <trace name="SPI_JST_CS" from=".J_SPI > .CS" to=".MCU_CORE .U1 > .GPIO17" maxViaCount={localSameLayerEscapes ? 0 : undefined} {...signalTraceProps} />
-      </>
-    )}
+    <trace name="SPI_JST_SCK" from=".J_SPI > .SCK" to=".MCU_CORE .U1 > .GPIO18" {...signalTraceProps} />
+    <trace name="SPI_JST_MOSI" from=".J_SPI > .MOSI" to=".MCU_CORE .U1 > .GPIO19" {...signalTraceProps} />
+    <trace name="SPI_JST_MISO" from=".J_SPI > .MISO" to=".MCU_CORE .U1 > .GPIO16" {...signalTraceProps} />
+    <trace name="SPI_JST_CS" from=".J_SPI > .CS" to=".MCU_CORE .U1 > .GPIO17" maxViaCount={localSameLayerEscapes ? 0 : undefined} {...signalTraceProps} />
 
     <silkscreentext text="RP2350A" fontSize="1mm" pcbX={-3} pcbY={-11} />
     <silkscreentext text="USB-C" fontSize="0.7mm" pcbX={-8} pcbY={-28} />
