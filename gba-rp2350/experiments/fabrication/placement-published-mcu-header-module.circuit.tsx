@@ -61,7 +61,7 @@ export default ({
       R_BOOST_EN_PULLUP: { pcbX: 1.5, pcbY: 26.25, pcbRotation: 90 },
       R_BAT_GATE_PULLUP: { pcbX: -11.5, pcbY: 17, pcbRotation: 90 },
       R_BAT_GATE_BASE: gbaHousingFit
-        ? { pcbX: -8, pcbY: 25.5, pcbRotation: 90 }
+        ? { pcbX: -14.5, pcbY: 23.75, pcbRotation: 90 }
         : { pcbX: -14.5, pcbY: 26.25, pcbRotation: 90 },
       D_BAT_BOOST: { pcbX: 19, pcbY: 24, pcbRotation: 180 },
       R_BOOST_TOP: { pcbX: 11.5, pcbY: 18, pcbRotation: 90 },

@@ -22,6 +22,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - candidate: gba-single-phase
+            entry: placement-storage-gba-single-phase
           - candidate: gba-power-planes-clock-first
             entry: placement-storage-gba-power-planes-clock-first
           - candidate: gba-power-planes-global

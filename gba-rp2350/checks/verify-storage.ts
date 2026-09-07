@@ -3,6 +3,7 @@ import { readFileSync, statSync } from "node:fs"
 import { resolve } from "node:path"
 import type { AnyCircuitElement } from "circuit-json"
 import { getSourcePortConnectivityMapFromCircuitJson } from "circuit-json-to-connectivity-map"
+import { gbaReferenceButtonPlacements } from "../experiments/fabrication/GbaReferenceButtonContacts.circuit"
 
 const file = process.argv[2] ?? "dist/experiments/fabrication/placement-published-mcu-header-module/circuit.json"
 const elements: AnyCircuitElement[] = JSON.parse(readFileSync(file, "utf8"))
@@ -30,6 +31,17 @@ function same(a: [string, string], b: [string, string]) {
 
 function different(a: [string, string], b: [string, string]) {
   assert(!connectivity.areIdsConnected(port(...a), port(...b)), `${a.join(".")} must NOT connect to ${b.join(".")}`)
+}
+
+function isInsidePolygon(point: { x: number; y: number }, polygon: { x: number; y: number }[]) {
+  let inside = false
+  for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+    const a = polygon[i]!
+    const b = polygon[j]!
+    if ((a.y > point.y) !== (b.y > point.y) &&
+      point.x < (b.x - a.x) * (point.y - a.y) / (b.y - a.y) + a.x) inside = !inside
+  }
+  return inside
 }
 
 // APS6404L-3SQR-SN SOP-8: shared QMI data/clock and separate CS1 on GPIO0.
@@ -130,7 +142,27 @@ for (const [name, x, y] of [
   assert(pcb?.type === "pcb_component")
   const placementX = typeof pcb.display_offset_x === "number" ? pcb.display_offset_x : pcb.center.x
   const placementY = typeof pcb.display_offset_y === "number" ? pcb.display_offset_y : pcb.center.y
-  assert(Math.abs(placementX - x) < 1e-6 && Math.abs(placementY - y) < 1e-6, `${name}: protected placement changed`)
+  const reference = gbaReferenceButtonPlacements[name.slice(3) as keyof typeof gbaReferenceButtonPlacements]
+  const expected = isGbaHousingEnvelope ? reference : { pcbX: x, pcbY: y }
+  assert(Math.abs(placementX - expected.pcbX) < 1e-5 && Math.abs(placementY - expected.pcbY) < 1e-5, `${name}: protected placement changed`)
+  if (isGbaHousingEnvelope) {
+    assert(pcb.do_not_place, `${name}: PCB contact must not be in assembly placement`)
+    different([name, "signal"], [name, "ground"])
+    const contactPads = elements.filter((e) => e.type === "pcb_smtpad" && e.pcb_component_id === pcb.pcb_component_id)
+    for (const pad of contactPads) {
+      assert(pad.type === "pcb_smtpad")
+      assert(pad.shape === "polygon", `${name}: expected reference copper polygon`)
+      const pcbPort = elements.find((e) => e.type === "pcb_port" && e.pcb_port_id === pad.pcb_port_id)
+      assert(pcbPort?.type === "pcb_port")
+      assert(isInsidePolygon(pcbPort, pad.points), `${name}: routing endpoint must lie in its own copper, not a contact gap`)
+      assert(!pad.is_covered_with_solder_mask, `${name}: contact copper must be exposed`)
+      assert(!elements.some((e) => e.type === "pcb_solder_paste" && e.pcb_smtpad_id === pad.pcb_smtpad_id), `${name}: contact must have no solder paste`)
+    }
+    for (const p of ports.filter((p) => p.source_component_id === component(name).source_component_id)) {
+      const alias = p.port_hints?.find((hint) => hint.startsWith("signal_aux") || hint.startsWith("ground_aux"))
+      if (alias) same([name, alias], [name, alias.startsWith("signal") ? "signal" : "ground"])
+    }
+  }
 }
 const pcbComponent = (name: string) => {
   const pcb = elements.find((e) => e.type === "pcb_component" && e.source_component_id === component(name).source_component_id)

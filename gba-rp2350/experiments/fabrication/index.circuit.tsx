@@ -4,6 +4,9 @@ import {
 } from "@tscircuit/common"
 import { LCDWiki_2_8_SPI_ILI9341_MSP2807 } from "./LCDWiki_2_8_SPI_ILI9341_MSP2807"
 import { GbaMembraneButtonContact } from "./GbaMembraneButtonContact.circuit"
+import { GbaReferenceButtonContact, gbaReferenceButtonPlacements } from "./GbaReferenceButtonContacts.circuit"
+import type { PushButtonProps } from "@tscircuit/props"
+import { createElement } from "react"
 import { SK_12E12_G5 } from "../../imports/SK_12E12_G5"
 import { Microcontroller_RP2350, type McuPlacement } from "./Microcontroller_RP2350.circuit"
 import { AP2112K_3_3TRG1 } from "../../imports/AP2112K_3_3TRG1"
@@ -30,6 +33,19 @@ const schSections = {
   controls: "controls",
   display: "display",
 } as const
+
+const BoardMembraneContact = ({
+  housingFit,
+  reference,
+  ...props
+}: Pick<PushButtonProps, "name" | "schSectionName" | "pcbX" | "pcbY" | "schX" | "schY"> & {
+  housingFit: boolean
+  reference: keyof typeof gbaReferenceButtonPlacements
+}) => housingFit ? (
+  <GbaReferenceButtonContact {...props} reference={reference} {...gbaReferenceButtonPlacements[reference]} />
+) : (
+  <GbaMembraneButtonContact {...props} />
+)
 
 export default ({
   mcuSubcircuit = false,
@@ -394,14 +410,14 @@ export default ({
 
     {/* Housing-critical control centers follow the close-to-1:1 OpenTendo
         AGB-CPU-01 mechanical reference. The original GBA has A/B only. */}
-    <GbaMembraneButtonContact name="SW_UP" schSectionName={schSections.controls} pcbX={-56.7} pcbY={13.3} schX={-36} schY={31} />
-    <GbaMembraneButtonContact name="SW_DOWN" schSectionName={schSections.controls} pcbX={-54.5} pcbY={-4.8} schX={-36} schY={34} />
-    <GbaMembraneButtonContact name="SW_LEFT" schSectionName={schSections.controls} pcbX={-64.7} pcbY={5.4} contactOffsetX={gbaHousingFit ? 2.1 : 0} schX={-36} schY={37} />
-    <GbaMembraneButtonContact name="SW_RIGHT" schSectionName={schSections.controls} pcbX={-46.5} pcbY={5.4} schX={-36} schY={40} />
-    <GbaMembraneButtonContact name="SW_A" schSectionName={schSections.controls} pcbX={57.2} pcbY={6.2} schX={-27} schY={31} />
-    <GbaMembraneButtonContact name="SW_B" schSectionName={schSections.controls} pcbX={44.1} pcbY={1.8} schX={-27} schY={34} />
-    <GbaMembraneButtonContact name="SW_SELECT" schSectionName={schSections.controls} pcbX={-45.2} pcbY={-22.7} schX={-31.5} schY={37} />
-    <GbaMembraneButtonContact name="SW_START" schSectionName={schSections.controls} pcbX={-45.2} pcbY={-14.6} schX={-27} schY={40} />
+    <BoardMembraneContact housingFit={gbaHousingFit} reference="UP" name="SW_UP" schSectionName={schSections.controls} pcbX={-56.7} pcbY={13.3} schX={-36} schY={31} />
+    <BoardMembraneContact housingFit={gbaHousingFit} reference="DOWN" name="SW_DOWN" schSectionName={schSections.controls} pcbX={-54.5} pcbY={-4.8} schX={-36} schY={34} />
+    <BoardMembraneContact housingFit={gbaHousingFit} reference="LEFT" name="SW_LEFT" schSectionName={schSections.controls} pcbX={-64.7} pcbY={5.4} schX={-36} schY={37} />
+    <BoardMembraneContact housingFit={gbaHousingFit} reference="RIGHT" name="SW_RIGHT" schSectionName={schSections.controls} pcbX={-46.5} pcbY={5.4} schX={-36} schY={40} />
+    <BoardMembraneContact housingFit={gbaHousingFit} reference="A" name="SW_A" schSectionName={schSections.controls} pcbX={57.2} pcbY={6.2} schX={-27} schY={31} />
+    <BoardMembraneContact housingFit={gbaHousingFit} reference="B" name="SW_B" schSectionName={schSections.controls} pcbX={44.1} pcbY={1.8} schX={-27} schY={34} />
+    <BoardMembraneContact housingFit={gbaHousingFit} reference="SELECT" name="SW_SELECT" schSectionName={schSections.controls} pcbX={-45.2} pcbY={-22.7} schX={-31.5} schY={37} />
+    <BoardMembraneContact housingFit={gbaHousingFit} reference="START" name="SW_START" schSectionName={schSections.controls} pcbX={-45.2} pcbY={-14.6} schX={-27} schY={40} />
 
     {/* Keep left-side controls on the left MCU header to avoid unnecessary
         cross-board routes. The RP2350 GPIOs remain ordinary digital inputs. */}
@@ -530,18 +546,15 @@ export default ({
       />
     )}
 
-    <silkscreentext text="LCDWIKI 2.8 SPI" fontSize="1.2mm" pcbX={0} pcbY={27} />
+    <silkscreentext text="LCDWIKI 2.8 SPI" fontSize="1.2mm" pcbX={gbaHousingFit ? -40 : 0} pcbY={27} />
     <silkscreentext text="BAT" fontSize="0.9mm" pcbX={-58} pcbY={25} pcbRotation={90} />
-    <silkscreentext text="USB-C / VBUS" fontSize="0.9mm" pcbX={0} pcbY={39} />
+    <silkscreentext text="USB-C / VBUS" fontSize="0.9mm" pcbX={gbaHousingFit ? 20 : 0} pcbY={gbaHousingFit ? 34 : 39} />
     <silkscreentext text="PWR SW" fontSize="0.9mm" pcbX={54} pcbY={-30} pcbRotation={90} />
-    <silkscreentext text="UP" fontSize="0.9mm" pcbX={-56.7} pcbY={13.3} />
-    <silkscreentext text="DOWN" fontSize="0.9mm" pcbX={-54.5} pcbY={-4.8} />
-    <silkscreentext text="LEFT" fontSize="0.9mm" pcbX={-64.7} pcbY={5.4} />
-    <silkscreentext text="RIGHT" fontSize="0.9mm" pcbX={-46.5} pcbY={5.4} />
-    <silkscreentext text="A" fontSize="0.9mm" pcbX={57.2} pcbY={6.2} />
-    <silkscreentext text="B" fontSize="0.9mm" pcbX={44.1} pcbY={1.8} />
-    <silkscreentext text="SELECT" fontSize="0.9mm" pcbX={-45.2} pcbY={-22.7} />
-    <silkscreentext text="START" fontSize="0.9mm" pcbX={-45.2} pcbY={-14.6} />
+    {Object.entries(gbaReferenceButtonPlacements).map(([label, placement]) =>
+      createElement("silkscreentext", {
+        key: label, text: label, fontSize: "0.8mm", pcbX: placement.pcbX, pcbY: placement.pcbY - 4,
+      }),
+    )}
     <silkscreentext text="VOLUME" fontSize="0.9mm" pcbX={-55} pcbY={-27} />
     <silkscreentext text="SPK" fontSize="0.9mm" pcbX={-9} pcbY={-8} />
   </board>
