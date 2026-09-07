@@ -22,10 +22,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - candidate: auto-u1-fanout
-            entry: placement-storage-auto-u1-fanout
-          - candidate: auto-u1-fanout-debug-row
-            entry: placement-storage-auto-u1-fanout-debug-row
+          - candidate: debug-pad-row
+            entry: placement-storage-debug-pad-row
+          - candidate: debug-pad-row-margin
+            entry: placement-storage-debug-pad-row-margin
     defaults:
       run:
         working-directory: gba-rp2350

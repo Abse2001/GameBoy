@@ -10,7 +10,6 @@ export default ({
   westDecouplerEscape = false,
   eastSupplyCapEscape = false,
   clockResistorEscape = false,
-  automaticU1Fanout = false,
   sdDetectEscape = false,
   debugTestpointEscape = false,
   mcuDebugTestpointPlacements,
@@ -18,7 +17,7 @@ export default ({
   usbResistorEscape = false,
   segmentedSupplyPours = false,
   routingSafetyMargin = false,
-}: { mcuSubcircuit?: boolean; mcuHeaders?: boolean; routeClockFirst?: boolean; psramCapEscape?: boolean; mcuPassiveEscape?: boolean; clockPassiveEscape?: boolean; westDecouplerEscape?: boolean; eastSupplyCapEscape?: boolean; clockResistorEscape?: boolean; automaticU1Fanout?: boolean; sdDetectEscape?: boolean; debugTestpointEscape?: boolean; mcuDebugTestpointPlacements?: Partial<Record<"TP_SWDIO" | "TP_SWCLK", { pcbX: number; pcbY: number }>>; flashCapEscape?: boolean; usbResistorEscape?: boolean; segmentedSupplyPours?: boolean; routingSafetyMargin?: boolean } = {}) => (
+}: { mcuSubcircuit?: boolean; mcuHeaders?: boolean; routeClockFirst?: boolean; psramCapEscape?: boolean; mcuPassiveEscape?: boolean; clockPassiveEscape?: boolean; westDecouplerEscape?: boolean; eastSupplyCapEscape?: boolean; clockResistorEscape?: boolean; sdDetectEscape?: boolean; debugTestpointEscape?: boolean; mcuDebugTestpointPlacements?: Partial<Record<"TP_SWDIO" | "TP_SWCLK", { pcbX: number; pcbY: number }>>; flashCapEscape?: boolean; usbResistorEscape?: boolean; segmentedSupplyPours?: boolean; routingSafetyMargin?: boolean } = {}) => (
   <Board
     publishedMcuModule
     storage
@@ -28,7 +27,6 @@ export default ({
     westDecouplerEscape={westDecouplerEscape}
     eastSupplyCapEscape={eastSupplyCapEscape}
     clockResistorEscape={clockResistorEscape}
-    automaticU1Fanout={automaticU1Fanout}
     sdDetectEscape={sdDetectEscape}
     debugTestpointEscape={debugTestpointEscape}
     mcuDebugTestpointPlacements={mcuDebugTestpointPlacements}
