@@ -19,7 +19,7 @@ export const GbaMembraneButtonContact = ({
 }: PushButtonProps<typeof pinLabels> & { contactOffsetX?: number }) => (
   <pushbutton
     pinLabels={pinLabels}
-    manufacturerPartNumber="GBA_PCB_MEMBRANE_CONTACT"
+    doNotPlace
     footprint={
       <footprint>
         <smtpad

@@ -26,13 +26,21 @@ const rectangleOutline = (
   minY: number,
   maxX: number,
   maxY: number,
+  placement: { pcbX?: number; pcbY?: number; pcbRotation?: number } = {},
 ) => [
   { x: minX, y: minY },
   { x: maxX, y: minY },
   { x: maxX, y: maxY },
   { x: minX, y: maxY },
   { x: minX, y: minY },
-]
+].map(({ x, y }) => {
+  // Copper-pour outlines use board coordinates, unlike component positions.
+  const radians = (placement.pcbRotation ?? 0) * Math.PI / 180
+  return {
+    x: (placement.pcbX ?? 0) + x * Math.cos(radians) - y * Math.sin(radians),
+    y: (placement.pcbY ?? 0) + x * Math.sin(radians) + y * Math.cos(radians),
+  }
+})
 
 // The official RP2350A Minimal KiCad design uses separate F.Cu zones for
 // VBUS, 3V3, 1V1, GND, and VREG_LX. These broad functional outlines follow
@@ -261,13 +269,13 @@ export const RP2350CompactLayout = ({
     <net name="V3V3" isPowerNet />
     <net name="USB_DP_OUT" />
     <net name="USB_DM_OUT" />
-    {/* Inner-1 carries the broad GND reference zone. It may be split by the
-        automatic router where necessary; physical fragments are audited after
-        routing but do not replace the zero-DRC and zero-short acceptance gates. */}
+    {/* Reserve a continuous inner-1 return plane with the supply-plane layout.
+        Pipeline 9 generates the pad-to-plane escape vias automatically. */}
     <copperpour
       name="GND_REFERENCE_INNER1"
       layer="inner1"
       connectsTo="net.GND"
+      unbroken={segmentedSupplyPours}
       clearance="0.2mm"
       boardEdgeMargin="0.3mm"
       useThermalReliefs
@@ -280,7 +288,7 @@ export const RP2350CompactLayout = ({
         layer="top"
         connectsTo="net.V3V3"
         clearance="0.2mm"
-        outline={rectangleOutline(6, -12.3, 12.2, -8.5)}
+        outline={rectangleOutline(6, -12.3, 12.2, -8.5, props)}
       />
     )}
     <copperpour
@@ -288,28 +296,34 @@ export const RP2350CompactLayout = ({
       layer="top"
       connectsTo="net.GND"
       clearance="0.15mm"
-      outline={rectangleOutline(-1.8, -0.65, 1.8, 2.85)}
+      outline={rectangleOutline(-1.8, -0.65, 1.8, 2.85, props)}
     />
     <copperpour
       name="GND_TOP_BUCK_RETURN"
       layer="top"
       connectsTo="net.GND"
       clearance="0.15mm"
-      outline={rectangleOutline(-1.2, -4.55, -0.4, -3.85)}
+      outline={mcuPassiveEscape
+        ? rectangleOutline(-1.65, -5.05, -0.75, -4.25, props)
+        : rectangleOutline(-1.2, -4.55, -0.4, -3.85, props)}
     />
     <copperpour
       name="V3V3_TOP_BUCK_INPUT"
       layer="top"
       connectsTo="net.V3V3"
       clearance="0.15mm"
-      outline={rectangleOutline(-1.35, -3.75, -0.35, -2.05)}
+      outline={mcuPassiveEscape
+        ? rectangleOutline(-1.95, -4.2, -0.6, -2.05, props)
+        : rectangleOutline(-1.35, -3.75, -0.35, -2.05, props)}
     />
     <copperpour
       name="V1V1_TOP_BUCK_OUTPUT"
       layer="top"
       connectsTo=".MCU_CORE > net.V1V1"
       clearance="0.15mm"
-      outline={rectangleOutline(-4.45, -5.45, -3.55, -3.55)}
+      outline={mcuPassiveEscape
+        ? rectangleOutline(-6, -5.5, -3.7, -3.05, props)
+        : rectangleOutline(-4.45, -5.45, -3.55, -3.55, props)}
     />
     {/* Automatic routing only; no stored copper paths or routing cache. A
         flattened module must participate in the parent board's phase rather

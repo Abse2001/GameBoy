@@ -26,8 +26,6 @@ jobs:
             entry: placement-storage-gba-power-planes-clock-first
           - candidate: gba-power-planes-global
             entry: placement-storage-gba-power-planes-global
-          - candidate: gba-single-phase
-            entry: placement-storage-gba-single-phase
     defaults:
       run:
         working-directory: gba-rp2350
