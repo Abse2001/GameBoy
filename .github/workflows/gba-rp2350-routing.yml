@@ -1,0 +1,141 @@
+name: GBA RP2350 routing
+
+on:
+  pull_request:
+    paths:
+      - 'gba-rp2350/**'
+      - '.github/workflows/gba-rp2350-routing.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: gba-routing-${{ github.ref }}-${{ github.sha }}
+  cancel-in-progress: true
+
+jobs:
+  route:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - candidate: gba-pipeline7-c18-clearance
+            entry: experiments/fabrication/placement-storage-gba-internal-connectors-pipeline7-c18-clearance
+    defaults:
+      run:
+        working-directory: gba-rp2350
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: '1.3.14'
+      - name: Install locked dependencies
+        run: bun install --frozen-lockfile
+      - name: Record installed routing packages
+        run: |
+          bun -e 'for (const name of ["tscircuit", "@tscircuit/core", "@tscircuit/eval", "@tscircuit/capacity-autorouter", "@tscircuit/copper-pour-solver"]) console.log(name, JSON.parse(await Bun.file(`node_modules/${name}/package.json`).text()).version)'
+      - name: Typecheck candidate sources
+        run: bunx --no-install tsc --noEmit
+      - name: Check the cutout auditor
+        run: node checks/audit-cutout-clearance.mjs --self-test
+      - name: Record the pre-interior connector baseline without routing
+        run: |
+          mkdir -p reports
+          baseline=experiments/fabrication/placement-storage-gba-restored-controls
+          bunx --no-install tsci build "${baseline}.circuit.tsx" --routing-disabled --disable-parts-engine
+          bun checks/route-report.ts "dist/${baseline}/circuit.json" reports/edge-connector-baseline.json > reports/edge-connector-baseline.log
+      - name: Verify ordinary-group hierarchy before routing
+        env:
+          ENTRY: ${{ matrix.entry }}
+        run: |
+          bunx --no-install tsci build "${ENTRY}.circuit.tsx" --routing-disabled --disable-parts-engine
+          bun checks/verify-storage.ts "dist/${ENTRY}/circuit.json"
+          bun checks/verify-controls.ts "dist/${ENTRY}/circuit.json"
+          bun checks/route-report.ts "dist/${ENTRY}/circuit.json" reports/preflight-route.json > reports/preflight-route.log
+          bun checks/verify-internal-connectors.ts reports/edge-connector-baseline.json reports/preflight-route.json "dist/${ENTRY}/circuit.json"
+          # Preserve input evidence separately; an interrupted build must not
+          # leave an unrouted preflight file where final copper is expected.
+          mv "dist/${ENTRY}" reports/preflight-build
+      - name: Route full board with Pipeline 7, no child subcircuits
+        timeout-minutes: 35
+        env:
+          ENTRY: ${{ matrix.entry }}
+        run: |
+          timeout --kill-after=30s 30m bunx --no-install tsci build "${ENTRY}.circuit.tsx" --autorouter-timeout 30m --autorouter-debug --autorouter-dump-srj all --pcb-svgs 2>&1 | tee reports/routing.log
+      - name: Preserve phase diagnostics in the job log
+        if: always()
+        run: bun checks/route-diagnostics.ts
+      - name: Record all errors and electrical identity
+        id: report
+        if: always()
+        env:
+          ENTRY: ${{ matrix.entry }}
+        run: bun checks/route-report.ts "dist/${ENTRY}/circuit.json" reports/route.json
+      - name: Verify storage netlist and imported parts
+        if: always()
+        env:
+          ENTRY: ${{ matrix.entry }}
+        run: bun checks/verify-storage.ts "dist/${ENTRY}/circuit.json" 2>&1 | tee reports/storage.log
+      - name: Verify preserved controls, electrical identity and interior connectors
+        if: always() && steps.report.outputs.route_ready == 'true'
+        env:
+          ENTRY: ${{ matrix.entry }}
+        run: |
+          bun checks/verify-controls.ts "dist/${ENTRY}/circuit.json"
+          bun checks/compare-route-reports.ts --unrouted-baseline reports/preflight-route.json reports/route.json
+          bun checks/verify-route-input.ts reports/preflight-build/circuit.json "dist/${ENTRY}/circuit.json"
+          bun checks/verify-internal-connectors.ts reports/edge-connector-baseline.json reports/route.json "dist/${ENTRY}/circuit.json"
+      - name: Verify routed copper clears the battery cutout
+        if: always() && steps.report.outputs.route_ready == 'true'
+        env:
+          ENTRY: ${{ matrix.entry }}
+        run: node checks/audit-cutout-clearance.mjs "dist/${ENTRY}/circuit.json" | tee reports/cutout-clearance.json
+      - name: Gerber shorts at 50 pixels per mm
+        id: shorts50
+        if: always() && steps.report.outputs.route_ready == 'true'
+        env:
+          ENTRY: ${{ matrix.entry }}
+        run: bunx --no-install tsci check shorts "dist/${ENTRY}/circuit.json" --mode gerber --layer all --pixels-per-mm 50 2>&1 | tee reports/shorts-50.log
+      - name: Preserve 50-pixel shorts images
+        if: always()
+        run: |
+          if [ -d checks/check-shorts ]; then
+            mv checks/check-shorts reports/shorts-50
+          fi
+      - name: Gerber shorts at 100 pixels per mm
+        if: always() && steps.report.outputs.route_ready == 'true' && steps.shorts50.outcome == 'success'
+        env:
+          ENTRY: ${{ matrix.entry }}
+        run: |
+          for layer in top inner1 inner2 bottom; do
+            bunx --no-install tsci check shorts "dist/${ENTRY}/circuit.json" --mode gerber --layer "$layer" --pixels-per-mm 100 2>&1 | tee "reports/shorts-100-${layer}.log"
+            if [ -d checks/check-shorts ]; then
+              mv checks/check-shorts "reports/shorts-100-${layer}"
+            fi
+          done
+      - name: Preserve 100-pixel shorts images
+        if: always()
+        run: |
+          if [ -d checks/check-shorts ]; then
+            mv checks/check-shorts reports/shorts-100
+          fi
+      - name: Require zero reported errors and critical warnings
+        if: always()
+        run: bun checks/route-gate.ts reports/route.json
+      - name: Preserve routing evidence
+        if: always()
+        # Route reports are already printed in the log; artifact quota should not mask routing results.
+        continue-on-error: true
+        uses: actions/upload-artifact@v4
+        with:
+          name: gba-routing-${{ matrix.candidate }}
+          path: |
+            gba-rp2350/reports
+            gba-rp2350/dist/${{ matrix.entry }}
+            gba-rp2350/dist/autorouter-debug
+          if-no-files-found: warn
+          retention-days: 14

@@ -1,0 +1,45 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "jsx": "react-jsx",
+    "outDir": "dist",
+    "rootDir": ".",
+    "baseUrl": ".",
+    "strict": true,
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "sourceMap": true,
+    "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true,
+    "types": [
+      "tscircuit",
+      "node"
+    ]
+  },
+  "include": [
+    "index.circuit.tsx",
+    "experiments/fabrication/placement-storage-gba-internal-connectors*.circuit.tsx",
+    "experiments/fabrication/placement-storage-gba-c14*.circuit.tsx",
+    "experiments/fabrication/placement-published-mcu-storage-global.circuit.tsx",
+    "experiments/fabrication/placement-storage-cap-escape.circuit.tsx",
+    "experiments/fabrication/placement-storage-supply-pours.circuit.tsx",
+    "experiments/fabrication/placement-storage-usb-escape.circuit.tsx",
+    "experiments/fabrication/placement-storage-mcu-spacing.circuit.tsx",
+    "experiments/fabrication/placement-storage-mcu-usb-spacing.circuit.tsx",
+    "experiments/fabrication/placement-storage-clock-spacing.circuit.tsx",
+    "experiments/fabrication/placement-storage-west-decouplers.circuit.tsx",
+    "experiments/fabrication/placement-storage-clock-resistor.circuit.tsx",
+    "experiments/fabrication/placement-storage-sd-detect.circuit.tsx",
+    "experiments/fabrication/placement-storage-debug-testpoint.circuit.tsx",
+    "checks/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    ".claude"
+  ]
+}
