@@ -6,14 +6,7 @@ import { CL10A106KP8NNNC } from "./imports/CL10A106KP8NNNC/CL10A106KP8NNNC"
 import { SRV05_4_P_T7 } from "./imports/SRV05_4_P_T7/SRV05_4_P_T7"
 
 // Normal group: these connections are routed together with the parent board.
-export const MicroSDStorage = ({
-  sdDetectEscape = false,
-  decouplingRoutingPhase,
-  ...props
-}: GroupProps & {
-  sdDetectEscape?: boolean
-  decouplingRoutingPhase?: number
-}) => (
+export const MicroSDStorage = ({ sdDetectEscape = false, ...props }: GroupProps & { sdDetectEscape?: boolean }) => (
   <group {...props}>
     {/* The mouth faces +Y in this group's local coordinates. The parent rotates
         the whole group 180 degrees to face outward at the bottom board edge. */}
@@ -34,10 +27,10 @@ export const MicroSDStorage = ({
     <trace name="SD_SHIELD2" from=".J_SD > .GND2" to="net.GND" />
     <trace name="SD_SHIELD3" from=".J_SD > .GND3" to="net.GND" />
     <trace name="SD_SHIELD4" from=".J_SD > .GND4" to="net.GND" />
-    <trace name="SD_BULK" routingPhaseIndex={decouplingRoutingPhase} from=".C_SD_BULK > .pin1" to=".J_SD > .VDD" maxLength="5.5mm" />
-    <trace name="SD_HF" routingPhaseIndex={decouplingRoutingPhase} from=".C_SD_HF > .pin1" to=".J_SD > .VDD" maxLength="5.5mm" />
-    <trace routingPhaseIndex={decouplingRoutingPhase} from=".C_SD_BULK > .pin2" to="net.GND" />
-    <trace routingPhaseIndex={decouplingRoutingPhase} from=".C_SD_HF > .pin2" to="net.GND" />
+    <trace name="SD_BULK" from=".C_SD_BULK > .pin1" to=".J_SD > .VDD" maxLength="5.5mm" />
+    <trace name="SD_HF" from=".C_SD_HF > .pin1" to=".J_SD > .VDD" maxLength="5.5mm" />
+    <trace from=".C_SD_BULK > .pin2" to="net.GND" />
+    <trace from=".C_SD_HF > .pin2" to="net.GND" />
 
     {/* SD requires pull-ups on CMD and DAT0..3 even in SPI mode. CLK has none. */}
     <trace from=".R_SD_DAT2 > .pin1" to=".J_SD > .DAT2" />
