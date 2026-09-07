@@ -22,8 +22,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - candidate: gba-c14-pgnd-inward
-            entry: experiments/fabrication/placement-storage-gba-c14-pgnd-inward
+          - candidate: gba-c14-r2-clock-gap
+            entry: experiments/fabrication/placement-storage-gba-c14-r2-clock-gap
     defaults:
       run:
         working-directory: gba-rp2350

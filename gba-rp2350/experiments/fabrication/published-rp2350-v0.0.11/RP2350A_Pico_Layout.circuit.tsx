@@ -78,6 +78,7 @@ export interface RP2350AEssentialKiCadReferenceProps {
 	eastSupplyCapEscape?: boolean;
 	clockResistorEscape?: boolean;
 	localVregGroundSameLayer?: boolean;
+	r2Placement?: { pcbX: number; pcbY: number; pcbRotation?: number };
 	c6Placement?: { pcbX: number; pcbY: number; pcbRotation?: number };
 	c12Placement?: { pcbX: number; pcbY: number; pcbRotation?: number };
 	c14Placement?: { pcbX: number; pcbY: number; pcbRotation?: number };
@@ -106,6 +107,7 @@ export const RP2350AEssentialKiCadReference = ({
 	eastSupplyCapEscape = false,
 	clockResistorEscape = false,
 	localVregGroundSameLayer = false,
+	r2Placement,
 	c6Placement,
 	c12Placement,
 	c14Placement,
@@ -196,6 +198,7 @@ export const RP2350AEssentialKiCadReference = ({
 			pcbX={clockResistorEscape ? 1.6 : 0}
 			pcbY={clockResistorEscape ? -5.95 : -5.8}
 			pcbRotation={clockPassiveEscape ? 0 : 180}
+			{...r2Placement}
 		/>
 		<resistor
 			name="R3"

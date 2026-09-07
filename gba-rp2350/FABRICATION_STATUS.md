@@ -2,6 +2,10 @@
 
 Status: **not ready to order**. No manufacturing files have been approved.
 
+Current experiment: `placement-storage-gba-c14-r2-clock-gap.circuit.tsx`,
+one global Pipeline 9 pass with only R2 moved 0.30 mm from the C14 layout.
+It is not promoted to the root C12 entry and needs cloud routing verification.
+
 ## Measured routing results
 
 All runs use published packages, Pipeline 9 and automatically generated traces.
@@ -34,6 +38,7 @@ Heavy routing and Gerber short checks run only in GitHub CI.
 | `7f5e4ae` / C14 + C6 VIN approach | 277 PCB traces, 273 vias, 103 copper regions; routing completed, rejected | 23 (3 trace, 2 via/trace clearance, 13 via/pad clearance, 5 via/pad overlap), plus 20 length warnings | 7 reported at 50 pixels/mm, including SWDIO/XIN and GPIO17/supply contacts; 100 pixels/mm skipped |
 | `ea32a18` / C14 PGND native fanout | Failed before global routing: zero traces and zero vias | 1 fanout failure and 422 consequent missing-connection errors | Not checked: no completed routed copper |
 | `ea32a18` / C14 PGND first, Pipeline 9 | PGND phase produced one trace; remaining global phase failed in high-density routing; no completed board | 1 routing failure and 422 consequent missing-connection errors | Not checked: no completed routed copper |
+| `23e8c49` / C14 inward PGND fanout | Native fanout and its completion succeeded; subsequent 148-connection global route failed; no completed board | 1 routing failure and 422 consequent missing-connection errors | Not checked: no completed routed copper |
 
 Evidence: [single-phase run and broad-plane comparison](https://github.com/Abse2001/GameBoy/actions/runs/34096366893),
 [corrected-plane run](https://github.com/Abse2001/GameBoy/actions/runs/34097162607).
@@ -49,6 +54,7 @@ Evidence: [single-phase run and broad-plane comparison](https://github.com/Abse2
 [Root/C14 comparison](https://github.com/Abse2001/GameBoy/actions/runs/34123911135).
 [C14/C6 comparison](https://github.com/Abse2001/GameBoy/actions/runs/34130814106).
 [PGND fanout and routing-order comparison](https://github.com/Abse2001/GameBoy/actions/runs/34133897841).
+[Inward PGND fanout result](https://github.com/Abse2001/GameBoy/actions/runs/34137407376).
 
 Later contact and capacitor-placement jobs are separate trials. Their local
 routing-disabled renders pass placement, type and netlist checks; that is not a
@@ -199,7 +205,7 @@ Increasing the outer boundary alone cannot remove these local obstructions.
 The log lacks per-candidate rejection data, so this is geometry and installed
 source evidence, not a captured explanation for every solver candidate.
 
-### Next trial: native inward PGND escape
+### Rejected trial: native inward PGND escape
 
 Use native inward/upward direction on a named bus containing the same PGND
 trace (`busFanoutDirections: { PGND_ESCAPE: "topside_center" }`). This supplies
@@ -216,6 +222,59 @@ source traces and 22 nets retain the global plan. No routed pass is claimed.
 CI diagnostics now retain the CLI's exact phase SRJ inputs, trace outputs and
 error JSON in the job log, because artifact uploads currently fail from quota.
 This preserves evidence only; it does not change routing or acceptance checks.
+
+The cloud result confirms the inward escape is possible: native fanout produced
+one trace in 4.003 seconds. Its via is at (-2.599944, 5.2885793), with a 0.45 mm
+pad and 0.2 mm drill; the generated escape width is 0.15 mm. Pipeline 9 then
+completed the selected connection in 318.912 seconds, emitting two traces in
+that phase output. The remaining global phase received those two traces but
+failed after 592.586 seconds, again at `cmn_107` with MAX_RIPS 200 and a rejected
+8x regional fallback. No complete board was emitted and neither physical
+shorts check ran. Parts, source connections and protected placements remain
+unchanged. The result demonstrates a viable fanout direction, not a viable
+full-board route; do not promote it or claim zero DRCs from the partial phases.
+
+Return the next placement experiment to the original single global Pipeline 9
+pass. Keep these failed phase variants only as recorded experiments; root C12
+remains unchanged.
+
+The two completed PGND phase traces were preserved byte-for-byte in the final
+global SRJ. Its independent 94-endpoint GND connection still contains the
+original PGND and C6 pads, not the fanout exit. This selector phase seeds copper;
+it does not replace those global endpoints. The partial PGND-to-C6 path is
+27.158 mm versus a 2.484 mm direct distance, so it is also not an attractive
+regulator-return layout. The repeated failing node label alone does not prove
+that the two global attempts failed on identical physical geometry.
+
+### Next trial: R2 clock-area clearance, one global pass
+
+On the unchanged C14 layout, move only R2 from board (0,12.8) to (0,13.1),
+retaining its 180-degree board rotation. The source override is
+`R2: { pcbX: 0, pcbY: -6.1, pcbRotation: 0 }`. Its 1 kohm value and connections
+do not change; U1, X1, C3, C4, PSRAM, controls and connectors remain fixed.
+No fanout or early routing phase is enabled for this candidate.
+
+This opens the U1-pad-tip-to-R2 gap from 0.417575 to 0.717575 mm, above the
+0.65 mm needed for the configured 0.45 mm via and two 0.1 mm clearances. It
+targets the area of the C14 SWDIO via, which has only 0.035100 mm clearance to
+U1.RUN. The solver still chooses every via and trace; no witness coordinates
+are added as routing geometry. Minimum moved-component clearance is 0.114687
+mm to C18; the gap below X1 remains 0.329927 mm, enough for a 0.1 mm track with
+0.1 mm clearance on each side. A larger 0.5 mm R2 move was not selected because
+it would close that crystal-side routing corridor.
+
+R2-to-X1 direct/octilinear distances become 3.524852/3.672888 mm, below the
+unchanged 10 mm and zero-via constraint. U1.XOUT-to-R2 distances become
+1.425453/1.438642 mm. These are lower-bound placement checks, not proof of a
+legal routed clock path. The missing R2 and X1 courtyard warnings remain open.
+Local typecheck, routing-disabled render, hierarchy and storage checks pass.
+Only R2's PCB center changes; all parts, electrical connections and protected
+positions match C14. Phase-plan inspection confirms one global Pipeline 9
+plan with 291 source traces and 22 nets, with no early phase or fanout.
+
+The alternative C18-east move was rejected before routing: even the smaller
+checked shift requires 5.762971 mm octilinear on its retained ground branch,
+above the 5.5 mm limit. A lesser shift did not clear the targeted pin-exit gap.
 
 - Replace concave comb contacts whose inferred route endpoints fell in empty
   gaps with the actual OpenTendo contact geometry. All 22 new endpoints are

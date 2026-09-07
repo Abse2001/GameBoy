@@ -193,6 +193,7 @@ export interface RP2350CompactLayoutProps {
     Record<
       | "U_RUN"
       | "U2"
+      | "R2"
       | "C6"
       | "C12"
       | "C14"
@@ -396,6 +397,7 @@ export const RP2350CompactLayout = ({
       eastSupplyCapEscape={eastSupplyCapEscape}
       clockResistorEscape={clockResistorEscape}
       localVregGroundSameLayer={localSameLayerEscapes}
+      r2Placement={peripheralPlacements?.R2}
       c6Placement={peripheralPlacements?.C6}
       c12Placement={peripheralPlacements?.C12}
       c14Placement={peripheralPlacements?.C14}
