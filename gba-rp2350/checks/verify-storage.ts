@@ -188,7 +188,22 @@ const crystal = pcbComponent("X1")
 for (const name of ["TP_SWCLK", "TP_SWDIO", "TP_GND", "TP_3V3"]) {
   const pcb = pcbComponent(name)
   assert(pcb.do_not_place, `${name}: bare PCB test pad must not be an assembled part`)
+  const testPads = elements.filter((e) => e.type === "pcb_smtpad" && e.pcb_component_id === pcb.pcb_component_id)
+  assert.equal(testPads.length, 1, `${name}: expected one bare copper pad`)
+  for (const pad of testPads) {
+    assert(pad.type === "pcb_smtpad")
+    assert(pad.shape === "circle" && Math.abs(pad.radius - 0.55) < 1e-9, `${name}: probe copper geometry changed`)
+    assert(!pad.is_covered_with_solder_mask, `${name}: probe copper must remain exposed`)
+    assert(!elements.some((e) => e.type === "pcb_solder_paste" && e.pcb_smtpad_id === pad.pcb_smtpad_id), `${name}: bare probe pad must have no solder paste`)
+  }
 }
+const l1 = pcbComponent("L1")
+const l1Courtyard = elements.find((e) => e.type === "pcb_courtyard_rect" && e.pcb_component_id === l1.pcb_component_id)
+assert(l1Courtyard?.type === "pcb_courtyard_rect", "L1: missing mechanical courtyard")
+assert(l1Courtyard.width === 3.5 && l1Courtyard.height === 2.1, "L1: courtyard must cover the land/body envelope plus clearance")
+assert(Math.hypot(l1Courtyard.center.x - l1.center.x, l1Courtyard.center.y - l1.center.y) < 1e-9, "L1: courtyard not centered on its footprint")
+const l1Model = elements.find((e) => e.type === "cad_component" && e.pcb_component_id === l1.pcb_component_id)
+assert(l1Model?.type === "cad_component" && l1Model.model_obj_url?.includes("/C42411119.obj") && l1Model.model_step_url?.includes("/C42411119.step"), "L1: missing exact-part mechanical model")
 assert(Math.abs(crystal.center.x - mcu.center.x) < 1e-6, "Crystal must stay aligned with the MCU")
 assert(Math.abs(crystal.center.y - mcu.center.y - 7.4) < 1e-6, "Crystal-to-MCU placement changed")
 assert(!components.some((c) => c.name === "SW_X" || c.name === "SW_Y"), "Original GBA housing has no X/Y face buttons")

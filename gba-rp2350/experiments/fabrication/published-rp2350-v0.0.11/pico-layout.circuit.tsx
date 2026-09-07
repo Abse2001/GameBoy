@@ -12,6 +12,7 @@ import { APS6404L_3SQR_SN } from "../imports/APS6404L_3SQR_SN/APS6404L_3SQR_SN"
 import { CL05B104KO5NNNC } from "../imports/CL05B104KO5NNNC/CL05B104KO5NNNC"
 import { CL10A105KB8NNNC } from "../imports/CL10A105KB8NNNC/CL10A105KB8NNNC"
 import { A_0402WGF1002TCE } from "../imports/A_0402WGF1002TCE/A_0402WGF1002TCE"
+import { BareTestPointPad } from "../BareTestPointPad"
 
 const gndLabel = { displayName: "GND", schDisplayLabel: "GND" } as const
 const groundPlaneTraceProps = { ...gndLabel, thickness: "0.1mm" } as const
@@ -193,8 +194,11 @@ export interface RP2350CompactLayoutProps {
     Record<
       | "U_RUN"
       | "U2"
+      | "L1"
+      | "C_FLASH"
       | "R2"
       | "C6"
+      | "C_IOVDD1"
       | "C12"
       | "C14"
       | "C17"
@@ -227,6 +231,7 @@ export interface RP2350CompactLayoutProps {
   usbResistorEscape?: boolean
   segmentedSupplyPours?: boolean
   headers?: boolean
+  spiChipSelectGPIO?: "GPIO17" | "GPIO22"
   pcbX?: number
   pcbY?: number
   pcbRotation?: number
@@ -251,6 +256,7 @@ export const RP2350CompactLayout = ({
   usbResistorEscape = false,
   segmentedSupplyPours = false,
   headers = true,
+  spiChipSelectGPIO = "GPIO17",
   ...props
 }: RP2350CompactLayoutProps = {}) => (
   <group
@@ -398,7 +404,9 @@ export const RP2350CompactLayout = ({
       clockResistorEscape={clockResistorEscape}
       localVregGroundSameLayer={localSameLayerEscapes}
       r2Placement={peripheralPlacements?.R2}
+      l1Placement={peripheralPlacements?.L1}
       c6Placement={peripheralPlacements?.C6}
+      cIovdd1Placement={peripheralPlacements?.C_IOVDD1}
       c12Placement={peripheralPlacements?.C12}
       c14Placement={peripheralPlacements?.C14}
       c17Placement={peripheralPlacements?.C17}
@@ -454,6 +462,7 @@ export const RP2350CompactLayout = ({
         pcbX={flashCapEscape ? -0.7 : mcuPassiveEscape ? -4.8 : -5}
         pcbY={flashCapEscape ? 8.55 : mcuPassiveEscape ? 9.3 : 10.3}
         pcbRotation={90}
+        {...peripheralPlacements?.C_FLASH}
       />
       <testpoint
         name="TP_SWCLK" pcbStyle={{ silkscreenTextVisibility: "hidden" }}
@@ -461,6 +470,7 @@ export const RP2350CompactLayout = ({
         footprintVariant="pad"
         padShape="circle"
         padDiameter="1.1mm"
+        footprint={<BareTestPointPad />}
         schSheetName="core"
         schSectionName="debug"
         schX={12}
@@ -676,9 +686,9 @@ export const RP2350CompactLayout = ({
     <capacitor name="C_RGB_BUF" capacitance="100nF" maxDecouplingTraceLength={5.5} footprint="0402" supplierPartNumbers={{ jlcpcb: ["C1525"] }} schSheetName="interfaces" schSectionName="status" schX={-4} schY={-8} schOrientation="vertical" pcbX={5.4} pcbY={16.5} pcbRotation={270} {...peripheralPlacements?.C_RGB_BUF} />
     <capacitor name="C_RGB" capacitance="100nF" maxDecouplingTraceLength={6.5} footprint="0402" supplierPartNumbers={{ jlcpcb: ["C1525"] }} schSheetName="interfaces" schSectionName="status" schX={4} schY={-8} schOrientation="vertical" pcbX={-3.5} pcbY={21} pcbRotation={270} {...peripheralPlacements?.C_RGB} />
 
-    <testpoint doNotPlace name="TP_SWDIO" pcbStyle={{ silkscreenTextVisibility: "hidden" }} footprintVariant="pad" padShape="circle" padDiameter="1.1mm" schSheetName="core" schSectionName="debug" schX={12} schY={-3.5} pcbX={debugTestpointPlacements?.TP_SWDIO?.pcbX ?? (debugTestpointEscape ? -1.8 : -6)} pcbY={debugTestpointPlacements?.TP_SWDIO?.pcbY ?? (debugTestpointEscape ? 5.95 : 10)} />
-    <testpoint doNotPlace name="TP_GND" pcbStyle={{ silkscreenTextVisibility: "hidden" }} footprintVariant="pad" padShape="circle" padDiameter="1.1mm" schSheetName="core" schSectionName="debug" schX={12} schY={-6.9} pcbX={-7} pcbY={16} {...peripheralPlacements?.TP_GND} />
-    <testpoint doNotPlace name="TP_3V3" pcbStyle={{ silkscreenTextVisibility: "hidden" }} footprintVariant="pad" padShape="circle" padDiameter="1.1mm" schSheetName="core" schSectionName="debug" schX={12} schY={-8.6} pcbX={-4.5} pcbY={16} {...peripheralPlacements?.TP_3V3} />
+    <testpoint doNotPlace name="TP_SWDIO" pcbStyle={{ silkscreenTextVisibility: "hidden" }} footprintVariant="pad" padShape="circle" padDiameter="1.1mm" footprint={<BareTestPointPad />} schSheetName="core" schSectionName="debug" schX={12} schY={-3.5} pcbX={debugTestpointPlacements?.TP_SWDIO?.pcbX ?? (debugTestpointEscape ? -1.8 : -6)} pcbY={debugTestpointPlacements?.TP_SWDIO?.pcbY ?? (debugTestpointEscape ? 5.95 : 10)} />
+    <testpoint doNotPlace name="TP_GND" pcbStyle={{ silkscreenTextVisibility: "hidden" }} footprintVariant="pad" padShape="circle" padDiameter="1.1mm" footprint={<BareTestPointPad />} schSheetName="core" schSectionName="debug" schX={12} schY={-6.9} pcbX={-7} pcbY={16} {...peripheralPlacements?.TP_GND} />
+    <testpoint doNotPlace name="TP_3V3" pcbStyle={{ silkscreenTextVisibility: "hidden" }} footprintVariant="pad" padShape="circle" padDiameter="1.1mm" footprint={<BareTestPointPad />} schSheetName="core" schSectionName="debug" schX={12} schY={-8.6} pcbX={-4.5} pcbY={16} {...peripheralPlacements?.TP_3V3} />
 
     {/* Board supplies feed the MCU's ordinary placement group. */}
     <trace name="PWR_LED_3V3" from="net.V3V3" to=".R_PWR_LED > .pin1" {...v3v3Label} />
@@ -779,7 +789,7 @@ export const RP2350CompactLayout = ({
     <trace name="SPI_JST_SCK" from=".J_SPI > .SCK" to=".MCU_CORE .U1 > .GPIO18" {...signalTraceProps} />
     <trace name="SPI_JST_MOSI" from=".J_SPI > .MOSI" to=".MCU_CORE .U1 > .GPIO19" {...signalTraceProps} />
     <trace name="SPI_JST_MISO" from=".J_SPI > .MISO" to=".MCU_CORE .U1 > .GPIO16" {...signalTraceProps} />
-    <trace name="SPI_JST_CS" from=".J_SPI > .CS" to=".MCU_CORE .U1 > .GPIO17" maxViaCount={localSameLayerEscapes ? 0 : undefined} {...signalTraceProps} />
+    <trace name="SPI_JST_CS" from=".J_SPI > .CS" to={`.MCU_CORE .U1 > .${spiChipSelectGPIO}`} maxViaCount={localSameLayerEscapes ? 0 : undefined} {...signalTraceProps} />
 
     <silkscreentext text="RP2350A" fontSize="1mm" pcbX={-3} pcbY={-11} />
     <silkscreentext text="USB-C" fontSize="0.7mm" pcbX={-8} pcbY={-28} />

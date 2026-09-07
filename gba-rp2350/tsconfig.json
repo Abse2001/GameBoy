@@ -22,6 +22,7 @@
   },
   "include": [
     "index.circuit.tsx",
+    "experiments/fabrication/placement-storage-gba-internal-connectors*.circuit.tsx",
     "experiments/fabrication/placement-storage-gba-c14*.circuit.tsx",
     "experiments/fabrication/placement-published-mcu-storage-global.circuit.tsx",
     "experiments/fabrication/placement-storage-cap-escape.circuit.tsx",

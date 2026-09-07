@@ -1,19 +1,35 @@
+import type { ReactNode } from "react"
 import StorageBoard from "./placement-published-mcu-header-module.circuit"
 import type { RP2350CompactLayoutProps } from "./published-rp2350-v0.0.11/pico-layout.circuit"
 
 export default ({
+  children,
+  pipeline,
+  internalConnectors = false,
+  restoredControls = false,
+  mcuSignalFanout = false,
+  groundPlaneFanout = false,
   segmentedSupplyPours = false,
   routeClockFirst = false,
+  mcuPriorityTraceNames,
   mcuGroundEscape,
   routingSafetyMargin = false,
   mcuPeripheralPlacements,
+  mcuDebugTestpointPlacements,
   sdHfCapRotation,
-}: { mcuGroundEscape?: "fanout" | "fanout-inward" | "beta-pipeline9"; segmentedSupplyPours?: boolean; routeClockFirst?: boolean; routingSafetyMargin?: boolean; mcuPeripheralPlacements?: RP2350CompactLayoutProps["peripheralPlacements"]; sdHfCapRotation?: number } = {}) => (
+}: { children?: ReactNode; pipeline?: 7 | 9; mcuPriorityTraceNames?: string[]; internalConnectors?: boolean; groundPlaneFanout?: boolean; mcuSignalFanout?: boolean; restoredControls?: boolean; mcuGroundEscape?: "fanout" | "fanout-inward" | "beta-pipeline9"; segmentedSupplyPours?: boolean; routeClockFirst?: boolean; routingSafetyMargin?: boolean; mcuPeripheralPlacements?: RP2350CompactLayoutProps["peripheralPlacements"]; mcuDebugTestpointPlacements?: RP2350CompactLayoutProps["debugTestpointPlacements"]; sdHfCapRotation?: number } = {}) => (
   <StorageBoard
+    children={children}
+    pipeline={pipeline}
+    internalConnectors={internalConnectors}
+    restoredControls={restoredControls}
+    mcuSignalFanout={mcuSignalFanout}
+    groundPlaneFanout={groundPlaneFanout}
     gbaHousingFit
     mcuPcbY={7}
     mcuSubcircuit={false}
     routeClockFirst={routeClockFirst}
+    mcuPriorityTraceNames={mcuPriorityTraceNames}
     mcuGroundEscape={mcuGroundEscape}
     segmentedSupplyPours={segmentedSupplyPours}
     routingSafetyMargin={routingSafetyMargin}
@@ -26,6 +42,7 @@ export default ({
     westDecouplerEscape
     mcuDebugTestpointPlacements={{
       TP_SWDIO: { pcbX: -18, pcbY: 18 },
+      ...mcuDebugTestpointPlacements,
     }}
     mcuPeripheralPlacements={{
       U_RUN: { pcbX: -9, pcbY: 9 },

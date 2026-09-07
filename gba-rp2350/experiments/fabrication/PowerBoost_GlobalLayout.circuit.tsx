@@ -26,6 +26,7 @@ const schSections = {
 } as const
 
 export type PowerBoostMT3608Props = Omit<GroupProps, "children" | "subcircuit"> & {
+  batteryConnectorPlacement?: { pcbX: number; pcbY: number; pcbRotation: number }
   placements?: Partial<
     Record<
       | "R_BOOST_EN_PULLUP"
@@ -55,6 +56,7 @@ export type PowerBoostMT3608Props = Omit<GroupProps, "children" | "subcircuit"> 
 export const PowerBoost_GlobalLayout = ({
   name = "PowerBoost_GlobalLayout",
   placements,
+  batteryConnectorPlacement,
   ...props
 }: PowerBoostMT3608Props) => (
   <group
@@ -90,6 +92,7 @@ export const PowerBoost_GlobalLayout = ({
       pcbRotation={90}
       schX={-10}
       schY={4}
+      {...batteryConnectorPlacement}
     />
     <AO3401A
       name="Q_BAT_CUTOFF"

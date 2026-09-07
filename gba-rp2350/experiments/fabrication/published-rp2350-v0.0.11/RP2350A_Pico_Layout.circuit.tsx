@@ -1,6 +1,7 @@
 // Variant-owned copy: edits here must not alter the main-board essentials.
 import { RP2350A } from "./imports/RP2350A";
 import { ABM8_272_T3 } from "./imports/ABM8_272_T3";
+import { AOTA_B201610S3R3_101_T } from "../../../imports/AOTA_B201610S3R3_101_T";
 import { Fragment, type ReactNode } from "react";
 
 const unusedRp2350Pins = [
@@ -78,8 +79,10 @@ export interface RP2350AEssentialKiCadReferenceProps {
 	eastSupplyCapEscape?: boolean;
 	clockResistorEscape?: boolean;
 	localVregGroundSameLayer?: boolean;
+	l1Placement?: { pcbX: number; pcbY: number; pcbRotation?: number };
 	r2Placement?: { pcbX: number; pcbY: number; pcbRotation?: number };
 	c6Placement?: { pcbX: number; pcbY: number; pcbRotation?: number };
+	cIovdd1Placement?: { pcbX: number; pcbY: number; pcbRotation?: number };
 	c12Placement?: { pcbX: number; pcbY: number; pcbRotation?: number };
 	c14Placement?: { pcbX: number; pcbY: number; pcbRotation?: number };
 	c17Placement?: { pcbX: number; pcbY: number; pcbRotation?: number };
@@ -107,8 +110,10 @@ export const RP2350AEssentialKiCadReference = ({
 	eastSupplyCapEscape = false,
 	clockResistorEscape = false,
 	localVregGroundSameLayer = false,
+	l1Placement,
 	r2Placement,
 	c6Placement,
+	cIovdd1Placement,
 	c12Placement,
 	c14Placement,
 	c17Placement,
@@ -162,12 +167,11 @@ export const RP2350AEssentialKiCadReference = ({
 						/>
 					</Fragment>
 				))}
-		<inductor
+		<AOTA_B201610S3R3_101_T
 			name="L1"
 			schSectionName="regulator"
 			schX={-10}
 			schY={3.8}
-			inductance="3.3uH"
 			maxCurrentRating="2.1A"
 			footprint="res_p1.999996mm_pw0.999998mm_ph1.5999968mm"
 			supplierPartNumbers={{ jlcpcb: ["C42411119"] }}
@@ -175,7 +179,13 @@ export const RP2350AEssentialKiCadReference = ({
 			pcbX={3.3}
 			pcbY={4}
 			pcbRotation={180}
-		/>
+			{...l1Placement}
+		>
+			{/* Preserve the existing copper lands; add their mechanical envelope.
+			    Abracon's 3.0 x 1.6 mm land span plus 0.25 mm courtyard clearance
+			    on each side (KiCad KLC F5.3), without enlarging router obstacles. */}
+			<courtyardrect width="3.5mm" height="2.1mm" />
+		</AOTA_B201610S3R3_101_T>
 		<ABM8_272_T3
 			name="X1"
 			schSectionName="clock"
@@ -478,6 +488,7 @@ export const RP2350AEssentialKiCadReference = ({
 			maxDecouplingTraceLength={5.5}
 			pcbX={mcuPassiveEscape ? 6.4 : 5.3}
 			pcbY={2.1}
+			{...cIovdd1Placement}
 		/>
 			{/* Route the dense MCU rails with the pad escapes so pipeline9 can
 			    solve their shared channels instead of freezing the escapes first. */}

@@ -1,10 +1,18 @@
+import type { ReactNode } from "react"
 import Board from "./index.circuit"
 import type { RP2350CompactLayoutProps } from "./published-rp2350-v0.0.11/pico-layout.circuit"
 
 export default ({
+  children,
+  pipeline = 9,
+  internalConnectors = false,
+  restoredControls = false,
+  mcuSignalFanout = false,
+  groundPlaneFanout = false,
   mcuSubcircuit = false,
   mcuHeaders = false,
   routeClockFirst = false,
+  mcuPriorityTraceNames,
   mcuGroundEscape,
   psramCapEscape = false,
   mcuPassiveEscape = false,
@@ -25,8 +33,13 @@ export default ({
   gbaHousingFit = false,
   mcuPcbX = 0,
   mcuPcbY = 0,
-}: { mcuGroundEscape?: "fanout" | "fanout-inward" | "beta-pipeline9"; mcuSubcircuit?: boolean; mcuHeaders?: boolean; routeClockFirst?: boolean; psramCapEscape?: boolean; mcuPassiveEscape?: boolean; clockPassiveEscape?: boolean; westDecouplerEscape?: boolean; eastSupplyCapEscape?: boolean; clockResistorEscape?: boolean; mcuLocalSameLayerEscapes?: boolean; mcuPeripheralPlacements?: RP2350CompactLayoutProps["peripheralPlacements"]; sdDetectEscape?: boolean; sdHfCapRotation?: number; debugTestpointEscape?: boolean; mcuDebugTestpointPlacements?: Partial<Record<"TP_SWDIO" | "TP_SWCLK", { pcbX: number; pcbY: number }>>; flashCapEscape?: boolean; usbResistorEscape?: boolean; segmentedSupplyPours?: boolean; routingSafetyMargin?: boolean; gbaHousingFit?: boolean; mcuPcbX?: number; mcuPcbY?: number } = {}) => (
+}: { children?: ReactNode; pipeline?: 7 | 9; mcuPriorityTraceNames?: string[]; internalConnectors?: boolean; groundPlaneFanout?: boolean; mcuSignalFanout?: boolean; restoredControls?: boolean; mcuGroundEscape?: "fanout" | "fanout-inward" | "beta-pipeline9"; mcuSubcircuit?: boolean; mcuHeaders?: boolean; routeClockFirst?: boolean; psramCapEscape?: boolean; mcuPassiveEscape?: boolean; clockPassiveEscape?: boolean; westDecouplerEscape?: boolean; eastSupplyCapEscape?: boolean; clockResistorEscape?: boolean; mcuLocalSameLayerEscapes?: boolean; mcuPeripheralPlacements?: RP2350CompactLayoutProps["peripheralPlacements"]; sdDetectEscape?: boolean; sdHfCapRotation?: number; debugTestpointEscape?: boolean; mcuDebugTestpointPlacements?: Partial<Record<"TP_SWDIO" | "TP_SWCLK", { pcbX: number; pcbY: number }>>; flashCapEscape?: boolean; usbResistorEscape?: boolean; segmentedSupplyPours?: boolean; routingSafetyMargin?: boolean; gbaHousingFit?: boolean; mcuPcbX?: number; mcuPcbY?: number } = {}) => (
   <Board
+    children={children}
+    internalConnectors={internalConnectors}
+    restoredControls={restoredControls}
+    mcuSignalFanout={mcuSignalFanout}
+    groundPlaneFanout={groundPlaneFanout}
     publishedMcuModule
     storage
     psramCapEscape={psramCapEscape}
@@ -51,11 +64,13 @@ export default ({
     mcuHeaders={mcuHeaders}
     mcuSubcircuit={mcuSubcircuit}
     routeClockFirst={routeClockFirst}
+    mcuPriorityTraceNames={mcuPriorityTraceNames}
     mcuGroundEscape={mcuGroundEscape}
     allGlobal
     layers={4}
     copperIslands={false}
-    router="beta-pipeline9"
+    router={pipeline === 7 ? "auto" : "beta-pipeline9"}
+    autorouterVersion={pipeline === 7 ? "beta_pipeline7" : undefined}
     effort="5x"
     edgeConnectors
     innerButtonContacts

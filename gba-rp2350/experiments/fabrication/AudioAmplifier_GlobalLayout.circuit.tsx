@@ -1,10 +1,12 @@
 // GBA placement variant of @tscircuit/common's PAM8403 circuit.
-// Same electrical topology and values; connector and output-filter placement
-// are adapted for an outward-facing top-edge socket. No manual PCB routes.
+// The default electrical topology and values are unchanged. The optional
+// volume wheel is AC-coupled on both sides. No manual PCB routes.
 import type { GroupProps } from "@tscircuit/props"
 import { BLM18PG121SN1D } from "../../imports/BLM18PG121SN1D"
 import { PAM8403DR_H } from "../../imports/PAM8403DR_H"
 import { SM02B_PASS_TBT_LF__SN_ } from "./SM02B_PASS_TBT_LF__SN_"
+import { RK10J12E002L } from "./imports/RK10J12E002L"
+import { CL10A105KB8NNNC } from "./imports/CL10A105KB8NNNC/CL10A105KB8NNNC"
 
 const signalTraceProps = { thickness: "0.1mm" } as const
 const powerTraceProps = { thickness: "0.4mm" } as const
@@ -20,7 +22,12 @@ const schSections = {
 } as const
 
 export type AudioAmplifier3WPAM8403Props = Omit<GroupProps, "children" | "subcircuit"> & {
+  speakerConnectorPlacement?: { pcbX: number; pcbY: number; pcbRotation: number }
   vrefPlacement?: { pcbX: number; pcbY: number; pcbRotation: number }
+  volumeControl?: {
+    wheelPlacement: { pcbX: number; pcbY: number; pcbRotation: number }
+    inputCapPlacement: { pcbX: number; pcbY: number; pcbRotation: number }
+  }
   placements?: Partial<Record<"R_AMP_IN" | "C_AMP_PWM_FILTER" | "C_AMP_IN_COUPLE" | "C_AMP_VDD" | "C_AMP_VDD_BULK" | "FB_SPK_POS", { pcbX: number; pcbY: number; pcbRotation: number }>>
 }
 
@@ -35,6 +42,8 @@ export const AudioAmplifier_GlobalLayout = ({
   name = "AudioAmplifier_GlobalLayout",
   vrefPlacement,
   placements,
+  volumeControl,
+  speakerConnectorPlacement,
   ...props
 }: AudioAmplifier3WPAM8403Props) => (
   <group
@@ -104,6 +113,30 @@ export const AudioAmplifier_GlobalLayout = ({
       schY={3}
       {...placements?.C_AMP_IN_COUPLE}
     />
+
+    {volumeControl && (
+      <CL10A105KB8NNNC
+        name="C_VOLUME_IN"
+        maxVoltageRating="50V"
+        schSectionName={schSections.input}
+        schX={-5}
+        schY={6}
+        {...volumeControl.inputCapPlacement}
+      />
+    )}
+    {volumeControl && (
+      <RK10J12E002L
+        name="RV_VOLUME"
+        schSectionName={schSections.input}
+        schX={-2}
+        schY={6}
+        schHeight={0.8}
+        // First gang: common low=pin1, wiper=pin2, high=pin3.
+        // The second gang and retaining tabs are not electrical connections.
+        noConnect={["pin4", "pin5", "EH1", "EH2"]}
+        {...volumeControl.wheelPlacement}
+      />
+    )}
 
     <PAM8403DR_H
       name="U_SPK_AMP"
@@ -240,6 +273,7 @@ export const AudioAmplifier_GlobalLayout = ({
       pcbX={16}
       pcbY={20.78745315}
       pcbRotation={180}
+      {...speakerConnectorPlacement}
       schX={14}
       schY={3}
       schWidth={1.4}
@@ -276,10 +310,23 @@ export const AudioAmplifier_GlobalLayout = ({
     />
     <trace
       from=".R_AMP_IN > .pin2"
-      to=".C_AMP_IN_COUPLE > .pin1"
+      to={volumeControl ? ".C_VOLUME_IN > .pin1" : ".C_AMP_IN_COUPLE > .pin1"}
       {...signalTraceProps}
       schDisplayLabel="FILTERED_PWM"
     />
+    {/* ALPS RK10J12E002L datasheet (C231765), pp.1-3: AC-only, 10k dual.
+        https://datasheet.lcsc.com/datasheet/pdf/ed9069aadf334d75988cb60bb3b95a24.pdf
+        Block PWM DC before the divider and retain C_AMP_IN_COUPLE after it
+        to isolate PAM8403 input bias. */}
+    {volumeControl && (
+      <trace name="VOLUME_IN" from=".C_VOLUME_IN > .pin2" to=".RV_VOLUME > .pin3" {...signalTraceProps} />
+    )}
+    {volumeControl && (
+      <trace name="VOLUME_WIPER" from=".RV_VOLUME > .pin2" to=".C_AMP_IN_COUPLE > .pin1" {...signalTraceProps} />
+    )}
+    {volumeControl && (
+      <trace name="VOLUME_GND" from=".RV_VOLUME > .pin1" to="net.GND" {...signalTraceProps} {...gndLabel} />
+    )}
     <trace
       from=".C_AMP_IN_COUPLE > .pin2"
       to=".U_SPK_AMP > .INL"

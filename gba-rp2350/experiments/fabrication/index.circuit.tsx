@@ -6,7 +6,7 @@ import { LCDWiki_2_8_SPI_ILI9341_MSP2807 } from "./LCDWiki_2_8_SPI_ILI9341_MSP28
 import { GbaMembraneButtonContact } from "./GbaMembraneButtonContact.circuit"
 import { GbaReferenceButtonContact, gbaReferenceButtonPlacements } from "./GbaReferenceButtonContacts.circuit"
 import type { PushButtonProps } from "@tscircuit/props"
-import { createElement } from "react"
+import { createElement, type ReactNode } from "react"
 import { SK_12E12_G5 } from "../../imports/SK_12E12_G5"
 import { Microcontroller_RP2350, type McuPlacement } from "./Microcontroller_RP2350.circuit"
 import { AP2112K_3_3TRG1 } from "./imports/AP2112K_3_3TRG1/AP2112K_3_3TRG1"
@@ -16,6 +16,8 @@ import { AudioAmplifier_GlobalLayout } from "./AudioAmplifier_GlobalLayout.circu
 import { PowerBoost_GlobalLayout } from "./PowerBoost_GlobalLayout.circuit"
 import { RP2350CompactLayout, type RP2350CompactLayoutProps } from "./published-rp2350-v0.0.11/pico-layout.circuit"
 import { MicroSDStorage } from "./MicroSD_Storage.circuit"
+import { GbaShoulderControls } from "./GbaShoulderControls.circuit"
+import { BatteryCableCutout } from "./BatteryCableCutout"
 import {
   gbaHousingOutline,
   gbaHousingTopGroundOutline,
@@ -49,6 +51,10 @@ const BoardMembraneContact = ({
 )
 
 export default ({
+  children,
+  restoredControls = false,
+  mcuSignalFanout = false,
+  groundPlaneFanout = false,
   mcuSubcircuit = false,
   publishedMcuModule = false,
   storage = false,
@@ -73,6 +79,7 @@ export default ({
   layers = 2,
   copperIslands = true,
   routeClockFirst = false,
+  mcuPriorityTraceNames,
   mcuGroundEscape,
   routeHighSpeedFirst = false,
   routeDecouplingFirst = false,
@@ -82,7 +89,9 @@ export default ({
   feedMcuAtInputCap = false,
   routingSafetyMargin = false,
   router = "beta-pipeline9",
+  autorouterVersion,
   edgeConnectors = false,
+  internalConnectors = false,
   spreadMcuPassives = false,
   compactCoreIsland = false,
   gbaHousingFit = false,
@@ -106,10 +115,11 @@ export default ({
   topLeftMountingHole = { x: -50, y: -32 },
   powerSwitchX = 60,
   effort,
-}: { mcuGroundEscape?: "fanout" | "fanout-inward" | "beta-pipeline9"; mcuSubcircuit?: boolean; publishedMcuModule?: boolean; storage?: boolean; psramCapEscape?: boolean; mcuPassiveEscape?: boolean; clockPassiveEscape?: boolean; westDecouplerEscape?: boolean; eastSupplyCapEscape?: boolean; clockResistorEscape?: boolean; mcuLocalSameLayerEscapes?: boolean; mcuPeripheralPlacements?: RP2350CompactLayoutProps["peripheralPlacements"]; sdDetectEscape?: boolean; sdHfCapRotation?: number; debugTestpointEscape?: boolean; mcuDebugTestpointPlacements?: Partial<Record<"TP_SWDIO" | "TP_SWCLK", { pcbX: number; pcbY: number }>>; flashCapEscape?: boolean; usbResistorEscape?: boolean; segmentedSupplyPours?: boolean; mcuHeaders?: boolean; allGlobal?: boolean; innerButtonContacts?: boolean; layers?: 2 | 4; copperIslands?: boolean; routeClockFirst?: boolean; routeHighSpeedFirst?: boolean; routeDecouplingFirst?: boolean; routeRegulatorFirst?: boolean; routeSupplyNetsFirst?: boolean; routeDisplayFirst?: boolean; feedMcuAtInputCap?: boolean; routingSafetyMargin?: boolean; router?: "auto" | "beta-pipeline9"; edgeConnectors?: boolean; spreadMcuPassives?: boolean; compactCoreIsland?: boolean; gbaHousingFit?: boolean; mcuPcbX?: number; mcuPcbY?: number; coreIslandOffsetX?: number; coreIslandOffsetY?: number; coreIslandRotation?: 0 | 90 | 180 | 270; clearUsbEscape?: boolean; mcuPlacements?: Partial<Record<string, McuPlacement>>; audioVrefPlacement?: { pcbX: number; pcbY: number; pcbRotation: number }; audioPlacements?: Partial<Record<"R_AMP_IN" | "C_AMP_PWM_FILTER" | "C_AMP_IN_COUPLE" | "C_AMP_VDD" | "C_AMP_VDD_BULK" | "FB_SPK_POS", { pcbX: number; pcbY: number; pcbRotation: number }>>; ldoOffset?: { x: number; y: number }; ldoFlipped?: boolean; ldoPlacements?: Partial<Record<"U_3V3" | "C_3V3_IN" | "C_3V3_OUT", { pcbX: number; pcbY: number; pcbRotation: number }>>; usbDiodeOffset?: { x: number; y: number }; powerOffsetX?: number; powerOffsetY?: number; powerPlacements?: Partial<Record<"R_BOOST_EN_PULLUP" | "R_BAT_GATE_PULLUP" | "R_BAT_GATE_BASE" | "D_BAT_BOOST" | "C_BAT_OUT" | "C_BAT_OUT_BULK" | "R_BOOST_TOP" | "R_BOOST_BOT" | "R_USB_BOOST_OFF" | "Q_USB_BOOST_OFF" | "R_USB_BOOST_OFF_PULLDOWN", { pcbX: number; pcbY: number; pcbRotation: number }>>; audioOffsetX?: number; topLeftMountingHole?: { x: number; y: number }; powerSwitchX?: number; effort?: "1x" | "2x" | "5x" | "10x" | "100x" } = {}) => (
+}: { children?: ReactNode; mcuPriorityTraceNames?: string[]; internalConnectors?: boolean; groundPlaneFanout?: boolean; mcuSignalFanout?: boolean; restoredControls?: boolean; mcuGroundEscape?: "fanout" | "fanout-inward" | "beta-pipeline9"; mcuSubcircuit?: boolean; publishedMcuModule?: boolean; storage?: boolean; psramCapEscape?: boolean; mcuPassiveEscape?: boolean; clockPassiveEscape?: boolean; westDecouplerEscape?: boolean; eastSupplyCapEscape?: boolean; clockResistorEscape?: boolean; mcuLocalSameLayerEscapes?: boolean; mcuPeripheralPlacements?: RP2350CompactLayoutProps["peripheralPlacements"]; sdDetectEscape?: boolean; sdHfCapRotation?: number; debugTestpointEscape?: boolean; mcuDebugTestpointPlacements?: Partial<Record<"TP_SWDIO" | "TP_SWCLK", { pcbX: number; pcbY: number }>>; flashCapEscape?: boolean; usbResistorEscape?: boolean; segmentedSupplyPours?: boolean; mcuHeaders?: boolean; allGlobal?: boolean; innerButtonContacts?: boolean; layers?: 2 | 4; copperIslands?: boolean; routeClockFirst?: boolean; routeHighSpeedFirst?: boolean; routeDecouplingFirst?: boolean; routeRegulatorFirst?: boolean; routeSupplyNetsFirst?: boolean; routeDisplayFirst?: boolean; feedMcuAtInputCap?: boolean; routingSafetyMargin?: boolean; router?: "auto" | "beta-pipeline9"; autorouterVersion?: "beta_pipeline7"; edgeConnectors?: boolean; spreadMcuPassives?: boolean; compactCoreIsland?: boolean; gbaHousingFit?: boolean; mcuPcbX?: number; mcuPcbY?: number; coreIslandOffsetX?: number; coreIslandOffsetY?: number; coreIslandRotation?: 0 | 90 | 180 | 270; clearUsbEscape?: boolean; mcuPlacements?: Partial<Record<string, McuPlacement>>; audioVrefPlacement?: { pcbX: number; pcbY: number; pcbRotation: number }; audioPlacements?: Partial<Record<"R_AMP_IN" | "C_AMP_PWM_FILTER" | "C_AMP_IN_COUPLE" | "C_AMP_VDD" | "C_AMP_VDD_BULK" | "FB_SPK_POS", { pcbX: number; pcbY: number; pcbRotation: number }>>; ldoOffset?: { x: number; y: number }; ldoFlipped?: boolean; ldoPlacements?: Partial<Record<"U_3V3" | "C_3V3_IN" | "C_3V3_OUT", { pcbX: number; pcbY: number; pcbRotation: number }>>; usbDiodeOffset?: { x: number; y: number }; powerOffsetX?: number; powerOffsetY?: number; powerPlacements?: Partial<Record<"R_BOOST_EN_PULLUP" | "R_BAT_GATE_PULLUP" | "R_BAT_GATE_BASE" | "D_BAT_BOOST" | "C_BAT_OUT" | "C_BAT_OUT_BULK" | "R_BOOST_TOP" | "R_BOOST_BOT" | "R_USB_BOOST_OFF" | "Q_USB_BOOST_OFF" | "R_USB_BOOST_OFF_PULLDOWN", { pcbX: number; pcbY: number; pcbRotation: number }>>; audioOffsetX?: number; topLeftMountingHole?: { x: number; y: number }; powerSwitchX?: number; effort?: "1x" | "2x" | "5x" | "10x" | "100x" } = {}) => (
   <board
     title="Game Boy Advance RP2350 handheld circuit"
     autorouter={router}
+    autorouterVersion={autorouterVersion ?? (groundPlaneFanout ? "beta_pipeline9" : undefined)}
     autorouterEffortLevel={effort}
     width={gbaHousingFit ? "131.32mm" : "144.5mm"}
     height={gbaHousingFit ? "72.42mm" : "87.5mm"}
@@ -154,13 +164,58 @@ export default ({
     <schematicrect schX={-27} schY={40} width={30} height={24} strokeWidth={0.08} color="#777777" />
     <schematictext text="Controls" schX={-40.6} schY={29.6} fontSize={1.4} anchor="top_left" color="#333333" />
 
-    <net name="GND" isGroundNet />
+    {children}
+    <net name="GND" isGroundNet routingPhaseIndex={groundPlaneFanout ? -10 : undefined} />
     <net name="V3V3" isPowerNet routingPhaseIndex={routeSupplyNetsFirst ? (routeHighSpeedFirst ? 2 : 1) : undefined} />
     <net name="VSYS" isPowerNet />
     <net name="VBUS" isPowerNet />
     <net name="BAT_POS" isPowerNet />
     <net name="BAT_SWITCHED" isPowerNet />
     <net name="AUDIO_PWM" />
+
+    {groundPlaneFanout && (
+      <autoroutingphase
+        name="GND_TO_INNER1"
+        // Installed props allow negative indices; Core sorts numerically.
+        // Reserve -10 before the existing signal/clock phases at 0.
+        phaseIndex={-10}
+        autorouter="fanout"
+        // Mapping is global: the existing GND net's phase assignment above
+        // includes every one-port GND trace converted to plane termination.
+        // Select exactly one existing plane despite top/bottom GND pours.
+        fanoutPourNetMap={{ inner1: "GND" }}
+      />
+    )}
+
+    {mcuSignalFanout && (
+      <autoroutingphase
+        name="MCU_GPIO_QSPI_FANOUT"
+        phaseIndex={0}
+        autorouter="fanout"
+        // Native solver-generated escapes only. The installed Core follows
+        // this with Pipeline 9 and then routes the remaining board globally.
+        // Do not include oscillator or regulator pins in this experiment.
+        connections={[".U1", ".MCU_CORE .U1", ".MCU .MCU_CORE .U1"].flatMap(prefix =>
+          [
+            ...Array.from({ length: 26 }, (_, i) => `GPIO${i}`),
+            "GPIO26_ADC0", "GPIO27_ADC1", "GPIO28_ADC2", "GPIO29_ADC3",
+            "QSPI_SS", "QSPI_SCLK", "QSPI_SD0", "QSPI_SD1", "QSPI_SD2", "QSPI_SD3",
+          ].map(pin => `${prefix} > .${pin}`),
+        )}
+        fanoutPourNetMap={{}}
+      />
+    )}
+
+    {mcuPriorityTraceNames && (
+      <bus
+        name="MCU_LOCAL_PRIORITY_BUS"
+        routingPhaseIndex={0}
+        connections={mcuPriorityTraceNames}
+      />
+    )}
+    {mcuPriorityTraceNames && (
+      <autoroutingphase name="MCU_LOCAL_PRIORITY" phaseIndex={0} autorouter={router} />
+    )}
 
     {routeClockFirst && (
       <autoroutingphase name="MCU_CLOCK_FIRST" phaseIndex={0} autorouter={router} />
@@ -251,6 +306,7 @@ export default ({
       usbResistorEscape={usbResistorEscape}
       segmentedSupplyPours={segmentedSupplyPours}
       headers={mcuHeaders}
+      spiChipSelectGPIO={restoredControls ? "GPIO22" : "GPIO17"}
       pcbX={mcuPcbX}
       pcbY={mcuPcbY}
       pcbRotation={0}
@@ -277,6 +333,11 @@ export default ({
     {allGlobal ? (
     <PowerBoost_GlobalLayout
       name="POWER"
+      batteryConnectorPlacement={internalConnectors ? {
+        pcbX: -18 - ((edgeConnectors ? -34 : -32) + powerOffsetX),
+        pcbY: 46 - powerOffsetY,
+        pcbRotation: 180,
+      } : undefined}
       placements={powerPlacements}
       pcbX={(edgeConnectors ? -34 : -32) + powerOffsetX}
       pcbY={-53 + powerOffsetY}
@@ -354,6 +415,15 @@ export default ({
     allGlobal ? (
     <AudioAmplifier_GlobalLayout
       name="AUDIO"
+      speakerConnectorPlacement={internalConnectors ? {
+        pcbX: 4 - audioOffsetX,
+        pcbY: -10 - (gbaHousingFit ? 10 : 13),
+        pcbRotation: 0,
+      } : undefined}
+      volumeControl={restoredControls ? {
+        wheelPlacement: { pcbX: -72.8, pcbY: -23, pcbRotation: 90 },
+        inputCapPlacement: { pcbX: -65, pcbY: -21, pcbRotation: 180 },
+      } : undefined}
       vrefPlacement={audioVrefPlacement}
       placements={audioPlacements}
       pcbX={14 + audioOffsetX}
@@ -411,6 +481,11 @@ export default ({
       </group>
     )}
 
+    {internalConnectors && (
+      // Native unplated milled slot for the battery cable from underneath.
+      // The JST-PH front is ~1.25 mm above the slot after its 180-degree turn.
+      <BatteryCableCutout />
+    )}
     {!gbaHousingFit && <hole
       name="BAT_CABLE_SLOT_STRAIGHT"
       shape="pill"
@@ -462,6 +537,10 @@ export default ({
     <trace name="SEL_G" from=".SW_SELECT > .ground" to="net.GND" {...gndLabel} />
     <trace name="STA" from=".SW_START > .signal" to={publishedMcuModule ? (mcuHeaders ? ".MCU .J_RIGHT > .pin15" : ".MCU .MCU_CORE .U1 > .GPIO11") : ".MCU .U1 > .GPIO11"} />
     <trace name="STA_G" from=".SW_START > .ground" to="net.GND" {...gndLabel} />
+
+    {restoredControls && (
+      <GbaShoulderControls name="SHOULDERS" pcbX={0} pcbY={0} schX={-35} schY={47} />
+    )}
 
     <trace name="LCD_VCC" from=".J_LCD .J_HEADER > .VCC" to="net.VSYS" {...powerTraceProps} {...vsysLabel} />
     <trace name="LCD_GND" from=".J_LCD .J_HEADER > .GND" to="net.GND" {...gndLabel} />
