@@ -180,6 +180,13 @@ export interface RP2350CompactLayoutProps {
   westDecouplerEscape?: boolean
   eastSupplyCapEscape?: boolean
   clockResistorEscape?: boolean
+  localSameLayerEscapes?: boolean
+  peripheralPlacements?: Partial<
+    Record<
+      "U_RUN" | "R_RUN" | "U_RGB_BUF" | "C_RGB_BUF" | "R_RGB_DATA",
+      { pcbX: number; pcbY: number; pcbRotation?: number }
+    >
+  >
   debugTestpointEscape?: boolean
   debugTestpointPlacements?: Partial<
     Record<"TP_SWDIO" | "TP_SWCLK", { pcbX: number; pcbY: number }>
@@ -204,6 +211,8 @@ export const RP2350CompactLayout = ({
   westDecouplerEscape = false,
   eastSupplyCapEscape = false,
   clockResistorEscape = false,
+  localSameLayerEscapes = false,
+  peripheralPlacements,
   debugTestpointEscape = false,
   debugTestpointPlacements,
   flashCapEscape = false,
@@ -349,6 +358,7 @@ export const RP2350CompactLayout = ({
       westDecouplerEscape={westDecouplerEscape}
       eastSupplyCapEscape={eastSupplyCapEscape}
       clockResistorEscape={clockResistorEscape}
+      localVregGroundSameLayer={localSameLayerEscapes}
     >
       {/* Keep the QSPI boot circuit in the MCU routing scope. */}
       <W25Q16JVUXIQ
@@ -504,7 +514,7 @@ export const RP2350CompactLayout = ({
     />
     </>}
 
-    <SKRPACE010 name="U_RUN" pcbStyle={{ silkscreenTextVisibility: "hidden" }} schSheetName="core" schSectionName="controls" schX={-9.44} schY={-6.5} pcbX={-8} pcbY={-16.5} />
+    <SKRPACE010 name="U_RUN" pcbStyle={{ silkscreenTextVisibility: "hidden" }} schSheetName="core" schSectionName="controls" schX={-9.44} schY={-6.5} pcbX={-8} pcbY={-16.5} {...peripheralPlacements?.U_RUN} />
 
     {/* Feather-compatible STEMMA QT / Qwiic I2C port. */}
     <SM04B_SRSS_TB_LF__SN_
@@ -540,7 +550,7 @@ export const RP2350CompactLayout = ({
       schY={5.5}
     />
 
-    <resistor name="R_RUN" resistance="10k" footprint="0402" supplierPartNumbers={{ jlcpcb: ["C25744"] }} schSheetName="core" schSectionName="controls" schX={-6.5} schY={-6.5} pcbX={-12} pcbY={-16.5} pcbRotation={90} />
+    <resistor name="R_RUN" resistance="10k" footprint="0402" supplierPartNumbers={{ jlcpcb: ["C25744"] }} schSheetName="core" schSectionName="controls" schX={-6.5} schY={-6.5} pcbX={-12} pcbY={-16.5} pcbRotation={90} {...peripheralPlacements?.R_RUN} />
     <resistor name="R_CC1" resistance="5.1k" footprint="0402" supplierPartNumbers={{ jlcpcb: ["C25905"] }} schSheetName="interfaces" schSectionName="usb" schX={-13} schY={3.5} pcbX={-3.2} pcbY={-31.5} />
     <resistor name="R_CC2" resistance="5.1k" footprint="0402" supplierPartNumbers={{ jlcpcb: ["C25905"] }} schSheetName="interfaces" schSectionName="usb" schX={-9.5} schY={3.5} pcbX={3.9} pcbY={-31.3} pcbRotation={270} />
     <resistor name="R_PWR_LED" resistance="1k" footprint="0402" supplierPartNumbers={{ jlcpcb: ["C11702"] }} schSheetName="interfaces" schSectionName="status" schX={-3} schY={-4} pcbX={-14} pcbY={-19.4} pcbRotation={90} />
@@ -580,6 +590,7 @@ export const RP2350CompactLayout = ({
       pcbX={8}
       pcbY={16.5}
       pcbRotation={270}
+      {...peripheralPlacements?.U_RGB_BUF}
     />
     <resistor
       name="R_RGB_DATA"
@@ -593,6 +604,7 @@ export const RP2350CompactLayout = ({
       pcbX={5.5}
       pcbY={18.5}
       pcbRotation={90}
+      {...peripheralPlacements?.R_RGB_DATA}
     />
     <XL_5050RGBC_2812B_S
       name="D_RGB" pcbStyle={{ silkscreenTextVisibility: "hidden" }}
@@ -609,7 +621,7 @@ export const RP2350CompactLayout = ({
     <capacitor name="C_VBUS" capacitance="10uF" footprint="0603" supplierPartNumbers={{ jlcpcb: ["C19702"] }} schSheetName="interfaces" schSectionName="usb" schX={-7.5} schY={5.5} schOrientation="vertical" pcbX={-6.8} pcbY={-33.5} />
     {/* Explicit local limits include the short pad escape and ground-plane via.
         The original net-only regulator capacitors had no decoupling limit. */}
-    <capacitor name="C_RGB_BUF" capacitance="100nF" maxDecouplingTraceLength={5.5} footprint="0402" supplierPartNumbers={{ jlcpcb: ["C1525"] }} schSheetName="interfaces" schSectionName="status" schX={-4} schY={-8} schOrientation="vertical" pcbX={5.4} pcbY={16.5} pcbRotation={270} />
+    <capacitor name="C_RGB_BUF" capacitance="100nF" maxDecouplingTraceLength={5.5} footprint="0402" supplierPartNumbers={{ jlcpcb: ["C1525"] }} schSheetName="interfaces" schSectionName="status" schX={-4} schY={-8} schOrientation="vertical" pcbX={5.4} pcbY={16.5} pcbRotation={270} {...peripheralPlacements?.C_RGB_BUF} />
     <capacitor name="C_RGB" capacitance="100nF" maxDecouplingTraceLength={6.5} footprint="0402" supplierPartNumbers={{ jlcpcb: ["C1525"] }} schSheetName="interfaces" schSectionName="status" schX={4} schY={-8} schOrientation="vertical" pcbX={-3.5} pcbY={21} pcbRotation={270} />
 
     <testpoint name="TP_SWDIO" pcbStyle={{ silkscreenTextVisibility: "hidden" }} footprintVariant="pad" padShape="circle" padDiameter="1.1mm" schSheetName="core" schSectionName="debug" schX={12} schY={-3.5} pcbX={debugTestpointPlacements?.TP_SWDIO?.pcbX ?? (debugTestpointEscape ? -1.8 : -6)} pcbY={debugTestpointPlacements?.TP_SWDIO?.pcbY ?? (debugTestpointEscape ? 5.95 : 10)} />
@@ -715,7 +727,7 @@ export const RP2350CompactLayout = ({
     <trace name="SPI_JST_SCK" from=".J_SPI > .SCK" to=".MCU_CORE .U1 > .GPIO18" {...signalTraceProps} />
     <trace name="SPI_JST_MOSI" from=".J_SPI > .MOSI" to=".MCU_CORE .U1 > .GPIO19" {...signalTraceProps} />
     <trace name="SPI_JST_MISO" from=".J_SPI > .MISO" to=".MCU_CORE .U1 > .GPIO16" {...signalTraceProps} />
-    <trace name="SPI_JST_CS" from=".J_SPI > .CS" to=".MCU_CORE .U1 > .GPIO17" {...signalTraceProps} />
+    <trace name="SPI_JST_CS" from=".J_SPI > .CS" to=".MCU_CORE .U1 > .GPIO17" maxViaCount={localSameLayerEscapes ? 0 : undefined} {...signalTraceProps} />
 
     <silkscreentext text="RP2350A" fontSize="1mm" pcbX={-3} pcbY={-11} />
     <silkscreentext text="USB-C" fontSize="0.7mm" pcbX={-8} pcbY={-28} />

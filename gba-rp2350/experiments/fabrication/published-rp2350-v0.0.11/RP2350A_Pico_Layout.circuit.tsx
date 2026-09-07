@@ -77,6 +77,7 @@ export interface RP2350AEssentialKiCadReferenceProps {
 	westDecouplerEscape?: boolean;
 	eastSupplyCapEscape?: boolean;
 	clockResistorEscape?: boolean;
+	localVregGroundSameLayer?: boolean;
 	children?: ReactNode;
 }
 
@@ -99,6 +100,7 @@ export const RP2350AEssentialKiCadReference = ({
 	westDecouplerEscape = false,
 	eastSupplyCapEscape = false,
 	clockResistorEscape = false,
+	localVregGroundSameLayer = false,
 	children,
 	...props
 }: RP2350AEssentialKiCadReferenceProps = {}) => (
@@ -464,7 +466,7 @@ export const RP2350AEssentialKiCadReference = ({
 			<trace name="C_IOVDD1_V3V3" from=".C_IOVDD1 > .pin1" to=".U1 > .IOVDD1" thickness="0.1mm" />
 			<trace name="C_IOVDD1_GND" from=".C_IOVDD1 > .pin2" to="net.GND" thickness="0.1mm" />
 			<trace name="U1_GND" from=".U1 > .GND" to="net.GND" thickness="0.1mm" />
-			<trace name="U1_VREG_PGND" from=".U1 > .VREG_PGND" to=".C6 > .pin2" thickness="0.1mm" />
+			<trace name="U1_VREG_PGND" from=".U1 > .VREG_PGND" to=".C6 > .pin2" maxViaCount={localVregGroundSameLayer ? 0 : undefined} thickness="0.1mm" />
 
 			<trace name="U1_IOVDD1" from=".U1 > .IOVDD1" to="net.V3V3" />
 			<trace name="U1_IOVDD2" from=".U1 > .IOVDD2" to="net.V3V3" />

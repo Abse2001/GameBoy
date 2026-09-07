@@ -38,6 +38,8 @@ export default ({
   westDecouplerEscape = false,
   eastSupplyCapEscape = false,
   clockResistorEscape = false,
+  mcuLocalSameLayerEscapes = false,
+  mcuPeripheralPlacements,
   sdDetectEscape = false,
   debugTestpointEscape = false,
   mcuDebugTestpointPlacements,
@@ -79,7 +81,7 @@ export default ({
   topLeftMountingHole = { x: -50, y: -32 },
   powerSwitchX = 60,
   effort,
-}: { mcuSubcircuit?: boolean; publishedMcuModule?: boolean; storage?: boolean; psramCapEscape?: boolean; mcuPassiveEscape?: boolean; clockPassiveEscape?: boolean; westDecouplerEscape?: boolean; eastSupplyCapEscape?: boolean; clockResistorEscape?: boolean; sdDetectEscape?: boolean; debugTestpointEscape?: boolean; mcuDebugTestpointPlacements?: Partial<Record<"TP_SWDIO" | "TP_SWCLK", { pcbX: number; pcbY: number }>>; flashCapEscape?: boolean; usbResistorEscape?: boolean; segmentedSupplyPours?: boolean; mcuHeaders?: boolean; allGlobal?: boolean; innerButtonContacts?: boolean; layers?: 2 | 4; copperIslands?: boolean; routeClockFirst?: boolean; routeHighSpeedFirst?: boolean; routeDecouplingFirst?: boolean; routeRegulatorFirst?: boolean; routeSupplyNetsFirst?: boolean; routeDisplayFirst?: boolean; feedMcuAtInputCap?: boolean; routingSafetyMargin?: boolean; router?: "auto" | "beta-pipeline9"; edgeConnectors?: boolean; spreadMcuPassives?: boolean; compactCoreIsland?: boolean; coreIslandOffsetX?: number; coreIslandOffsetY?: number; coreIslandRotation?: 0 | 90 | 180 | 270; clearUsbEscape?: boolean; mcuPlacements?: Partial<Record<string, McuPlacement>>; audioVrefPlacement?: { pcbX: number; pcbY: number; pcbRotation: number }; audioPlacements?: Partial<Record<"R_AMP_IN" | "C_AMP_PWM_FILTER" | "C_AMP_IN_COUPLE" | "C_AMP_VDD" | "C_AMP_VDD_BULK" | "FB_SPK_POS", { pcbX: number; pcbY: number; pcbRotation: number }>>; ldoOffset?: { x: number; y: number }; ldoFlipped?: boolean; ldoPlacements?: Partial<Record<"U_3V3" | "C_3V3_IN" | "C_3V3_OUT", { pcbX: number; pcbY: number; pcbRotation: number }>>; usbDiodeOffset?: { x: number; y: number }; powerOffsetX?: number; powerOffsetY?: number; powerPlacements?: Partial<Record<"R_BOOST_EN_PULLUP" | "R_BAT_GATE_PULLUP" | "D_BAT_BOOST" | "C_BAT_OUT" | "C_BAT_OUT_BULK" | "R_BOOST_TOP" | "R_BOOST_BOT" | "R_USB_BOOST_OFF" | "Q_USB_BOOST_OFF" | "R_USB_BOOST_OFF_PULLDOWN", { pcbX: number; pcbY: number; pcbRotation: number }>>; audioOffsetX?: number; topLeftMountingHole?: { x: number; y: number }; powerSwitchX?: number; effort?: "1x" | "2x" | "5x" | "10x" | "100x" } = {}) => (
+}: { mcuSubcircuit?: boolean; publishedMcuModule?: boolean; storage?: boolean; psramCapEscape?: boolean; mcuPassiveEscape?: boolean; clockPassiveEscape?: boolean; westDecouplerEscape?: boolean; eastSupplyCapEscape?: boolean; clockResistorEscape?: boolean; mcuLocalSameLayerEscapes?: boolean; mcuPeripheralPlacements?: Partial<Record<"U_RUN" | "R_RUN" | "U_RGB_BUF" | "C_RGB_BUF" | "R_RGB_DATA", { pcbX: number; pcbY: number; pcbRotation?: number }>>; sdDetectEscape?: boolean; debugTestpointEscape?: boolean; mcuDebugTestpointPlacements?: Partial<Record<"TP_SWDIO" | "TP_SWCLK", { pcbX: number; pcbY: number }>>; flashCapEscape?: boolean; usbResistorEscape?: boolean; segmentedSupplyPours?: boolean; mcuHeaders?: boolean; allGlobal?: boolean; innerButtonContacts?: boolean; layers?: 2 | 4; copperIslands?: boolean; routeClockFirst?: boolean; routeHighSpeedFirst?: boolean; routeDecouplingFirst?: boolean; routeRegulatorFirst?: boolean; routeSupplyNetsFirst?: boolean; routeDisplayFirst?: boolean; feedMcuAtInputCap?: boolean; routingSafetyMargin?: boolean; router?: "auto" | "beta-pipeline9"; edgeConnectors?: boolean; spreadMcuPassives?: boolean; compactCoreIsland?: boolean; coreIslandOffsetX?: number; coreIslandOffsetY?: number; coreIslandRotation?: 0 | 90 | 180 | 270; clearUsbEscape?: boolean; mcuPlacements?: Partial<Record<string, McuPlacement>>; audioVrefPlacement?: { pcbX: number; pcbY: number; pcbRotation: number }; audioPlacements?: Partial<Record<"R_AMP_IN" | "C_AMP_PWM_FILTER" | "C_AMP_IN_COUPLE" | "C_AMP_VDD" | "C_AMP_VDD_BULK" | "FB_SPK_POS", { pcbX: number; pcbY: number; pcbRotation: number }>>; ldoOffset?: { x: number; y: number }; ldoFlipped?: boolean; ldoPlacements?: Partial<Record<"U_3V3" | "C_3V3_IN" | "C_3V3_OUT", { pcbX: number; pcbY: number; pcbRotation: number }>>; usbDiodeOffset?: { x: number; y: number }; powerOffsetX?: number; powerOffsetY?: number; powerPlacements?: Partial<Record<"R_BOOST_EN_PULLUP" | "R_BAT_GATE_PULLUP" | "D_BAT_BOOST" | "C_BAT_OUT" | "C_BAT_OUT_BULK" | "R_BOOST_TOP" | "R_BOOST_BOT" | "R_USB_BOOST_OFF" | "Q_USB_BOOST_OFF" | "R_USB_BOOST_OFF_PULLDOWN", { pcbX: number; pcbY: number; pcbRotation: number }>>; audioOffsetX?: number; topLeftMountingHole?: { x: number; y: number }; powerSwitchX?: number; effort?: "1x" | "2x" | "5x" | "10x" | "100x" } = {}) => (
   <board
     title="Game Boy Advance RP2350 handheld circuit"
     autorouter={router}
@@ -191,6 +193,8 @@ export default ({
       eastSupplyCapEscape={eastSupplyCapEscape}
       clockRoutingPhase={routeClockFirst ? 0 : undefined}
       clockResistorEscape={clockResistorEscape}
+      localSameLayerEscapes={mcuLocalSameLayerEscapes}
+      peripheralPlacements={mcuPeripheralPlacements}
       debugTestpointEscape={debugTestpointEscape}
       debugTestpointPlacements={mcuDebugTestpointPlacements}
       flashCapEscape={flashCapEscape}
@@ -410,7 +414,7 @@ export default ({
 
     <trace name="LCD_VCC" from=".J_LCD .J_HEADER > .VCC" to="net.VSYS" {...powerTraceProps} {...vsysLabel} />
     <trace name="LCD_GND" from=".J_LCD .J_HEADER > .GND" to="net.GND" {...gndLabel} />
-    <trace name="LCD_CS" routingPhaseIndex={routeDisplayFirst ? 0 : undefined} from=".J_LCD .J_HEADER > .CS" to={publishedMcuModule ? (mcuHeaders ? ".MCU .J_LEFT > .pin18" : ".MCU .MCU_CORE .U1 > .GPIO17") : ".MCU .U1 > .GPIO17"} />
+    <trace name="LCD_CS" routingPhaseIndex={routeDisplayFirst ? 0 : undefined} from=".J_LCD .J_HEADER > .CS" to={publishedMcuModule ? (mcuHeaders ? ".MCU .J_LEFT > .pin18" : ".MCU .MCU_CORE .U1 > .GPIO17") : ".MCU .U1 > .GPIO17"} maxViaCount={mcuLocalSameLayerEscapes ? 0 : undefined} />
     <trace name="LCD_RST" from=".J_LCD .J_HEADER > .RESET" to={publishedMcuModule ? (mcuHeaders ? ".MCU .J_LEFT > .pin13" : ".MCU .MCU_CORE .U1 > .GPIO21") : ".MCU .U1 > .GPIO21"} />
     <trace name="LCD_DC" from=".J_LCD .J_HEADER > .DC_RS" to={publishedMcuModule ? (mcuHeaders ? ".MCU .J_LEFT > .pin14" : ".MCU .MCU_CORE .U1 > .GPIO20") : ".MCU .U1 > .GPIO20"} />
     <trace name="LCD_MOSI" from=".J_LCD .J_HEADER > .SDI_MOSI" to={publishedMcuModule ? (mcuHeaders ? ".MCU .J_LEFT > .pin15" : ".MCU .MCU_CORE .U1 > .GPIO19") : ".MCU .U1 > .GPIO19"} />
