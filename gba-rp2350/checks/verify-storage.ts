@@ -106,6 +106,7 @@ const separate: [string, string][] = [
 for (let i = 0; i < separate.length; i++) for (let j = i + 1; j < separate.length; j++) different(separate[i]!, separate[j]!)
 
 const parts = {
+  U_3V3: "C51118",
   U_PSRAM: "C5333729", J_SD: "C91145", U_SD_ESD: "C85364",
   C_PSRAM_BULK: "C15849", C_PSRAM_HF: "C1525", R_PSRAM_CS: "C25744",
   C_SD_BULK: "C19702", C_SD_HF: "C1525", R_SD_DAT2: "C25744",

@@ -22,10 +22,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - candidate: gba-clock-escape-global
+          - candidate: gba-genuine-ldo-global
             entry: placement-storage-gba-single-phase
-          - candidate: gba-clock-escape-first
-            entry: placement-storage-gba-controls-spi-centered-clock-first
     defaults:
       run:
         working-directory: gba-rp2350

@@ -52,6 +52,11 @@ physical routing or short-check pass.
   USB pins. MCU, crystal, PSRAM and all connector/button placements remain
   unchanged. Test normal global and clock-first routing, without supply-plane
   reservation, as the reserved-plane trials did not finish successfully.
+- Correct the LDO to genuine Diodes C51118. The previous C23380830 supplier
+  number resolves to TECH PUBLIC, so Diodes' specifications could not certify
+  that silicon. The new JLC import includes its exact footprint, OBJ and STEP;
+  rotate it 90 degrees relative to the old library to preserve the pin sides.
+  Move C_3V3_OUT clear of the new courtyard and closer to VOUT.
 
 ## Remaining signoff items
 
@@ -82,7 +87,9 @@ physical routing or short-check pass.
    mounted module/display-window/height arrangement. Its 5 V supply jumper
    configuration and signal-level requirements must be verified at assembly.
 7. **Manufacturing:** verify real inductor height, courtyards, stencil, drill and copper stackup, connector
-   access, BOM/placement orientation and live assembly stock. Generic footprint
+   access, BOM/placement orientation and live assembly stock. The exact PSRAM
+   C5333729 currently has zero available order quantity in JLC's assembly
+   portal; it is a procurement blocker, not silently substituted. Generic footprint
    similarity warnings alone do not establish a wrong package, but neither do
    they provide dimensional signoff. Membrane contacts require exposed copper,
    no paste and an appropriate wear-resistant finish (reference: ENIG).
@@ -101,8 +108,8 @@ JLC, so final solder-margin approval remains the assembler's check. Neither IoU
 warning establishes a wrong or disconnected footprint.
 
 The actual Abracon L1 body is 2.0 × 1.6 × 1.0 mm; its generic rendered model does
-not yet represent that mechanical envelope. Assembly stock has not been verified
-live for every selected part.
+not yet represent that mechanical envelope. See [key-part stock audit](JLC_STOCK_AUDIT.md)
+for dated portal figures. This is not a reservation or a full-BOM availability guarantee.
 
 Sources: [OpenTendo-AGB reference](https://github.com/Redherring32/OpenTendo-AGB/tree/dba1e35571da9c9448f5f7fd9f55c6aaa15c2806),
 [AP2112 datasheet](https://www.diodes.com/datasheet/download/AP2112.pdf),
