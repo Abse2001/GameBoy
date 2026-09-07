@@ -2,6 +2,7 @@ import Board from "./index.circuit"
 
 export default ({
   mcuSubcircuit = true,
+  mcuHeaders = false,
   routeClockFirst = false,
   psramCapEscape = false,
   mcuPassiveEscape = false,
@@ -14,7 +15,7 @@ export default ({
   flashCapEscape = false,
   usbResistorEscape = false,
   segmentedSupplyPours = false,
-}: { mcuSubcircuit?: boolean; routeClockFirst?: boolean; psramCapEscape?: boolean; mcuPassiveEscape?: boolean; clockPassiveEscape?: boolean; westDecouplerEscape?: boolean; eastSupplyCapEscape?: boolean; clockResistorEscape?: boolean; sdDetectEscape?: boolean; debugTestpointEscape?: boolean; flashCapEscape?: boolean; usbResistorEscape?: boolean; segmentedSupplyPours?: boolean } = {}) => (
+}: { mcuSubcircuit?: boolean; mcuHeaders?: boolean; routeClockFirst?: boolean; psramCapEscape?: boolean; mcuPassiveEscape?: boolean; clockPassiveEscape?: boolean; westDecouplerEscape?: boolean; eastSupplyCapEscape?: boolean; clockResistorEscape?: boolean; sdDetectEscape?: boolean; debugTestpointEscape?: boolean; flashCapEscape?: boolean; usbResistorEscape?: boolean; segmentedSupplyPours?: boolean } = {}) => (
   <Board
     publishedMcuModule
     storage
@@ -29,7 +30,7 @@ export default ({
     flashCapEscape={flashCapEscape}
     usbResistorEscape={usbResistorEscape}
     segmentedSupplyPours={segmentedSupplyPours}
-    mcuHeaders={false}
+    mcuHeaders={mcuHeaders}
     mcuSubcircuit={mcuSubcircuit}
     routeClockFirst={routeClockFirst}
     allGlobal
