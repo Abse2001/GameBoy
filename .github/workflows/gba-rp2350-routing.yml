@@ -93,6 +93,8 @@ jobs:
         run: bun checks/route-gate.ts reports/route.json
       - name: Preserve routing evidence
         if: always()
+        # Route reports are already printed in the log; artifact quota should not mask routing results.
+        continue-on-error: true
         uses: actions/upload-artifact@v4
         with:
           name: gba-routing-${{ matrix.candidate }}
