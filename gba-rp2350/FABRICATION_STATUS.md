@@ -93,14 +93,43 @@ physical routing or short-check pass.
    configuration and signal-level requirements must be verified at assembly.
 7. **Manufacturing:** verify real inductor height, courtyards, stencil, drill and copper stackup, connector
    access, BOM/placement orientation and live assembly stock. The exact PSRAM
-   C5333729 currently has zero available order quantity in JLC's assembly
-   portal; it is a procurement blocker, not silently substituted. Generic footprint
+   C5333729 currently has zero immediately available order quantity in JLC's
+   assembly portal. On September 7, its exact-part page offered pre-order with
+   minimum quantity 3 and an estimated 11-day lead time; acceptance, eventual
+   assembly availability and delivery are unconfirmed. Keep the exact part;
+   no substitution or order has been made. Generic footprint
    similarity warnings alone do not establish a wrong package, but neither do
    they provide dimensional signoff. Membrane contacts require exposed copper,
    no paste and an appropriate wear-resistant finish (reference: ENIG).
 8. **Bring-up:** zero DRCs does not prove firmware compatibility, oscillator
    startup, signal integrity, temperature margin or actual Game Boy emulation.
    Prototype bring-up remains necessary before claiming a functional product.
+9. **Assembly exports:** the installed CLI's bundled BOM and PnP converters
+   iterate every `pcb_component`, including the eight `do_not_place` membrane
+   contacts. The Gerber ZIP path calls them with the unfiltered circuit JSON.
+   Do not submit those assembly CSVs as-is. Bare copper contacts must remain in
+   copper/mask exports but not in populated BOM/PnP rows. This is an exporter
+   issue, not a routing correction; no package patch or hand-edited export has
+   been applied. The 22 electrode polygons have solder mask openings and no
+   associated paste records in the inspected routed baseline.
+
+## Independent placement trials
+
+Two candidates preserve the full 106-component source netlist, parts, values,
+and all protected placements (MCU, crystal, PSRAM, buttons and connectors).
+Local routing-disabled builds have zero placement errors and pass the 15
+imported-parts/storage checks. Those checks are not physical short-check passes.
+
+- `placement-storage-gba-c12-channel`: rotate/reposition only C12 to local
+  `(-0.2, 3.8, 90 degrees)`, board `(0.2, 3.2, 270 degrees)`, opening the USB/QSPI
+  exit corridor. Its supply-pad-to-MCU straight-line distance is 0.927 mm.
+- `placement-storage-gba-flash-facing-mcu`: independently move/rotate only U2
+  to local `(-2.6, 7, 180 degrees)`, board `(2.6, 0, 0 degrees)`, facing its
+  clock/data row toward U1. Leave C_FLASH fixed; the supply connection's
+  straight-line lower bound is 2.795 mm, below the unchanged 5.5 mm limit.
+
+Both require full Pipeline 9 routing, Core DRC and Gerber short checks in CI.
+No routing result is claimed from the arithmetic placement checks.
 
 ## Dimensional checks completed
 
@@ -120,3 +149,5 @@ Sources: [OpenTendo-AGB reference](https://github.com/Redherring32/OpenTendo-AGB
 [AP2112 datasheet](https://www.diodes.com/datasheet/download/AP2112.pdf),
 [MSP2807 schematic](https://www.lcdwiki.com/res/MSP2807/MSP2807-2.8-SPI.pdf),
 [Abracon inductor datasheet](https://abracon.com/datasheets/AOTA-B201610S3R3-101-T.pdf).
+
+Procurement follow-up: [exact selected PSRAM at JLC](https://jlcpcb.com/partdetail/C5333729).

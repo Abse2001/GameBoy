@@ -192,6 +192,8 @@ export interface RP2350CompactLayoutProps {
   peripheralPlacements?: Partial<
     Record<
       | "U_RUN"
+      | "U2"
+      | "C12"
       | "R_RUN"
       | "U_RGB_BUF"
       | "C_RGB_BUF"
@@ -390,6 +392,7 @@ export const RP2350CompactLayout = ({
       eastSupplyCapEscape={eastSupplyCapEscape}
       clockResistorEscape={clockResistorEscape}
       localVregGroundSameLayer={localSameLayerEscapes}
+      c12Placement={peripheralPlacements?.C12}
     >
       {/* Keep the QSPI boot circuit in the MCU routing scope. */}
       <W25Q16JVUXIQ
@@ -402,6 +405,7 @@ export const RP2350CompactLayout = ({
         schX={-1}
         schY={5.5}
         schHeight={1}
+        {...peripheralPlacements?.U2}
       />
       <SKRPACE010
         name="U_BOOTSEL" pcbStyle={{ silkscreenTextVisibility: "hidden" }}

@@ -29,7 +29,7 @@ const countByType = (items: AnyCircuitElement[]): Record<string, number> => {
   for (const item of items) counts[item.type] = (counts[item.type] ?? 0) + 1
   return counts
 }
-const protectedNames = components.filter(c => /^SW_|^J_|^X1$|^U1$/.test(c.name)).map(c => c.name)
+const protectedNames = components.filter(c => /^SW_|^J_|^X1$|^U1$|^U_PSRAM$/.test(c.name)).map(c => c.name)
 const protectedPlacements = protectedNames.map(name => {
   const component = components.find(c => c.name === name)!
   const pcb = pcbComponents.find(p => p.source_component_id === component.source_component_id)

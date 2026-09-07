@@ -1,10 +1,12 @@
 import StorageBoard from "./placement-published-mcu-header-module.circuit"
+import type { RP2350CompactLayoutProps } from "./published-rp2350-v0.0.11/pico-layout.circuit"
 
 export default ({
   segmentedSupplyPours = false,
   routeClockFirst = true,
   routingSafetyMargin = false,
-}: { segmentedSupplyPours?: boolean; routeClockFirst?: boolean; routingSafetyMargin?: boolean } = {}) => (
+  mcuPeripheralPlacements,
+}: { segmentedSupplyPours?: boolean; routeClockFirst?: boolean; routingSafetyMargin?: boolean; mcuPeripheralPlacements?: RP2350CompactLayoutProps["peripheralPlacements"] } = {}) => (
   <StorageBoard
     gbaHousingFit
     mcuPcbY={7}
@@ -40,6 +42,7 @@ export default ({
       C_RGB: { pcbX: 16.5, pcbY: 11, pcbRotation: 270 },
       TP_GND: { pcbX: -15.5, pcbY: 18 },
       TP_3V3: { pcbX: -13, pcbY: 18 },
+      ...mcuPeripheralPlacements,
     }}
   />
 )

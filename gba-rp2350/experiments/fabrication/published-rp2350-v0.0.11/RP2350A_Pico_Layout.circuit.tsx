@@ -78,6 +78,7 @@ export interface RP2350AEssentialKiCadReferenceProps {
 	eastSupplyCapEscape?: boolean;
 	clockResistorEscape?: boolean;
 	localVregGroundSameLayer?: boolean;
+	c12Placement?: { pcbX: number; pcbY: number; pcbRotation?: number };
 	children?: ReactNode;
 }
 
@@ -101,6 +102,7 @@ export const RP2350AEssentialKiCadReference = ({
 	eastSupplyCapEscape = false,
 	clockResistorEscape = false,
 	localVregGroundSameLayer = false,
+	c12Placement,
 	children,
 	...props
 }: RP2350AEssentialKiCadReferenceProps = {}) => (
@@ -358,6 +360,7 @@ export const RP2350AEssentialKiCadReference = ({
 			pcbX={-0.5}
 			pcbY={4.2}
 			pcbRotation={180}
+			{...c12Placement}
 		/>
 		<capacitor
 			name="C13"
