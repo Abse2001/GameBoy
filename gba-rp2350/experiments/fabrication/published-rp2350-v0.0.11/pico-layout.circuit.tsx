@@ -194,6 +194,7 @@ export interface RP2350CompactLayoutProps {
       | "U_RUN"
       | "U2"
       | "C12"
+      | "C17"
       | "C18"
       | "R_RUN"
       | "U_RGB_BUF"
@@ -394,6 +395,7 @@ export const RP2350CompactLayout = ({
       clockResistorEscape={clockResistorEscape}
       localVregGroundSameLayer={localSameLayerEscapes}
       c12Placement={peripheralPlacements?.C12}
+      c17Placement={peripheralPlacements?.C17}
       c18Placement={peripheralPlacements?.C18}
     >
       {/* Keep the QSPI boot circuit in the MCU routing scope. */}
@@ -449,6 +451,7 @@ export const RP2350CompactLayout = ({
       />
       <testpoint
         name="TP_SWCLK" pcbStyle={{ silkscreenTextVisibility: "hidden" }}
+        doNotPlace
         footprintVariant="pad"
         padShape="circle"
         padDiameter="1.1mm"
@@ -667,9 +670,9 @@ export const RP2350CompactLayout = ({
     <capacitor name="C_RGB_BUF" capacitance="100nF" maxDecouplingTraceLength={5.5} footprint="0402" supplierPartNumbers={{ jlcpcb: ["C1525"] }} schSheetName="interfaces" schSectionName="status" schX={-4} schY={-8} schOrientation="vertical" pcbX={5.4} pcbY={16.5} pcbRotation={270} {...peripheralPlacements?.C_RGB_BUF} />
     <capacitor name="C_RGB" capacitance="100nF" maxDecouplingTraceLength={6.5} footprint="0402" supplierPartNumbers={{ jlcpcb: ["C1525"] }} schSheetName="interfaces" schSectionName="status" schX={4} schY={-8} schOrientation="vertical" pcbX={-3.5} pcbY={21} pcbRotation={270} {...peripheralPlacements?.C_RGB} />
 
-    <testpoint name="TP_SWDIO" pcbStyle={{ silkscreenTextVisibility: "hidden" }} footprintVariant="pad" padShape="circle" padDiameter="1.1mm" schSheetName="core" schSectionName="debug" schX={12} schY={-3.5} pcbX={debugTestpointPlacements?.TP_SWDIO?.pcbX ?? (debugTestpointEscape ? -1.8 : -6)} pcbY={debugTestpointPlacements?.TP_SWDIO?.pcbY ?? (debugTestpointEscape ? 5.95 : 10)} />
-    <testpoint name="TP_GND" pcbStyle={{ silkscreenTextVisibility: "hidden" }} footprintVariant="pad" padShape="circle" padDiameter="1.1mm" schSheetName="core" schSectionName="debug" schX={12} schY={-6.9} pcbX={-7} pcbY={16} {...peripheralPlacements?.TP_GND} />
-    <testpoint name="TP_3V3" pcbStyle={{ silkscreenTextVisibility: "hidden" }} footprintVariant="pad" padShape="circle" padDiameter="1.1mm" schSheetName="core" schSectionName="debug" schX={12} schY={-8.6} pcbX={-4.5} pcbY={16} {...peripheralPlacements?.TP_3V3} />
+    <testpoint doNotPlace name="TP_SWDIO" pcbStyle={{ silkscreenTextVisibility: "hidden" }} footprintVariant="pad" padShape="circle" padDiameter="1.1mm" schSheetName="core" schSectionName="debug" schX={12} schY={-3.5} pcbX={debugTestpointPlacements?.TP_SWDIO?.pcbX ?? (debugTestpointEscape ? -1.8 : -6)} pcbY={debugTestpointPlacements?.TP_SWDIO?.pcbY ?? (debugTestpointEscape ? 5.95 : 10)} />
+    <testpoint doNotPlace name="TP_GND" pcbStyle={{ silkscreenTextVisibility: "hidden" }} footprintVariant="pad" padShape="circle" padDiameter="1.1mm" schSheetName="core" schSectionName="debug" schX={12} schY={-6.9} pcbX={-7} pcbY={16} {...peripheralPlacements?.TP_GND} />
+    <testpoint doNotPlace name="TP_3V3" pcbStyle={{ silkscreenTextVisibility: "hidden" }} footprintVariant="pad" padShape="circle" padDiameter="1.1mm" schSheetName="core" schSectionName="debug" schX={12} schY={-8.6} pcbX={-4.5} pcbY={16} {...peripheralPlacements?.TP_3V3} />
 
     {/* Board supplies feed the MCU's ordinary placement group. */}
     <trace name="PWR_LED_3V3" from="net.V3V3" to=".R_PWR_LED > .pin1" {...v3v3Label} />

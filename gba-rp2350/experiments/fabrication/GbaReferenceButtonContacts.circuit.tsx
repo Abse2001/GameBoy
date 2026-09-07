@@ -1015,7 +1015,6 @@ export const GbaReferenceButtonContact = ({
               name: alias.toUpperCase(),
               portHints: [pin],
               shape: "polygon",
-              solderPasteMargin: "-10mm",
               points: points.map(([x, y]) => ({ x, y })),
             }),
           )}

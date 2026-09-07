@@ -172,6 +172,10 @@ const pcbComponent = (name: string) => {
 }
 const mcu = pcbComponent("U1")
 const crystal = pcbComponent("X1")
+for (const name of ["TP_SWCLK", "TP_SWDIO", "TP_GND", "TP_3V3"]) {
+  const pcb = pcbComponent(name)
+  assert(pcb.do_not_place, `${name}: bare PCB test pad must not be an assembled part`)
+}
 assert(Math.abs(crystal.center.x - mcu.center.x) < 1e-6, "Crystal must stay aligned with the MCU")
 assert(Math.abs(crystal.center.y - mcu.center.y - 7.4) < 1e-6, "Crystal-to-MCU placement changed")
 assert(!components.some((c) => c.name === "SW_X" || c.name === "SW_Y"), "Original GBA housing has no X/Y face buttons")

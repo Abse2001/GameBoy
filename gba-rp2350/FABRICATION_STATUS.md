@@ -21,6 +21,8 @@ Heavy routing and Gerber short checks run only in GitHub CI.
 | `1249dbd` / shorter USB and shifted R2, global and clock first | Both exhausted HB solver iterations | Each has 1 routing failure plus 422 consequent missing-connection errors | Not checked: no completed routed output; these resistor moves reverted |
 | `b8bfd9d` / genuine LDO | Routing precheck rejected C_3V3_OUT ground distance: 5.96 mm exceeds 5.5 mm | 1 routing failure plus 422 consequent missing-connection errors | Not checked: no completed routed output; capacitor repositioned for next trial |
 | `65cbe98` / corrected LDO capacitor and restored resistors | 277 PCB traces, 262 vias; routing completed | 13: 9 via/pad clearance reports, 2 trace/via accidental contacts, 2 maximum-via violations; plus 19 length warnings | 5 detections at 50 pixels/mm; includes V3V3/V1V1 contact, not ready |
+| `0a8a550` / C12 channel | 277 PCB traces, 261 vias; routing completed | 11, plus 18 length warnings | 3 detected by the shorts check; not ready |
+| `0a8a550` / flash facing MCU | 277 PCB traces, 277 vias; routing completed, Core errors regressed | 24, plus 18 length warnings | 3 detected at 50 pixels/mm; reject flash relocation |
 
 Evidence: [single-phase run and broad-plane comparison](https://github.com/Abse2001/GameBoy/actions/runs/34096366893),
 [corrected-plane run](https://github.com/Abse2001/GameBoy/actions/runs/34097162607).
@@ -28,6 +30,7 @@ Evidence: [single-phase run and broad-plane comparison](https://github.com/Abse2
 [Closer-decoupler result](https://github.com/Abse2001/GameBoy/actions/runs/34099573916/job/101670670212).
 [V1V1-plane comparison](https://github.com/Abse2001/GameBoy/actions/runs/34100690651).
 [Corrected LDO result](https://github.com/Abse2001/GameBoy/actions/runs/34106069834/job/101691251748).
+[C12 and flash comparison](https://github.com/Abse2001/GameBoy/actions/runs/34107943064).
 
 Later contact and capacitor-placement jobs are separate trials. Their local
 routing-disabled renders pass placement, type and netlist checks; that is not a
@@ -114,6 +117,14 @@ physical routing or short-check pass.
    issue, not a routing correction; no package patch or hand-edited export has
    been applied. The 22 electrode polygons have solder mask openings and no
    associated paste records in the inspected routed baseline.
+   Remove the old negative `solderPasteMargin` declaration from those polygons:
+   the installed renderer ignored it, and absence of paste is verified from the
+   generated data instead of relying on an ineffective setting.
+   Four bare test pads (TP_SWCLK, TP_SWDIO, TP_GND and TP_3V3) also need assembly
+   exclusion; their source declarations are now explicitly `doNotPlace`.
+   The installed Core creates paste on uncovered circular test pads, so their
+   stencil treatment still needs resolving. Do not cover the test pads with
+   solder mask or alter their copper shape merely to suppress paste output.
 
 ## Independent placement trials
 
@@ -140,6 +151,19 @@ The intended C18 supply-pad-to-IOVDD4 straight-line distance is 2.536 mm,
 below the existing 5.5 mm limit. R2, USB resistors, crystal, MCU and all other
 placements remain as in the corrected LDO baseline. This trial is independent
 of the C12 and flash trials; a changed endpoint is not proof of a safe route.
+
+Next independent tests use the better C12 result as their starting point:
+
+- `placement-storage-gba-c12-c17-channel`: move/rotate only C17 relative to C12,
+  local `(5.3, 0.9, 90 degrees)`, board `(-5.3, 6.1, 270 degrees)`. The supply pad
+  faces C14 and its ground pad faces C9/C7; this opens a channel past C11 for
+  the V3V3 branch that crossed two ground traces. ADC_AVDD straight-line
+  decoupling distance is 1.910 mm, below 5.5 mm.
+- `placement-storage-gba-c12-clock-first`: retain C12 placement and use the
+  existing clock-first autorouting phase, with no extra component moves and no
+  changes to clock via/length limits. Then autoroute the remaining board.
+
+These tests do not edit the router, routes, minimum clearances, or connectivity.
 
 ## Dimensional checks completed
 
