@@ -20,12 +20,14 @@ Heavy routing and Gerber short checks run only in GitHub CI.
 | `f39414b` / same larger margin, top fill outside contacts | 277 PCB traces, 285 vias; routing completed | 50, plus 18 length warnings | 13 at 50 pixels/mm; contact-field fill exclusion helps, margin still rejected |
 | `1249dbd` / shorter USB and shifted R2, global and clock first | Both exhausted HB solver iterations | Each has 1 routing failure plus 422 consequent missing-connection errors | Not checked: no completed routed output; these resistor moves reverted |
 | `b8bfd9d` / genuine LDO | Routing precheck rejected C_3V3_OUT ground distance: 5.96 mm exceeds 5.5 mm | 1 routing failure plus 422 consequent missing-connection errors | Not checked: no completed routed output; capacitor repositioned for next trial |
+| `65cbe98` / corrected LDO capacitor and restored resistors | 277 PCB traces, 262 vias; routing completed | 13: 9 via/pad clearance reports, 2 trace/via accidental contacts, 2 maximum-via violations; plus 19 length warnings | 5 detections at 50 pixels/mm; includes V3V3/V1V1 contact, not ready |
 
 Evidence: [single-phase run and broad-plane comparison](https://github.com/Abse2001/GameBoy/actions/runs/34096366893),
 [corrected-plane run](https://github.com/Abse2001/GameBoy/actions/runs/34097162607).
 [Reference-contact result](https://github.com/Abse2001/GameBoy/actions/runs/34099225875/job/101669578145).
 [Closer-decoupler result](https://github.com/Abse2001/GameBoy/actions/runs/34099573916/job/101670670212).
 [V1V1-plane comparison](https://github.com/Abse2001/GameBoy/actions/runs/34100690651).
+[Corrected LDO result](https://github.com/Abse2001/GameBoy/actions/runs/34106069834/job/101691251748).
 
 Later contact and capacitor-placement jobs are separate trials. Their local
 routing-disabled renders pass placement, type and netlist checks; that is not a
@@ -130,6 +132,14 @@ imported-parts/storage checks. Those checks are not physical short-check passes.
 
 Both require full Pipeline 9 routing, Core DRC and Gerber short checks in CI.
 No routing result is claimed from the arithmetic placement checks.
+
+The subsequent `placement-storage-gba-c18-west` trial independently changes only
+C18 to local `(1.6, -5.55, 0 degrees)`, board `(-1.6, 12.55, 180 degrees)`.
+It targets the measured V3V3 branch crossing V1V1 vias near `(-1.30, 13.46)`.
+The intended C18 supply-pad-to-IOVDD4 straight-line distance is 2.536 mm,
+below the existing 5.5 mm limit. R2, USB resistors, crystal, MCU and all other
+placements remain as in the corrected LDO baseline. This trial is independent
+of the C12 and flash trials; a changed endpoint is not proof of a safe route.
 
 ## Dimensional checks completed
 

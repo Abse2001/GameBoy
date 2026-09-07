@@ -22,10 +22,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - candidate: gba-c12-channel
-            entry: placement-storage-gba-c12-channel
-          - candidate: gba-flash-facing-mcu
-            entry: placement-storage-gba-flash-facing-mcu
+          - candidate: gba-c18-west
+            entry: placement-storage-gba-c18-west
     defaults:
       run:
         working-directory: gba-rp2350

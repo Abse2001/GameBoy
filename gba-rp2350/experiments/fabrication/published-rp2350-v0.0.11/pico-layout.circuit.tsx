@@ -194,6 +194,7 @@ export interface RP2350CompactLayoutProps {
       | "U_RUN"
       | "U2"
       | "C12"
+      | "C18"
       | "R_RUN"
       | "U_RGB_BUF"
       | "C_RGB_BUF"
@@ -393,6 +394,7 @@ export const RP2350CompactLayout = ({
       clockResistorEscape={clockResistorEscape}
       localVregGroundSameLayer={localSameLayerEscapes}
       c12Placement={peripheralPlacements?.C12}
+      c18Placement={peripheralPlacements?.C18}
     >
       {/* Keep the QSPI boot circuit in the MCU routing scope. */}
       <W25Q16JVUXIQ
