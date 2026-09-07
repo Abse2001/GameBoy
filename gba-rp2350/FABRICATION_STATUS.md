@@ -23,6 +23,8 @@ Heavy routing and Gerber short checks run only in GitHub CI.
 | `65cbe98` / corrected LDO capacitor and restored resistors | 277 PCB traces, 262 vias; routing completed | 13: 9 via/pad clearance reports, 2 trace/via accidental contacts, 2 maximum-via violations; plus 19 length warnings | 5 detections at 50 pixels/mm; includes V3V3/V1V1 contact, not ready |
 | `0a8a550` / C12 channel | 277 PCB traces, 261 vias; routing completed | 11, plus 18 length warnings | 3 detected by the shorts check; not ready |
 | `0a8a550` / flash facing MCU | 277 PCB traces, 277 vias; routing completed, Core errors regressed | 24, plus 18 length warnings | 3 detected at 50 pixels/mm; reject flash relocation |
+| `6ec4dde` / C18 west | 277 PCB traces, 271 vias; routing completed, regressed | 16, plus 21 length warnings | 5 detected at 50 pixels/mm; rejected |
+| `524f887` / C12 + C17 channel | 277 PCB traces, 284 vias; routing completed, regressed | 30, plus 17 length warnings | 4 detected at 50 pixels/mm; rejected |
 
 Evidence: [single-phase run and broad-plane comparison](https://github.com/Abse2001/GameBoy/actions/runs/34096366893),
 [corrected-plane run](https://github.com/Abse2001/GameBoy/actions/runs/34097162607).
@@ -31,6 +33,8 @@ Evidence: [single-phase run and broad-plane comparison](https://github.com/Abse2
 [V1V1-plane comparison](https://github.com/Abse2001/GameBoy/actions/runs/34100690651).
 [Corrected LDO result](https://github.com/Abse2001/GameBoy/actions/runs/34106069834/job/101691251748).
 [C12 and flash comparison](https://github.com/Abse2001/GameBoy/actions/runs/34107943064).
+[C18 result](https://github.com/Abse2001/GameBoy/actions/runs/34109015255).
+[C17 result](https://github.com/Abse2001/GameBoy/actions/runs/34111058889/job/101707165934).
 
 Later contact and capacitor-placement jobs are separate trials. Their local
 routing-disabled renders pass placement, type and netlist checks; that is not a
@@ -165,6 +169,23 @@ Next independent tests use the better C12 result as their starting point:
 
 These tests do not edit the router, routes, minimum clearances, or connectivity.
 
+The next independent `placement-storage-gba-c12-sd-cap-facing` trial keeps C12
+and rotates only C_SD_HF from local 90 to 270 degrees at its unchanged center.
+Its supply pad faces J_SD.VDD and its ground pad faces U_SD_ESD. Straight-line
+distances are 2.593 mm to socket VDD, 3.442 mm to ESD ground, 2.120 mm to the
+bulk capacitor's supply pad, and 1.900 mm to R_SD_DAT0's supply pad. All are
+below 5.5 mm; this is a placement hypothesis, not a routed pass. Parts/values,
+source netlist, protected placements and top-side status match the C12 baseline.
+
+The 18 length warnings in the completed C12 baseline comprise one XIN branch,
+three V1V1 branches, twelve GND branches and two SD supply branches. Several
+generated shared-net branches inherit a local 5.5-mm limit despite endpoints
+already farther apart: U1.VREG_FB-to-DVDD3 is 5.523 mm straight-line, RGB buffer
+ground-to-RGB capacitor ground is 8.448 mm, and SD ESD ground-to-audio VREF
+capacitor ground is 19.119 mm. Those particular branches cannot satisfy the
+limit through passive nudges; a different automatic tree topology or corrected
+constraint handling is required. No warnings are suppressed.
+
 ## Dimensional checks completed
 
 The PSRAM copper matches the current JLC module exactly: 0.588010 × 1.7999964 mm
@@ -178,6 +199,20 @@ warning establishes a wrong or disconnected footprint.
 The actual Abracon L1 body is 2.0 × 1.6 × 1.0 mm; its generic rendered model does
 not yet represent that mechanical envelope. See [key-part stock audit](JLC_STOCK_AUDIT.md)
 for dated portal figures. This is not a reservation or a full-BOM availability guarantee.
+
+An additional geometry audit of C12's routed output found 37 wire records below
+the board's 0.1-mm width across 15 ground traces. They are covered pad-entry
+geometry: 31 segments lie within their own ground electrode, three are
+zero-length wire/via transitions, and three boundary transitions are covered
+by adjacent full-width copper and the pad. No external under-width bottleneck
+was established. This does not clear the actual shorts or replace CAM review.
+
+The installed input/output LDO capacitors are both C15849 / Samsung
+CL10A105KB8NNNC, 1 uF ±10%, X5R, 50 V, 0603. Their nominal values match the
+Diodes AP2112 application circuit; no nominal capacitor voltage/value or
+resistor power/package mismatch was identified in the bounded supply-BOM
+review. Effective capacitance and assembled thermal performance are not
+proven by those nominal specifications alone.
 
 Sources: [OpenTendo-AGB reference](https://github.com/Redherring32/OpenTendo-AGB/tree/dba1e35571da9c9448f5f7fd9f55c6aaa15c2806),
 [AP2112 datasheet](https://www.diodes.com/datasheet/download/AP2112.pdf),

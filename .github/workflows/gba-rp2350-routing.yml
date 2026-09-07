@@ -22,10 +22,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - candidate: gba-c12-c17-channel
-            entry: placement-storage-gba-c12-c17-channel
-          - candidate: gba-c12-clock-first
-            entry: placement-storage-gba-c12-clock-first
+          - candidate: gba-c12-sd-cap-facing
+            entry: placement-storage-gba-c12-sd-cap-facing
     defaults:
       run:
         working-directory: gba-rp2350

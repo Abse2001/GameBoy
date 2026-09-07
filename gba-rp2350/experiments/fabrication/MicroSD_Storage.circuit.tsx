@@ -6,13 +6,13 @@ import { CL10A106KP8NNNC } from "./imports/CL10A106KP8NNNC/CL10A106KP8NNNC"
 import { SRV05_4_P_T7 } from "./imports/SRV05_4_P_T7/SRV05_4_P_T7"
 
 // Normal group: these connections are routed together with the parent board.
-export const MicroSDStorage = ({ sdDetectEscape = false, ...props }: GroupProps & { sdDetectEscape?: boolean }) => (
+export const MicroSDStorage = ({ sdDetectEscape = false, hfCapRotation = 90, ...props }: GroupProps & { sdDetectEscape?: boolean; hfCapRotation?: number }) => (
   <group {...props}>
     {/* The mouth faces +Y in this group's local coordinates. The parent rotates
         the whole group 180 degrees to face outward at the bottom board edge. */}
     <TF_01A name="J_SD" pcbRotation={180} schX={0} schY={0} />
     <CL10A106KP8NNNC name="C_SD_BULK" pcbX={0.4} pcbY={-8.2} pcbRotation={90} schX={-5} schY={-4} maxVoltageRating="10V" maxDecouplingTraceLength="5.5mm" />
-    <CL05B104KO5NNNC name="C_SD_HF" pcbX={2.2} pcbY={-8.2} pcbRotation={90} schX={-2} schY={-4} maxVoltageRating="16V" maxDecouplingTraceLength="5.5mm" />
+    <CL05B104KO5NNNC name="C_SD_HF" pcbX={2.2} pcbY={-8.2} pcbRotation={hfCapRotation} schX={-2} schY={-4} maxVoltageRating="16V" maxDecouplingTraceLength="5.5mm" />
     <A_0402WGF1002TCE name="R_SD_DAT2" pcbX={-4.5} pcbY={-8.5} pcbRotation={90} schX={-6} schY={5} />
     <A_0402WGF1002TCE name="R_SD_CS" pcbX={-2.9} pcbY={-8.2} pcbRotation={90} schX={-3} schY={5} />
     <A_0402WGF1002TCE name="R_SD_CMD" pcbX={-1.3} pcbY={-8.2} pcbRotation={90} schX={0} schY={5} />

@@ -6,7 +6,8 @@ export default ({
   routeClockFirst = true,
   routingSafetyMargin = false,
   mcuPeripheralPlacements,
-}: { segmentedSupplyPours?: boolean; routeClockFirst?: boolean; routingSafetyMargin?: boolean; mcuPeripheralPlacements?: RP2350CompactLayoutProps["peripheralPlacements"] } = {}) => (
+  sdHfCapRotation,
+}: { segmentedSupplyPours?: boolean; routeClockFirst?: boolean; routingSafetyMargin?: boolean; mcuPeripheralPlacements?: RP2350CompactLayoutProps["peripheralPlacements"]; sdHfCapRotation?: number } = {}) => (
   <StorageBoard
     gbaHousingFit
     mcuPcbY={7}
@@ -14,6 +15,7 @@ export default ({
     routeClockFirst={routeClockFirst}
     segmentedSupplyPours={segmentedSupplyPours}
     routingSafetyMargin={routingSafetyMargin}
+    sdHfCapRotation={sdHfCapRotation}
     psramCapEscape
     mcuPassiveEscape
     flashCapEscape

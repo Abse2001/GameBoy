@@ -14,6 +14,7 @@ export default ({
   mcuLocalSameLayerEscapes = false,
   mcuPeripheralPlacements,
   sdDetectEscape = false,
+  sdHfCapRotation,
   debugTestpointEscape = false,
   mcuDebugTestpointPlacements,
   flashCapEscape = false,
@@ -23,7 +24,7 @@ export default ({
   gbaHousingFit = false,
   mcuPcbX = 0,
   mcuPcbY = 0,
-}: { mcuSubcircuit?: boolean; mcuHeaders?: boolean; routeClockFirst?: boolean; psramCapEscape?: boolean; mcuPassiveEscape?: boolean; clockPassiveEscape?: boolean; westDecouplerEscape?: boolean; eastSupplyCapEscape?: boolean; clockResistorEscape?: boolean; mcuLocalSameLayerEscapes?: boolean; mcuPeripheralPlacements?: RP2350CompactLayoutProps["peripheralPlacements"]; sdDetectEscape?: boolean; debugTestpointEscape?: boolean; mcuDebugTestpointPlacements?: Partial<Record<"TP_SWDIO" | "TP_SWCLK", { pcbX: number; pcbY: number }>>; flashCapEscape?: boolean; usbResistorEscape?: boolean; segmentedSupplyPours?: boolean; routingSafetyMargin?: boolean; gbaHousingFit?: boolean; mcuPcbX?: number; mcuPcbY?: number } = {}) => (
+}: { mcuSubcircuit?: boolean; mcuHeaders?: boolean; routeClockFirst?: boolean; psramCapEscape?: boolean; mcuPassiveEscape?: boolean; clockPassiveEscape?: boolean; westDecouplerEscape?: boolean; eastSupplyCapEscape?: boolean; clockResistorEscape?: boolean; mcuLocalSameLayerEscapes?: boolean; mcuPeripheralPlacements?: RP2350CompactLayoutProps["peripheralPlacements"]; sdDetectEscape?: boolean; sdHfCapRotation?: number; debugTestpointEscape?: boolean; mcuDebugTestpointPlacements?: Partial<Record<"TP_SWDIO" | "TP_SWCLK", { pcbX: number; pcbY: number }>>; flashCapEscape?: boolean; usbResistorEscape?: boolean; segmentedSupplyPours?: boolean; routingSafetyMargin?: boolean; gbaHousingFit?: boolean; mcuPcbX?: number; mcuPcbY?: number } = {}) => (
   <Board
     publishedMcuModule
     storage
@@ -36,6 +37,7 @@ export default ({
     mcuLocalSameLayerEscapes={mcuLocalSameLayerEscapes}
     mcuPeripheralPlacements={mcuPeripheralPlacements}
     sdDetectEscape={sdDetectEscape}
+    sdHfCapRotation={sdHfCapRotation}
     debugTestpointEscape={debugTestpointEscape}
     mcuDebugTestpointPlacements={mcuDebugTestpointPlacements}
     flashCapEscape={flashCapEscape}
