@@ -22,12 +22,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - candidate: flat-clock-first-baseline
+          - candidate: separated-mcu-peripherals-clock-first
             entry: placement-storage-separated-mcu-peripherals-clock-first
-          - candidate: mcu-subcircuit-headers
-            entry: placement-storage-mcu-subcircuit-headers
-          - candidate: mcu-subcircuit-headers-clock-first
-            entry: placement-storage-mcu-subcircuit-headers-clock-first
+          - candidate: separated-mcu-peripherals-reset-east-clock-first
+            entry: placement-storage-separated-mcu-peripherals-reset-east-clock-first
     defaults:
       run:
         working-directory: gba-rp2350
