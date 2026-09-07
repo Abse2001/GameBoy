@@ -5,6 +5,7 @@ export default ({
   mcuSubcircuit = false,
   mcuHeaders = false,
   routeClockFirst = false,
+  mcuGroundEscape,
   psramCapEscape = false,
   mcuPassiveEscape = false,
   clockPassiveEscape = false,
@@ -24,7 +25,7 @@ export default ({
   gbaHousingFit = false,
   mcuPcbX = 0,
   mcuPcbY = 0,
-}: { mcuSubcircuit?: boolean; mcuHeaders?: boolean; routeClockFirst?: boolean; psramCapEscape?: boolean; mcuPassiveEscape?: boolean; clockPassiveEscape?: boolean; westDecouplerEscape?: boolean; eastSupplyCapEscape?: boolean; clockResistorEscape?: boolean; mcuLocalSameLayerEscapes?: boolean; mcuPeripheralPlacements?: RP2350CompactLayoutProps["peripheralPlacements"]; sdDetectEscape?: boolean; sdHfCapRotation?: number; debugTestpointEscape?: boolean; mcuDebugTestpointPlacements?: Partial<Record<"TP_SWDIO" | "TP_SWCLK", { pcbX: number; pcbY: number }>>; flashCapEscape?: boolean; usbResistorEscape?: boolean; segmentedSupplyPours?: boolean; routingSafetyMargin?: boolean; gbaHousingFit?: boolean; mcuPcbX?: number; mcuPcbY?: number } = {}) => (
+}: { mcuGroundEscape?: "fanout" | "beta-pipeline9"; mcuSubcircuit?: boolean; mcuHeaders?: boolean; routeClockFirst?: boolean; psramCapEscape?: boolean; mcuPassiveEscape?: boolean; clockPassiveEscape?: boolean; westDecouplerEscape?: boolean; eastSupplyCapEscape?: boolean; clockResistorEscape?: boolean; mcuLocalSameLayerEscapes?: boolean; mcuPeripheralPlacements?: RP2350CompactLayoutProps["peripheralPlacements"]; sdDetectEscape?: boolean; sdHfCapRotation?: number; debugTestpointEscape?: boolean; mcuDebugTestpointPlacements?: Partial<Record<"TP_SWDIO" | "TP_SWCLK", { pcbX: number; pcbY: number }>>; flashCapEscape?: boolean; usbResistorEscape?: boolean; segmentedSupplyPours?: boolean; routingSafetyMargin?: boolean; gbaHousingFit?: boolean; mcuPcbX?: number; mcuPcbY?: number } = {}) => (
   <Board
     publishedMcuModule
     storage
@@ -50,6 +51,7 @@ export default ({
     mcuHeaders={mcuHeaders}
     mcuSubcircuit={mcuSubcircuit}
     routeClockFirst={routeClockFirst}
+    mcuGroundEscape={mcuGroundEscape}
     allGlobal
     layers={4}
     copperIslands={false}

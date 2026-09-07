@@ -30,6 +30,8 @@ Heavy routing and Gerber short checks run only in GitHub CI.
 | `fec3553` / C12 ordinary-group repeat | 277 PCB traces, 261 vias, 96 copper regions; full routing build took 20m55s | 11, plus 18 length warnings; matches the earlier C12 result | 3 detected at 50 pixels/mm; 100 pixels/mm skipped after failure, not passed |
 | `e59bbc8` / root C12 repeat | 277 PCB traces, 261 vias, 96 copper regions; matches prior baseline | 11, plus 18 length warnings | 3 reported at 50 pixels/mm; not ready |
 | `e59bbc8` / C14 inner channel | 277 PCB traces, 275 vias, 93 copper regions; mixed result, not promoted | 17 (2 maximum-via, 14 via/pad clearance, 1 via/pad overlap), plus 23 length warnings | 1 at 50 pixels/mm: VREG_AVDD/GND at (-2.770, 4.970); 100 pixels/mm skipped, not passed |
+| `7f5e4ae` / C14 control repeat | 277 PCB traces, 275 vias, 93 copper regions; identical result | 17, plus 23 length warnings | 1 at 50 pixels/mm at the same VREG_AVDD/GND site; 100 pixels/mm skipped |
+| `7f5e4ae` / C14 + C6 VIN approach | 277 PCB traces, 273 vias, 103 copper regions; routing completed, rejected | 23 (3 trace, 2 via/trace clearance, 13 via/pad clearance, 5 via/pad overlap), plus 20 length warnings | 7 reported at 50 pixels/mm, including SWDIO/XIN and GPIO17/supply contacts; 100 pixels/mm skipped |
 
 Evidence: [single-phase run and broad-plane comparison](https://github.com/Abse2001/GameBoy/actions/runs/34096366893),
 [corrected-plane run](https://github.com/Abse2001/GameBoy/actions/runs/34097162607).
@@ -43,6 +45,7 @@ Evidence: [single-phase run and broad-plane comparison](https://github.com/Abse2
 [SD capacitor result](https://github.com/Abse2001/GameBoy/actions/runs/34113209572/job/101713939428).
 [Ordinary-group repeat](https://github.com/Abse2001/GameBoy/actions/runs/34115710932/job/101721879869).
 [Root/C14 comparison](https://github.com/Abse2001/GameBoy/actions/runs/34123911135).
+[C14/C6 comparison](https://github.com/Abse2001/GameBoy/actions/runs/34130814106).
 
 Later contact and capacitor-placement jobs are separate trials. Their local
 routing-disabled renders pass placement, type and netlist checks; that is not a
@@ -100,7 +103,7 @@ or modified router packages are introduced. Native fanout would add a routing
 stage with its own default solver; it is left off for this fully global Pipeline
 9 placement comparison.
 
-### Next trial: C6 input-capacitor approach
+### Rejected trial: C6 input-capacitor approach
 
 On the unpromoted C14 variant, move only C6 from source `(1.2, 4.2)` to
 `(1.2, 3.75)`, keeping rotation 90 degrees. Its board center becomes
@@ -115,8 +118,13 @@ no child subcircuits. These preflight results do not certify routed copper.
 The offending ground via position touches a fixed MCU pad, so better capacitor
 geometry does not guarantee that the global solver will relocate it safely.
 
-Compare against a repeated C14 control in cloud CI. C12 remains the root
-entry; no experimental variant is promoted. Preserve parts, connections,
+The completed cloud comparison preserves component identities, electrical nets
+and protected placements, but increases Core errors from 17 to 23 and reported
+shorts from one to seven. It removes the previous VREG_AVDD/GND contact but
+introduces other real contacts around U1, the crystal and the flash. Fewer vias
+(275 to 273) and fewer length warnings (23 to 20) do not justify this regression.
+The C6 candidate is rejected. C12 remains the root entry; no experimental
+variant is promoted. Preserve parts, connections,
 trace limits, crystal/MCU/PSRAM and control/connector positions. No handwritten
 trace geometry or vias are added. The user-requested 15-minute task follow-up
 now resumes placement work after each cloud result, with no duplicate batches.
@@ -128,6 +136,41 @@ overlap is a START-net through-via whose logical bottom/inner1 transition still
 occupies top copper. The other five sites already include top in their logical
 spans, so hidden through-via occupancy does not explain all of the failures.
 Keep the full reported count in the acceptance gate.
+
+### Next comparison: automatic PGND escape versus routing order
+
+Keep the C14 control placement, including the original C6 position. Select only
+the existing `U1_VREG_PGND` connection with a board-owned phase. Compare native
+`autorouter="fanout"` against `autorouter="beta-pipeline9"` on that same phase.
+Both leave the remainder of the board on Pipeline 9, with no child subcircuits,
+authored breakout points, manual traces or explicit vias. No component moves or
+electrical changes are part of this comparison. C12 remains the root default.
+Both candidates pass the expanded typecheck and routing-disabled storage and
+hierarchy checks. Their parts, source nets and all 106 component placements
+match the C14 control. A routing-disabled phase-plan audit confirms that phase
+0 selects exactly `U1_VREG_PGND`, no whole nets; the other 290 source traces and
+22 nets remain in the global plan. These are input checks, not routing passes.
+
+The hypothesis is that an automatically chosen PGND escape can avoid the
+ground-via/VREG_AVDD contact. The ordering-only candidate distinguishes fanout
+from simply routing this connection before other nets. Native fanout is a
+separate preparatory solver, followed by its Pipeline 9 completion and the
+remaining global Pipeline 9 route; it is not a single Pipeline 9 pass and does
+not use Pipeline 7. The global GND route still references the original pad, so
+the experiment does not guarantee that later branches use the escape endpoint.
+
+The explicit empty `fanoutPourNetMap` only prevents fanout from inferring a
+plane termination from the several existing GND pours. It leaves all physical
+pours, pad-to-pad connectivity, and full-board checks intact. The native fanout
+may widen the 0.1 mm PGND source trace to its 0.15 mm nominal width; record the
+actual generated width rather than claiming exact width preservation. The
+0.45 mm via pad, 0.2 mm drill and 0.1 mm clearance remain unchanged.
+
+Whole-chip fanout is deliberately not used: net-only connections would not all
+receive automatic exits in the installed Core version. The selective phase
+does not permanently hide those pads behind a whole-chip keepout. All Core
+errors, critical length/via limits and physical Gerber shorts remain strict
+acceptance requirements.
 
 - Replace concave comb contacts whose inferred route endpoints fell in empty
   gaps with the actual OpenTendo contact geometry. All 22 new endpoints are

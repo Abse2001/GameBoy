@@ -4,15 +4,17 @@ import type { RP2350CompactLayoutProps } from "./published-rp2350-v0.0.11/pico-l
 export default ({
   segmentedSupplyPours = false,
   routeClockFirst = false,
+  mcuGroundEscape,
   routingSafetyMargin = false,
   mcuPeripheralPlacements,
   sdHfCapRotation,
-}: { segmentedSupplyPours?: boolean; routeClockFirst?: boolean; routingSafetyMargin?: boolean; mcuPeripheralPlacements?: RP2350CompactLayoutProps["peripheralPlacements"]; sdHfCapRotation?: number } = {}) => (
+}: { mcuGroundEscape?: "fanout" | "beta-pipeline9"; segmentedSupplyPours?: boolean; routeClockFirst?: boolean; routingSafetyMargin?: boolean; mcuPeripheralPlacements?: RP2350CompactLayoutProps["peripheralPlacements"]; sdHfCapRotation?: number } = {}) => (
   <StorageBoard
     gbaHousingFit
     mcuPcbY={7}
     mcuSubcircuit={false}
     routeClockFirst={routeClockFirst}
+    mcuGroundEscape={mcuGroundEscape}
     segmentedSupplyPours={segmentedSupplyPours}
     routingSafetyMargin={routingSafetyMargin}
     sdHfCapRotation={sdHfCapRotation}
