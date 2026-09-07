@@ -22,12 +22,12 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - candidate: flat-clock-first-baseline
-            entry: placement-storage-separated-mcu-peripherals-clock-first
-          - candidate: shared-spi-paths-clock-first
-            entry: placement-storage-shared-spi-paths-clock-first
-          - candidate: same-layer-clock-first
-            entry: placement-storage-separated-mcu-peripherals-same-layer-clock-first
+          - candidate: chained-shared-signals-clock-first
+            entry: placement-storage-chained-shared-signals-clock-first
+          - candidate: chained-shared-signals-decoupling-first
+            entry: placement-storage-chained-shared-signals-decoupling-first
+          - candidate: flat-decoupling-clock-first
+            entry: placement-storage-separated-mcu-peripherals-decoupling-clock-first
     defaults:
       run:
         working-directory: gba-rp2350

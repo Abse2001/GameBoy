@@ -4,6 +4,7 @@ export default ({
   mcuSubcircuit = true,
   mcuHeaders = false,
   routeClockFirst = false,
+  routeDecouplingFirst = false,
   psramCapEscape = false,
   mcuPassiveEscape = false,
   clockPassiveEscape = false,
@@ -12,6 +13,7 @@ export default ({
   clockResistorEscape = false,
   mcuLocalSameLayerEscapes = false,
   sharedSpiTracePaths = false,
+  chainSharedSignalTraces = false,
   mcuPeripheralPlacements,
   sdDetectEscape = false,
   debugTestpointEscape = false,
@@ -20,7 +22,7 @@ export default ({
   usbResistorEscape = false,
   segmentedSupplyPours = false,
   routingSafetyMargin = false,
-}: { mcuSubcircuit?: boolean; mcuHeaders?: boolean; routeClockFirst?: boolean; psramCapEscape?: boolean; mcuPassiveEscape?: boolean; clockPassiveEscape?: boolean; westDecouplerEscape?: boolean; eastSupplyCapEscape?: boolean; clockResistorEscape?: boolean; mcuLocalSameLayerEscapes?: boolean; sharedSpiTracePaths?: boolean; mcuPeripheralPlacements?: Partial<Record<"U_RUN" | "R_RUN" | "U_RGB_BUF" | "C_RGB_BUF" | "R_RGB_DATA", { pcbX: number; pcbY: number; pcbRotation?: number }>>; sdDetectEscape?: boolean; debugTestpointEscape?: boolean; mcuDebugTestpointPlacements?: Partial<Record<"TP_SWDIO" | "TP_SWCLK", { pcbX: number; pcbY: number }>>; flashCapEscape?: boolean; usbResistorEscape?: boolean; segmentedSupplyPours?: boolean; routingSafetyMargin?: boolean } = {}) => (
+}: { mcuSubcircuit?: boolean; mcuHeaders?: boolean; routeClockFirst?: boolean; routeDecouplingFirst?: boolean; psramCapEscape?: boolean; mcuPassiveEscape?: boolean; clockPassiveEscape?: boolean; westDecouplerEscape?: boolean; eastSupplyCapEscape?: boolean; clockResistorEscape?: boolean; mcuLocalSameLayerEscapes?: boolean; sharedSpiTracePaths?: boolean; chainSharedSignalTraces?: boolean; mcuPeripheralPlacements?: Partial<Record<"U_RUN" | "R_RUN" | "U_RGB_BUF" | "C_RGB_BUF" | "R_RGB_DATA", { pcbX: number; pcbY: number; pcbRotation?: number }>>; sdDetectEscape?: boolean; debugTestpointEscape?: boolean; mcuDebugTestpointPlacements?: Partial<Record<"TP_SWDIO" | "TP_SWCLK", { pcbX: number; pcbY: number }>>; flashCapEscape?: boolean; usbResistorEscape?: boolean; segmentedSupplyPours?: boolean; routingSafetyMargin?: boolean } = {}) => (
   <Board
     publishedMcuModule
     storage
@@ -32,6 +34,7 @@ export default ({
     clockResistorEscape={clockResistorEscape}
     mcuLocalSameLayerEscapes={mcuLocalSameLayerEscapes}
     sharedSpiTracePaths={sharedSpiTracePaths}
+    chainSharedSignalTraces={chainSharedSignalTraces}
     mcuPeripheralPlacements={mcuPeripheralPlacements}
     sdDetectEscape={sdDetectEscape}
     debugTestpointEscape={debugTestpointEscape}
@@ -43,6 +46,7 @@ export default ({
     mcuHeaders={mcuHeaders}
     mcuSubcircuit={mcuSubcircuit}
     routeClockFirst={routeClockFirst}
+    routeDecouplingFirst={routeDecouplingFirst}
     allGlobal
     layers={4}
     copperIslands={false}
