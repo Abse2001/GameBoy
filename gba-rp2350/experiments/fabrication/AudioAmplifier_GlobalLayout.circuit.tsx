@@ -61,6 +61,9 @@ export const AudioAmplifier_GlobalLayout = ({
 
     <resistor
       name="R_AMP_IN"
+      supplierPartNumbers={{ jlcpcb: ["C11702"] }}
+      manufacturerPartNumber="0402WGF1001TCE"
+      tolerance="1%"
       schSectionName={schSections.input}
       resistance="1k"
       footprint="0402"
@@ -73,6 +76,9 @@ export const AudioAmplifier_GlobalLayout = ({
     />
     <capacitor
       name="C_AMP_PWM_FILTER"
+      supplierPartNumbers={{ jlcpcb: ["C15195"] }}
+      manufacturerPartNumber="CL05B103KB5NNNC"
+      maxVoltageRating="50V"
       schSectionName={schSections.input}
       capacitance="10nF"
       footprint="0402"
@@ -86,6 +92,9 @@ export const AudioAmplifier_GlobalLayout = ({
     />
     <capacitor
       name="C_AMP_IN_COUPLE"
+      supplierPartNumbers={{ jlcpcb: ["C52923"] }}
+      manufacturerPartNumber="CL05A105KA5NQNC"
+      maxVoltageRating="25V"
       schSectionName={schSections.input}
       capacitance="1uF"
       footprint="0402"
@@ -130,6 +139,9 @@ export const AudioAmplifier_GlobalLayout = ({
     />
     <capacitor
       name="C_AMP_VDD"
+      supplierPartNumbers={{ jlcpcb: ["C52923"] }}
+      manufacturerPartNumber="CL05A105KA5NQNC"
+      maxVoltageRating="25V"
       schSectionName={schSections.amplifier}
       capacitance="1uF"
       footprint="0402"
@@ -143,6 +155,9 @@ export const AudioAmplifier_GlobalLayout = ({
     />
     <capacitor
       name="C_AMP_VDD_BULK"
+      supplierPartNumbers={{ jlcpcb: ["C59461"] }}
+      manufacturerPartNumber="CL10A226MQ8NRNC"
+      maxVoltageRating="6.3V"
       schSectionName={schSections.amplifier}
       capacitance="22uF"
       footprint="0603"
@@ -156,6 +171,9 @@ export const AudioAmplifier_GlobalLayout = ({
     />
     <capacitor
       name="C_AMP_VREF"
+      supplierPartNumbers={{ jlcpcb: ["C52923"] }}
+      manufacturerPartNumber="CL05A105KA5NQNC"
+      maxVoltageRating="25V"
       schSectionName={schSections.amplifier}
       capacitance="1uF"
       footprint="0402"
@@ -189,6 +207,9 @@ export const AudioAmplifier_GlobalLayout = ({
     />
     <capacitor
       name="C_SPK_EMI_POS"
+      supplierPartNumbers={{ jlcpcb: ["C1530"] }}
+      manufacturerPartNumber="0402B221K500NT"
+      maxVoltageRating="50V"
       schSectionName={schSections.output}
       capacitance="220pF"
       footprint="0402"
@@ -201,6 +222,9 @@ export const AudioAmplifier_GlobalLayout = ({
     />
     <capacitor
       name="C_SPK_EMI_NEG"
+      supplierPartNumbers={{ jlcpcb: ["C1530"] }}
+      manufacturerPartNumber="0402B221K500NT"
+      maxVoltageRating="50V"
       schSectionName={schSections.output}
       capacitance="220pF"
       footprint="0402"

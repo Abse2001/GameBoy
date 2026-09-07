@@ -1,0 +1,79 @@
+# GBA fabrication readiness — 2026-09-07
+
+Status: **not ready to order**. No manufacturing files have been approved.
+
+## Measured routing results
+
+All runs use published packages, Pipeline 9 and automatically generated traces.
+Heavy routing and Gerber short checks run only in GitHub CI.
+
+| Commit / candidate | Result | Core errors | Shorts |
+| --- | --- | --- | --- |
+| `c77e0ae` / single phase | 271 PCB traces, 288 vias; routing completed | 32, plus 23 length warnings | 1 at 50 pixels/mm, near U1.XOUT/R2 and V3V3; 100 pixels/mm not run after the failure |
+| `c77e0ae` / power planes, global | Routing timeout after 2409 seconds; no completed circuit emitted | Not available, not zero | Not checked: no completed routed output |
+| `66c5aa6` / corrected planes, clock first | Main phase failed on a V1V1 branch after the clock phase | 1 routing failure and 416 consequent missing-connection errors | Not checked: no completed routed output |
+
+Evidence: [single-phase run and broad-plane comparison](https://github.com/Abse2001/GameBoy/actions/runs/34096366893),
+[corrected-plane run](https://github.com/Abse2001/GameBoy/actions/runs/34097162607).
+
+Later contact and capacitor-placement jobs are separate trials. Their local
+routing-disabled renders pass placement, type and netlist checks; that is not a
+physical routing or short-check pass.
+
+## Board-input corrections under test
+
+- Replace concave comb contacts whose inferred route endpoints fell in empty
+  gaps with the actual OpenTendo contact geometry. All 22 new endpoints are
+  inside their own electrode copper, with no signal/GND netlist merge.
+- Keep the controls at the reference contact centers, not arbitrary congestion
+  offsets. R_BAT_GATE_BASE moves clear of SELECT instead.
+- Correct local copper island coordinates to follow the translated MCU content.
+- Move C18 and C_FLASH closer to their own supply pins. MCU, crystal and PSRAM
+  remain fixed; component values and electrical connectivity do not change.
+- Test a continuous inner1 ground reference and separate inner2 supply regions,
+  including the MCU's V1V1 rail. No trace geometry, explicit vias or breakout
+  points are authored by hand.
+- Pin the audio passive BOM to the matching JLC selections already used by CI.
+
+## Remaining signoff items
+
+1. **Physical copper:** require zero Core errors, complete routing, respected
+   length/via constraints and passing Gerber shorts checks on all four layers.
+   Some merged ground-branch length warnings inherit a local capacitor's limit
+   on remote endpoints; do not move unrelated parts or suppress warnings to hide
+   this. Assess the actual constrained endpoint pair as well as the emitted flag.
+2. **Housing:** a matching bounding rectangle does not certify stock-case fit.
+   The reference has 13 circular mechanical openings and four internal slots.
+   They are not currently reproduced. Whether the case may be trimmed is an
+   outstanding user choice. Outward connector overhang needs a shell model or
+   physical dimension check, not just pad-to-edge clearance.
+3. **Controls:** L/R shoulder switches and the requested left-side volume wheel
+   still need mechanically verified implementation. A contact pad center is not
+   an actuator center. The existing RK10J12E002L is a through-hole dual 10k pot,
+   not an SMD part; its original left placement does not prove case-opening fit.
+4. **SPI expansion:** the external SPI connector and LCD currently share GPIO17
+   as chip select. They cannot be independently selected. Assigning a separate
+   free GPIO is awaiting user confirmation; no pin remapping has been made.
+5. **Power budget:** AP2112's 600 mA rating does not establish a safe continuous
+   5 V-to-3.3 V load in the assembled enclosure. At 200 mA the nominal loss is
+   0.34 W; the datasheet's 184 °C/W figure implies about 63 °C rise under its test
+   conditions. Confirm worst-case load, copper/thermal conditions and ambient.
+   Battery/boost and speaker load also need a bounded maximum-current budget.
+6. **Display:** the LCDWIKI MSP2807 module is approximately 86 × 50 mm. The
+   current housing variant shows only its electrical header, not a proven
+   mounted module/display-window/height arrangement. Its 5 V supply jumper
+   configuration and signal-level requirements must be verified at assembly.
+7. **Manufacturing:** verify PSRAM/MT3608 footprint dimensional registration,
+   real inductor height, courtyards, stencil, drill and copper stackup, connector
+   access, BOM/placement orientation and live assembly stock. Generic footprint
+   similarity warnings alone do not establish a wrong package, but neither do
+   they provide dimensional signoff. Membrane contacts require exposed copper,
+   no paste and an appropriate wear-resistant finish (reference: ENIG).
+8. **Bring-up:** zero DRCs does not prove firmware compatibility, oscillator
+   startup, signal integrity, temperature margin or actual Game Boy emulation.
+   Prototype bring-up remains necessary before claiming a functional product.
+
+Sources: [OpenTendo-AGB reference](https://github.com/Redherring32/OpenTendo-AGB/tree/dba1e35571da9c9448f5f7fd9f55c6aaa15c2806),
+[AP2112 datasheet](https://www.diodes.com/datasheet/download/AP2112.pdf),
+[MSP2807 schematic](https://www.lcdwiki.com/res/MSP2807/MSP2807-2.8-SPI.pdf),
+[Abracon inductor datasheet](https://abracon.com/datasheets/AOTA-B201610S3R3-101-T.pdf).

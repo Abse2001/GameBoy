@@ -22,8 +22,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - candidate: gba-single-phase
-            entry: placement-storage-gba-single-phase
           - candidate: gba-power-planes-clock-first
             entry: placement-storage-gba-power-planes-clock-first
           - candidate: gba-power-planes-global
@@ -50,6 +48,9 @@ jobs:
         run: |
           mkdir -p reports
           bunx --no-install tsci build "experiments/fabrication/${ENTRY}.circuit.tsx" --autorouter-timeout 40m --autorouter-debug --autorouter-dump-srj all --pcb-svgs 2>&1 | tee reports/routing.log
+      - name: Preserve phase diagnostics in the job log
+        if: always()
+        run: bun checks/route-diagnostics.ts
       - name: Record all errors and electrical identity
         id: report
         if: always()

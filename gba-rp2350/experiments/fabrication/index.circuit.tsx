@@ -480,11 +480,32 @@ export default ({
         outline={gbaHousingFit ? [
           { x: -65.36, y: -18 }, { x: -9, y: -18 },
           { x: -9, y: -35.91 }, { x: 65.36, y: -35.91 },
-          { x: 65.36, y: 35.91 }, { x: -65.36, y: 35.91 },
+          { x: 65.36, y: 35.91 },
+          { x: mcuPcbX + 8.6, y: 35.91 },
+          { x: mcuPcbX + 8.6, y: mcuPcbY - 9.6 },
+          { x: mcuPcbX - 8.6, y: mcuPcbY - 9.6 },
+          { x: mcuPcbX - 8.6, y: 35.91 },
+          { x: -65.36, y: 35.91 },
         ] : [
           { x: -36, y: -18 }, { x: -9, y: -18 },
           { x: -9, y: -41 }, { x: 45, y: -41 },
           { x: 45, y: 30 }, { x: -36, y: 30 },
+        ]}
+      />
+    )}
+    {gbaHousingFit && publishedMcuModule && segmentedSupplyPours && (
+      <copperpour
+        name="V1V1_CORE_INNER2"
+        connectsTo=".MCU .MCU_CORE > net.V1V1"
+        layer="inner2"
+        unbroken
+        clearance="0.2mm"
+        boardEdgeMargin="0.3mm"
+        outline={[
+          { x: mcuPcbX - 8, y: mcuPcbY - 9 },
+          { x: mcuPcbX + 8, y: mcuPcbY - 9 },
+          { x: mcuPcbX + 8, y: 35.91 },
+          { x: mcuPcbX - 8, y: 35.91 },
         ]}
       />
     )}
