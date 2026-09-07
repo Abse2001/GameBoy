@@ -1,11 +1,15 @@
 import StorageBoard from "./placement-published-mcu-header-module.circuit"
 
-export default () => (
+export default ({
+  segmentedSupplyPours = false,
+  routeClockFirst = true,
+}: { segmentedSupplyPours?: boolean; routeClockFirst?: boolean } = {}) => (
   <StorageBoard
     gbaHousingFit
     mcuPcbY={7}
     mcuSubcircuit={false}
-    routeClockFirst
+    routeClockFirst={routeClockFirst}
+    segmentedSupplyPours={segmentedSupplyPours}
     psramCapEscape
     mcuPassiveEscape
     usbResistorEscape

@@ -370,14 +370,14 @@ export default ({
       </group>
     )}
 
-    <hole
+    {!gbaHousingFit && <hole
       name="BAT_CABLE_SLOT_STRAIGHT"
       shape="pill"
       width="5mm"
       height="11mm"
       pcbX="-66mm"
       pcbY="25mm"
-    />
+    />}
     <SK_12E12_G5
       name="J_PWR_SW"
       schSectionName={schSections.power}
@@ -461,7 +461,11 @@ export default ({
         unbroken
         clearance="0.2mm"
         boardEdgeMargin="0.3mm"
-        outline={[
+        outline={gbaHousingFit ? [
+          { x: -65.36, y: -18 }, { x: -9, y: -18 },
+          { x: -9, y: -35.91 }, { x: 65.36, y: -35.91 },
+          { x: 65.36, y: 35.91 }, { x: -65.36, y: 35.91 },
+        ] : [
           { x: -36, y: -18 }, { x: -9, y: -18 },
           { x: -9, y: -41 }, { x: 45, y: -41 },
           { x: 45, y: 30 }, { x: -36, y: 30 },
@@ -476,7 +480,10 @@ export default ({
         unbroken
         clearance="0.2mm"
         boardEdgeMargin="0.3mm"
-        outline={[
+        outline={gbaHousingFit ? [
+          { x: -65.36, y: -35.91 }, { x: -9.6, y: -35.91 },
+          { x: -9.6, y: -18.6 }, { x: -65.36, y: -18.6 },
+        ] : [
           { x: -55, y: -41 }, { x: -9.6, y: -41 },
           { x: -9.6, y: -18.6 }, { x: -55, y: -18.6 },
         ]}
