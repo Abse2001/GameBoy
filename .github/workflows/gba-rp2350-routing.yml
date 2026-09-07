@@ -22,10 +22,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - candidate: mcu-subcircuit-direct
-            entry: placement-storage-mcu-subcircuit-direct
-          - candidate: mcu-subcircuit-headers
-            entry: placement-storage-mcu-subcircuit-headers
+          - candidate: debug-lateral
+            entry: placement-storage-debug-lateral
+          - candidate: debug-lateral-local-sd
+            entry: placement-storage-debug-lateral-local-sd
     defaults:
       run:
         working-directory: gba-rp2350

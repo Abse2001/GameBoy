@@ -181,6 +181,9 @@ export interface RP2350CompactLayoutProps {
   eastSupplyCapEscape?: boolean
   clockResistorEscape?: boolean
   debugTestpointEscape?: boolean
+  debugTestpointPlacements?: Partial<
+    Record<"TP_SWDIO" | "TP_SWCLK", { pcbX: number; pcbY: number }>
+  >
   flashCapEscape?: boolean
   usbResistorEscape?: boolean
   segmentedSupplyPours?: boolean
@@ -202,6 +205,7 @@ export const RP2350CompactLayout = ({
   eastSupplyCapEscape = false,
   clockResistorEscape = false,
   debugTestpointEscape = false,
+  debugTestpointPlacements,
   flashCapEscape = false,
   usbResistorEscape = false,
   segmentedSupplyPours = false,
@@ -405,8 +409,8 @@ export const RP2350CompactLayout = ({
         schSectionName="debug"
         schX={12}
         schY={-5.2}
-        pcbX={4}
-        pcbY={-10}
+        pcbX={debugTestpointPlacements?.TP_SWCLK?.pcbX ?? 4}
+        pcbY={debugTestpointPlacements?.TP_SWCLK?.pcbY ?? -10}
       />
       {/* BOOTSEL series protection; no manual copper path. */}
       <resistor
@@ -608,7 +612,7 @@ export const RP2350CompactLayout = ({
     <capacitor name="C_RGB_BUF" capacitance="100nF" maxDecouplingTraceLength={5.5} footprint="0402" supplierPartNumbers={{ jlcpcb: ["C1525"] }} schSheetName="interfaces" schSectionName="status" schX={-4} schY={-8} schOrientation="vertical" pcbX={5.4} pcbY={16.5} pcbRotation={270} />
     <capacitor name="C_RGB" capacitance="100nF" maxDecouplingTraceLength={6.5} footprint="0402" supplierPartNumbers={{ jlcpcb: ["C1525"] }} schSheetName="interfaces" schSectionName="status" schX={4} schY={-8} schOrientation="vertical" pcbX={-3.5} pcbY={21} pcbRotation={270} />
 
-    <testpoint name="TP_SWDIO" pcbStyle={{ silkscreenTextVisibility: "hidden" }} footprintVariant="pad" padShape="circle" padDiameter="1.1mm" schSheetName="core" schSectionName="debug" schX={12} schY={-3.5} pcbX={debugTestpointEscape ? -1.8 : -6} pcbY={debugTestpointEscape ? 5.95 : 10} />
+    <testpoint name="TP_SWDIO" pcbStyle={{ silkscreenTextVisibility: "hidden" }} footprintVariant="pad" padShape="circle" padDiameter="1.1mm" schSheetName="core" schSectionName="debug" schX={12} schY={-3.5} pcbX={debugTestpointPlacements?.TP_SWDIO?.pcbX ?? (debugTestpointEscape ? -1.8 : -6)} pcbY={debugTestpointPlacements?.TP_SWDIO?.pcbY ?? (debugTestpointEscape ? 5.95 : 10)} />
     <testpoint name="TP_GND" pcbStyle={{ silkscreenTextVisibility: "hidden" }} footprintVariant="pad" padShape="circle" padDiameter="1.1mm" schSheetName="core" schSectionName="debug" schX={12} schY={-6.9} pcbX={-7} pcbY={16} />
     <testpoint name="TP_3V3" pcbStyle={{ silkscreenTextVisibility: "hidden" }} footprintVariant="pad" padShape="circle" padDiameter="1.1mm" schSheetName="core" schSectionName="debug" schX={12} schY={-8.6} pcbX={-4.5} pcbY={16} />
 
