@@ -22,10 +22,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - candidate: debug-lateral
-            entry: placement-storage-debug-lateral
-          - candidate: debug-lateral-local-sd
-            entry: placement-storage-debug-lateral-local-sd
+          - candidate: debug-pad-row
+            entry: placement-storage-debug-pad-row
+          - candidate: debug-pad-row-margin
+            entry: placement-storage-debug-pad-row-margin
     defaults:
       run:
         working-directory: gba-rp2350
