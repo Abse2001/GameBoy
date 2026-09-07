@@ -1,6 +1,6 @@
 // Local all-global-routing experiment. Component children match @tscircuit/common 0.0.56.
 // Only the routing container changes; values, placements, and trace intent are retained.
-import type { SubcircuitProps } from "@tscircuit/props"
+import type { GroupProps } from "@tscircuit/props"
 import { A_0603WAF1003T5E } from "./global-power-imports/A_0603WAF1003T5E"
 import { A_0603WAF9532T5E } from "./global-power-imports/A_0603WAF9532T5E"
 import { AO3401A } from "./global-power-imports/AO3401A"
@@ -25,7 +25,7 @@ const schSections = {
   usbShutdown: "usb-shutdown",
 } as const
 
-export type PowerBoostMT3608Props = Omit<SubcircuitProps, "children"> & {
+export type PowerBoostMT3608Props = Omit<GroupProps, "children" | "subcircuit"> & {
   placements?: Partial<
     Record<
       | "R_BOOST_EN_PULLUP"
@@ -48,8 +48,8 @@ export type PowerBoostMT3608Props = Omit<SubcircuitProps, "children"> & {
  * Battery-powered 5 V boost supply extracted from abse/gameboy.
  *
  * VBUS disables the MT3608 while USB power is present. VSYS is the boosted
- * output and GND is the common return. Use exposedNets to expose the selected
- * power domains to the parent circuit. Connect an external switch between
+ * output and GND is the common return. This ordinary group shares the board's
+ * routing scope and does not route separately. Connect an external switch between
  * BAT_POS and BAT_SWITCHED, or connect both nets for always-on operation.
  */
 export const PowerBoost_GlobalLayout = ({
@@ -58,7 +58,6 @@ export const PowerBoost_GlobalLayout = ({
   ...props
 }: PowerBoostMT3608Props) => (
   <group
-    subcircuit={false}
     minViaHoleDiameter="0.3mm"
     minViaPadDiameter="0.45mm"
     {...props}

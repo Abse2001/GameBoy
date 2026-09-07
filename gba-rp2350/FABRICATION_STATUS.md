@@ -25,6 +25,8 @@ Heavy routing and Gerber short checks run only in GitHub CI.
 | `0a8a550` / flash facing MCU | 277 PCB traces, 277 vias; routing completed, Core errors regressed | 24, plus 18 length warnings | 3 detected at 50 pixels/mm; reject flash relocation |
 | `6ec4dde` / C18 west | 277 PCB traces, 271 vias; routing completed, regressed | 16, plus 21 length warnings | 5 detected at 50 pixels/mm; rejected |
 | `524f887` / C12 + C17 channel | 277 PCB traces, 284 vias; routing completed, regressed | 30, plus 17 length warnings | 4 detected at 50 pixels/mm; rejected |
+| `6ce06c8` / C12 + SD capacitor rotation | 277 PCB traces, 255 vias; mixed result | 17, plus 18 length warnings | 2 detected at 50 pixels/mm, MISO against XIN and V3V3 near the crystal; not accepted |
+| `524f887` / C12 clock first | Canceled at user direction after approximately 45 minutes; no completed full-board result | Not available, not zero | Not checked: canceled before finished copper |
 
 Evidence: [single-phase run and broad-plane comparison](https://github.com/Abse2001/GameBoy/actions/runs/34096366893),
 [corrected-plane run](https://github.com/Abse2001/GameBoy/actions/runs/34097162607).
@@ -35,12 +37,33 @@ Evidence: [single-phase run and broad-plane comparison](https://github.com/Abse2
 [C12 and flash comparison](https://github.com/Abse2001/GameBoy/actions/runs/34107943064).
 [C18 result](https://github.com/Abse2001/GameBoy/actions/runs/34109015255).
 [C17 result](https://github.com/Abse2001/GameBoy/actions/runs/34111058889/job/101707165934).
+[SD capacitor result](https://github.com/Abse2001/GameBoy/actions/runs/34113209572/job/101713939428).
 
 Later contact and capacitor-placement jobs are separate trials. Their local
 routing-disabled renders pass placement, type and netlist checks; that is not a
 physical routing or short-check pass.
 
 ## Board-input corrections under test
+
+### Routing scope: ordinary groups, board-level phases allowed
+
+The latest completed SD trial already had one global Pipeline 9 pass:
+149 connections, 1,066 obstacles and zero previously routed traces. All nine
+child groups are ordinary groups; only the board root has `is_subcircuit: true`.
+This board-root metadata is required and is not a separate child route.
+MCU and wrapper defaults now use ordinary groups; power/audio global variants
+use `GroupProps`. Before the expensive CI route, a routing-disabled render and
+hierarchy check reject any independently routed child group or trace outside
+the root board scope. Board-level routing phases remain allowed.
+
+The canceled clock-first run used two phases of this same board, not child
+subcircuits. Its second phase entered `traceSimplificationSolver` at 10:46:43
+UTC and was still there at 11:06:45 UTC, reporting 71% throughout those 20
+minutes. This identifies the observed stage bottleneck, not a proven inner
+solver defect. No engine change or manual routing bypass was made.
+
+The next CI run repeats the C12 layout with the hierarchy guard. The group
+cleanup preserves component identities, values, netlist and protected positions.
 
 - Replace concave comb contacts whose inferred route endpoints fell in empty
   gaps with the actual OpenTendo contact geometry. All 22 new endpoints are
@@ -84,6 +107,11 @@ physical routing or short-check pass.
    They are not currently reproduced. Whether the case may be trimmed is an
    outstanding user choice. Outward connector overhang needs a shell model or
    physical dimension check, not just pad-to-edge clearance.
+   The reference shoulder edges are around Y=24.6–26 mm, versus the rectangle's
+   Y=36.21 mm: roughly 10–12 mm of extra PCB at those sites. Restoring the
+   reference edge would put J_HEADER's first three holes about 4.9–5.8 mm
+   beyond that edge. Preserving both the current connector placement and an
+   unmodified original housing has not been demonstrated.
 3. **Controls:** L/R shoulder switches and the requested left-side volume wheel
    still need mechanically verified implementation. A contact pad center is not
    an actuator center. The existing RK10J12E002L is a through-hole dual 10k pot,

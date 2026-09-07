@@ -22,8 +22,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - candidate: gba-c12-sd-cap-facing
-            entry: placement-storage-gba-c12-sd-cap-facing
+          - candidate: gba-c12-global-groups
+            entry: placement-storage-gba-c12-channel
     defaults:
       run:
         working-directory: gba-rp2350
@@ -40,6 +40,12 @@ jobs:
           bun -e 'for (const name of ["tscircuit", "@tscircuit/core", "@tscircuit/eval", "@tscircuit/capacity-autorouter", "@tscircuit/copper-pour-solver"]) console.log(name, JSON.parse(await Bun.file(`node_modules/${name}/package.json`).text()).version)'
       - name: Typecheck candidate sources
         run: bunx --no-install tsc --noEmit
+      - name: Verify ordinary-group hierarchy before routing
+        env:
+          ENTRY: ${{ matrix.entry }}
+        run: |
+          bunx --no-install tsci build "experiments/fabrication/${ENTRY}.circuit.tsx" --routing-disabled --disable-parts-engine
+          bun checks/verify-storage.ts "dist/experiments/fabrication/${ENTRY}/circuit.json"
       - name: Route full board with Pipeline 9
         env:
           ENTRY: ${{ matrix.entry }}

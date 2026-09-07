@@ -231,7 +231,7 @@ export interface RP2350CompactLayoutProps {
 
 export const RP2350CompactLayout = ({
   name = "MCU",
-  subcircuit = true,
+  subcircuit = false,
   psram = false,
   psramCapEscape = false,
   mcuPassiveEscape = false,

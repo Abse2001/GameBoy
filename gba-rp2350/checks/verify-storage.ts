@@ -11,6 +11,19 @@ const components = elements.filter((e) => e.type === "source_component")
 const ports = elements.filter((e) => e.type === "source_port")
 const connectivity = getSourcePortConnectivityMapFromCircuitJson(elements)
 
+// Phases may sequence board-level connections, but none of this board's
+// functional groups may create an independently routed child subcircuit.
+const sourceBoards = elements.filter((e) => e.type === "source_board")
+assert.equal(sourceBoards.length, 1, "Expected exactly one root board")
+const sourceGroups = elements.filter((e) => e.type === "source_group")
+const rootGroup = sourceGroups.find((g) => g.source_group_id === sourceBoards[0]!.source_group_id)
+assert(rootGroup?.is_subcircuit, "Missing root board routing scope")
+const childSubcircuits = sourceGroups.filter((g) => g.is_subcircuit && g !== rootGroup)
+assert.deepEqual(childSubcircuits.map((g) => g.name ?? g.source_group_id), [], "Use ordinary groups, not child subcircuits")
+for (const trace of elements.filter((e) => e.type === "source_trace" || e.type === "pcb_trace")) {
+  assert.equal(trace.subcircuit_id, rootGroup.subcircuit_id, "Every trace must belong to the root board routing scope")
+}
+
 function component(name: string) {
   const matches = components.filter((c) => c.name === name)
   assert.equal(matches.length, 1, `Expected exactly one ${name}`)
@@ -184,6 +197,7 @@ const errors = elements.filter((e) => e.type.endsWith("_error"))
 const errorCounts: Record<string, number> = {}
 for (const e of errors) errorCounts[e.type] = (errorCounts[e.type] ?? 0) + 1
 console.log(JSON.stringify({ file, storageNetlistChecks: "passed", importedPartsWithLocalObjAndStep: Object.keys(parts).length,
+  routingHierarchyChecks: "passed: one root board, no child subcircuits; board-level phases allowed",
   pcbTraces: elements.filter((e) => e.type === "pcb_trace").length,
   errors: errorCounts,
   note: "Netlist checks do not certify physical copper continuity or zero shorts. Run tsci check shorts and inspect routing DRCs separately."

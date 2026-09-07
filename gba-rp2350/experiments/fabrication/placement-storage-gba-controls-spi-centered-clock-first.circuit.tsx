@@ -3,7 +3,7 @@ import type { RP2350CompactLayoutProps } from "./published-rp2350-v0.0.11/pico-l
 
 export default ({
   segmentedSupplyPours = false,
-  routeClockFirst = true,
+  routeClockFirst = false,
   routingSafetyMargin = false,
   mcuPeripheralPlacements,
   sdHfCapRotation,

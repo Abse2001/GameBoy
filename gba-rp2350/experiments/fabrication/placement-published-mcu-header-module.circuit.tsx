@@ -2,7 +2,7 @@ import Board from "./index.circuit"
 import type { RP2350CompactLayoutProps } from "./published-rp2350-v0.0.11/pico-layout.circuit"
 
 export default ({
-  mcuSubcircuit = true,
+  mcuSubcircuit = false,
   mcuHeaders = false,
   routeClockFirst = false,
   psramCapEscape = false,

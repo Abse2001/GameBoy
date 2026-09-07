@@ -1,7 +1,7 @@
 // GBA placement variant of @tscircuit/common's PAM8403 circuit.
 // Same electrical topology and values; connector and output-filter placement
 // are adapted for an outward-facing top-edge socket. No manual PCB routes.
-import type { SubcircuitProps } from "@tscircuit/props"
+import type { GroupProps } from "@tscircuit/props"
 import { BLM18PG121SN1D } from "../../imports/BLM18PG121SN1D"
 import { PAM8403DR_H } from "../../imports/PAM8403DR_H"
 import { SM02B_PASS_TBT_LF__SN_ } from "./SM02B_PASS_TBT_LF__SN_"
@@ -19,7 +19,7 @@ const schSections = {
   output: "speaker-output",
 } as const
 
-export type AudioAmplifier3WPAM8403Props = Omit<SubcircuitProps, "children"> & {
+export type AudioAmplifier3WPAM8403Props = Omit<GroupProps, "children" | "subcircuit"> & {
   vrefPlacement?: { pcbX: number; pcbY: number; pcbRotation: number }
   placements?: Partial<Record<"R_AMP_IN" | "C_AMP_PWM_FILTER" | "C_AMP_IN_COUPLE" | "C_AMP_VDD" | "C_AMP_VDD_BULK" | "FB_SPK_POS", { pcbX: number; pcbY: number; pcbRotation: number }>>
 }
@@ -28,8 +28,8 @@ export type AudioAmplifier3WPAM8403Props = Omit<SubcircuitProps, "children"> & {
  * 3W mono PWM audio amplifier extracted from abse/gameboy.
  *
  * The circuit includes PWM input filtering, PAM8403 amplification, power
- * decoupling, speaker EMI filtering, and the speaker connector. Use
- * exposedNets to expose only the selected signal and power nets.
+ * decoupling, speaker EMI filtering, and the speaker connector. Its ordinary
+ * group shares the board's routing scope; it does not route separately.
  */
 export const AudioAmplifier_GlobalLayout = ({
   name = "AudioAmplifier_GlobalLayout",
@@ -38,7 +38,6 @@ export const AudioAmplifier_GlobalLayout = ({
   ...props
 }: AudioAmplifier3WPAM8403Props) => (
   <group
-    subcircuit={false}
     minViaHoleDiameter="0.3mm"
     minViaPadDiameter="0.45mm"
     {...props}
