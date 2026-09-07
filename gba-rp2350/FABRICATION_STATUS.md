@@ -28,6 +28,8 @@ Heavy routing and Gerber short checks run only in GitHub CI.
 | `6ce06c8` / C12 + SD capacitor rotation | 277 PCB traces, 255 vias; mixed result | 17, plus 18 length warnings | 2 detected at 50 pixels/mm, MISO against XIN and V3V3 near the crystal; not accepted |
 | `524f887` / C12 clock first | Canceled at user direction after approximately 45 minutes; no completed full-board result | Not available, not zero | Not checked: canceled before finished copper |
 | `fec3553` / C12 ordinary-group repeat | 277 PCB traces, 261 vias, 96 copper regions; full routing build took 20m55s | 11, plus 18 length warnings; matches the earlier C12 result | 3 detected at 50 pixels/mm; 100 pixels/mm skipped after failure, not passed |
+| `e59bbc8` / root C12 repeat | 277 PCB traces, 261 vias, 96 copper regions; matches prior baseline | 11, plus 18 length warnings | 3 reported at 50 pixels/mm; not ready |
+| `e59bbc8` / C14 inner channel | 277 PCB traces, 275 vias, 93 copper regions; mixed result, not promoted | 17 (2 maximum-via, 14 via/pad clearance, 1 via/pad overlap), plus 23 length warnings | 1 at 50 pixels/mm: VREG_AVDD/GND at (-2.770, 4.970); 100 pixels/mm skipped, not passed |
 
 Evidence: [single-phase run and broad-plane comparison](https://github.com/Abse2001/GameBoy/actions/runs/34096366893),
 [corrected-plane run](https://github.com/Abse2001/GameBoy/actions/runs/34097162607).
@@ -40,6 +42,7 @@ Evidence: [single-phase run and broad-plane comparison](https://github.com/Abse2
 [C17 result](https://github.com/Abse2001/GameBoy/actions/runs/34111058889/job/101707165934).
 [SD capacitor result](https://github.com/Abse2001/GameBoy/actions/runs/34113209572/job/101713939428).
 [Ordinary-group repeat](https://github.com/Abse2001/GameBoy/actions/runs/34115710932/job/101721879869).
+[Root/C14 comparison](https://github.com/Abse2001/GameBoy/actions/runs/34123911135).
 
 Later contact and capacitor-placement jobs are separate trials. Their local
 routing-disabled renders pass placement, type and netlist checks; that is not a
@@ -78,20 +81,53 @@ is a symmetric 131.32 x 72.42 mm outline; that is not a certified stock-shell fi
 The standalone RP2350 project and the separate legacy project at the repository
 root are untouched. Cloud CI performs the full routing and physical shorts checks.
 
-The next isolated trial moves only C14 to `(4.9, -1.1)` in the MCU essentials'
+The C14 isolated trial moves only C14 to `(4.9, -1.1)` in the MCU essentials'
 coordinate system, maintaining its rotation, value and connections. Its board
 position becomes `(-4.9, 8.1)`. This aligns its supply pad with U1.IOVDD2 and
 reduces their straight-line distance to 0.905 mm. It opens a pad-clear path on
 the MCU side of C11 toward C17, beside the two existing V3V3/GND crossings.
 The smallest component pad gap is 0.1598 mm, above the unchanged 0.1 mm rule.
-Routing-disabled checks pass with only C14's placement changed; the complete
-cloud route, length constraints and all-layer Gerber checks still determine
-acceptance. This is not yet an improved or fabrication-ready result.
+Routing-disabled checks pass with only C14's placement changed. The complete
+cloud result removes the earlier west-bank trace contacts, but increases Core
+errors from 11 to 17 and length warnings from 18 to 23 while Gerber-50 shorts
+drop from three to one. Both candidates preserve all parts, source connections,
+protected positions and top-side assembly. C14 is not promoted to the root
+entry; the remaining ground via contact near VREG_AVDD and the other via/pad
+conflicts must be addressed before this can be considered a better board.
 
 No child subcircuits, fanout stages, manual traces, explicit vias, relaxed checks
 or modified router packages are introduced. Native fanout would add a routing
 stage with its own default solver; it is left off for this fully global Pipeline
 9 placement comparison.
+
+### Next trial: C6 input-capacitor approach
+
+On the unpromoted C14 variant, move only C6 from source `(1.2, 4.2)` to
+`(1.2, 3.75)`, keeping rotation 90 degrees. Its board center becomes
+`(-1.2, 3.25)`. The VIN-pad distance falls to 0.917 mm and the PGND-pad
+distance to 2.101 mm. Minimum component-box separation remains 0.188 mm to
+U1 and 0.330 mm to L1; the existing regulator-side passage is not narrowed.
+This changes an actual PGND branch endpoint, not a synthetic routing anchor.
+Local typecheck and routing-disabled render pass. Source parts, netlist,
+protected placements and top-side assembly match the C14 control exactly;
+only C6's PCB center changes. The hierarchy check confirms one root board and
+no child subcircuits. These preflight results do not certify routed copper.
+The offending ground via position touches a fixed MCU pad, so better capacitor
+geometry does not guarantee that the global solver will relocate it safely.
+
+Compare against a repeated C14 control in cloud CI. C12 remains the root
+entry; no experimental variant is promoted. Preserve parts, connections,
+trace limits, crystal/MCU/PSRAM and control/connector positions. No handwritten
+trace geometry or vias are added. The user-requested 15-minute task follow-up
+now resumes placement work after each cloud result, with no duplicate batches.
+
+The C14 result's 14 via/pad clearance reports represent eight distinct physical
+via/pad pairs at six via sites; coincident same-net via records account for six
+repeated reports. They are not electrically safe false positives. The crystal
+overlap is a START-net through-via whose logical bottom/inner1 transition still
+occupies top copper. The other five sites already include top in their logical
+spans, so hidden through-via occupancy does not explain all of the failures.
+Keep the full reported count in the acceptance gate.
 
 - Replace concave comb contacts whose inferred route endpoints fell in empty
   gaps with the actual OpenTendo contact geometry. All 22 new endpoints are

@@ -22,10 +22,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - candidate: gba-c12-global-groups
-            entry: index
           - candidate: gba-c14-inner-channel
             entry: experiments/fabrication/placement-storage-gba-c14-inner-channel
+          - candidate: gba-c14-c6-vin-approach
+            entry: experiments/fabrication/placement-storage-gba-c14-c6-vin-approach
     defaults:
       run:
         working-directory: gba-rp2350
