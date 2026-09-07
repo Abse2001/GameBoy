@@ -24,8 +24,8 @@ jobs:
         include:
           - candidate: separated-mcu-peripherals
             entry: placement-storage-separated-mcu-peripherals
-          - candidate: separated-mcu-peripherals-same-layer
-            entry: placement-storage-separated-mcu-peripherals-same-layer
+          - candidate: separated-mcu-peripherals-reset-east
+            entry: placement-storage-separated-mcu-peripherals-reset-east
     defaults:
       run:
         working-directory: gba-rp2350
