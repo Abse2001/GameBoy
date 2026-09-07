@@ -21,7 +21,7 @@
   "devDependencies": {
     "@tscircuit/common": "^0.0.56",
     "@types/react": "^19.2.14",
-    "tscircuit": "0.0.2463",
+    "tscircuit": "0.0.2465",
     "typescript": "^5.0.0"
   },
   "author": "abdolsalamallawlabi"
