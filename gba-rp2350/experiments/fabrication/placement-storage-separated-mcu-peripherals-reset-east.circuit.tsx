@@ -16,7 +16,7 @@ export default () => (
     }}
     mcuPeripheralPlacements={{
       U_RUN: { pcbX: 13, pcbY: 4 },
-      R_RUN: { pcbX: 16, pcbY: 4, pcbRotation: 90 },
+      R_RUN: { pcbX: 18, pcbY: 4, pcbRotation: 90 },
       U_RGB_BUF: { pcbX: 8, pcbY: 8, pcbRotation: 270 },
       C_RGB_BUF: { pcbX: 5.4, pcbY: 9.8, pcbRotation: 270 },
       R_RGB_DATA: { pcbX: 8.95, pcbY: 12, pcbRotation: 90 },
