@@ -22,10 +22,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - candidate: gba-power-planes-clock-first
-            entry: placement-storage-gba-power-planes-clock-first
-          - candidate: gba-power-planes-global
-            entry: placement-storage-gba-power-planes-global
+          - candidate: gba-manufacturing-margin
+            entry: placement-storage-gba-manufacturing-margin
     defaults:
       run:
         working-directory: gba-rp2350

@@ -3,13 +3,15 @@ import StorageBoard from "./placement-published-mcu-header-module.circuit"
 export default ({
   segmentedSupplyPours = false,
   routeClockFirst = true,
-}: { segmentedSupplyPours?: boolean; routeClockFirst?: boolean } = {}) => (
+  routingSafetyMargin = false,
+}: { segmentedSupplyPours?: boolean; routeClockFirst?: boolean; routingSafetyMargin?: boolean } = {}) => (
   <StorageBoard
     gbaHousingFit
     mcuPcbY={7}
     mcuSubcircuit={false}
     routeClockFirst={routeClockFirst}
     segmentedSupplyPours={segmentedSupplyPours}
+    routingSafetyMargin={routingSafetyMargin}
     psramCapEscape
     mcuPassiveEscape
     flashCapEscape

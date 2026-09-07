@@ -12,9 +12,12 @@ Heavy routing and Gerber short checks run only in GitHub CI.
 | `c77e0ae` / single phase | 271 PCB traces, 288 vias; routing completed | 32, plus 23 length warnings | 1 at 50 pixels/mm, near U1.XOUT/R2 and V3V3; 100 pixels/mm not run after the failure |
 | `c77e0ae` / power planes, global | Routing timeout after 2409 seconds; no completed circuit emitted | Not available, not zero | Not checked: no completed routed output |
 | `66c5aa6` / corrected planes, clock first | Main phase failed on a V1V1 branch after the clock phase | 1 routing failure and 416 consequent missing-connection errors | Not checked: no completed routed output |
+| `66c5aa6` / corrected planes, global | Routing timeout after 2411 seconds; no completed circuit emitted | Not available, not zero | Not checked: no completed routed output |
+| `f8690c3` / reference contacts, single phase | 277 PCB traces, 262 vias; routing completed | 29, plus 20 length warnings | 12 detected at 50 pixels/mm; rejected despite lower Core error count |
 
 Evidence: [single-phase run and broad-plane comparison](https://github.com/Abse2001/GameBoy/actions/runs/34096366893),
 [corrected-plane run](https://github.com/Abse2001/GameBoy/actions/runs/34097162607).
+[Reference-contact result](https://github.com/Abse2001/GameBoy/actions/runs/34099225875/job/101669578145).
 
 Later contact and capacitor-placement jobs are separate trials. Their local
 routing-disabled renders pass placement, type and netlist checks; that is not a
@@ -34,6 +37,9 @@ physical routing or short-check pass.
   including the MCU's V1V1 rail. No trace geometry, explicit vias or breakout
   points are authored by hand.
 - Pin the audio passive BOM to the matching JLC selections already used by CI.
+- A separate manufacturing-margin trial asks the routing phase for 0.15 mm
+  trace-to-pad and 0.2 mm via-to-pad clearance, above the existing 0.1 mm board
+  minimum. It does not disable checks or edit the resulting copper.
 
 ## Remaining signoff items
 
@@ -63,8 +69,7 @@ physical routing or short-check pass.
    current housing variant shows only its electrical header, not a proven
    mounted module/display-window/height arrangement. Its 5 V supply jumper
    configuration and signal-level requirements must be verified at assembly.
-7. **Manufacturing:** verify PSRAM/MT3608 footprint dimensional registration,
-   real inductor height, courtyards, stencil, drill and copper stackup, connector
+7. **Manufacturing:** verify real inductor height, courtyards, stencil, drill and copper stackup, connector
    access, BOM/placement orientation and live assembly stock. Generic footprint
    similarity warnings alone do not establish a wrong package, but neither do
    they provide dimensional signoff. Membrane contacts require exposed copper,
@@ -72,6 +77,20 @@ physical routing or short-check pass.
 8. **Bring-up:** zero DRCs does not prove firmware compatibility, oscillator
    startup, signal integrity, temperature margin or actual Game Boy emulation.
    Prototype bring-up remains necessary before claiming a functional product.
+
+## Dimensional checks completed
+
+The PSRAM copper matches the current JLC module exactly: 0.588010 × 1.7999964 mm
+oval pads, 1.27 mm pitch and 5.199888 mm row-center spacing. Its pin numbering and
+orientation match the manufacturer SOP-8 drawing. The MT3608 pads match JLC to
+approximately 0.002 mm rounding; it is SOT23-6 despite the footprint generator's
+`dfn6` name. The manufacturer recommends a somewhat larger land pattern than
+JLC, so final solder-margin approval remains the assembler's check. Neither IoU
+warning establishes a wrong or disconnected footprint.
+
+The actual Abracon L1 body is 2.0 × 1.6 × 1.0 mm; its generic rendered model does
+not yet represent that mechanical envelope. Assembly stock has not been verified
+live for every selected part.
 
 Sources: [OpenTendo-AGB reference](https://github.com/Redherring32/OpenTendo-AGB/tree/dba1e35571da9c9448f5f7fd9f55c6aaa15c2806),
 [AP2112 datasheet](https://www.diodes.com/datasheet/download/AP2112.pdf),
