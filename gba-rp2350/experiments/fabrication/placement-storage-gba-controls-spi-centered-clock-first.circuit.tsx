@@ -17,7 +17,6 @@ export default ({
     flashCapEscape
     usbResistorEscape
     clockPassiveEscape
-    clockResistorEscape
     westDecouplerEscape
     mcuDebugTestpointPlacements={{
       TP_SWDIO: { pcbX: -18, pcbY: 18 },

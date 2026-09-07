@@ -312,7 +312,7 @@ export default ({
       pcbRotation={(ldoPlacements?.U_3V3?.pcbRotation ?? (ldoFlipped ? 0 : 180)) + 90}
     />
     <capacitor name="C_3V3_IN" capacitance="1uF" maxDecouplingTraceLength="5.5mm" footprint="0603" supplierPartNumbers={{ jlcpcb: ["C15849"] }} pcbX={(ldoFlipped ? -14.8 : -23.2) + ldoOffset.x} pcbY={(ldoFlipped ? 18 : 20) + ldoOffset.y} pcbRotation={ldoFlipped ? 0 : 180} schX={-25} schY={24.5} {...ldoPlacements?.C_3V3_IN} />
-    <capacitor name="C_3V3_OUT" capacitance="1uF" maxDecouplingTraceLength="5.5mm" footprint="0603" supplierPartNumbers={{ jlcpcb: ["C15849"] }} pcbX={(ldoFlipped ? -22.75 : -15.25) + ldoOffset.x} pcbY={(ldoFlipped ? 18 : 20) + ldoOffset.y} pcbRotation={ldoFlipped ? 180 : 0} schX={-17} schY={24.5} {...ldoPlacements?.C_3V3_OUT} />
+    <capacitor name="C_3V3_OUT" capacitance="1uF" maxDecouplingTraceLength="5.5mm" footprint="0603" supplierPartNumbers={{ jlcpcb: ["C15849"] }} pcbX={(ldoFlipped ? -22 : -16) + ldoOffset.x} pcbY={(ldoFlipped ? 17.8 : 20.2) + ldoOffset.y} pcbRotation={ldoFlipped ? 270 : 90} schX={-17} schY={24.5} {...ldoPlacements?.C_3V3_OUT} />
     <trace name="REG_3V3_IN" from="net.VSYS" to=".U_3V3 > .VIN" {...powerTraceProps} />
     <trace name="REG_3V3_ENABLE" from=".U_3V3 > .EN" to="net.VSYS" />
     <trace name="REG_3V3_GND" from=".U_3V3 > .GND" to="net.GND" />

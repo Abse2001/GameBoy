@@ -1,0 +1,1104 @@
+{
+  "auditDate": "2026-09-07",
+  "sourceCircuit": "https://github.com/Abse2001/GameBoy/actions/runs/34099573916/job/101670670212",
+  "scope": "47 unique first-choice JLC IDs across 94 populated source components, excluding 8 doNotPlace membrane contacts and 4 bare testpoints",
+  "auditProjectionOverride": {
+    "U_3V3": {
+      "from": "C23380830",
+      "to": "C51118",
+      "reason": "Intended part is genuine Diodes AP2112K-3.3TRG1; original C23380830 is TECH PUBLIC, not Diodes. This audit does not itself edit the project."
+    }
+  },
+  "method": "Read-only live JLCPCB parts portal public product data; reused 9 earlier same-day verifications and checked remaining 38 sequentially.",
+  "fieldDefinitions": {
+    "inStock": "JLC overseasStockCount displayed as In Stock",
+    "availableOrderQty": "JLC canPresaleNumber displayed as Available Order Qty. Inventory and orderable quantity differ; why is not established by these fields.",
+    "isBuyComponent": "JLC buy-enabled flag when available"
+  },
+  "caveats": [
+    "This is JLCPCB assembly parts portal stock, not LCSC retail shop stock.",
+    "Counts are timestamped, unreserved observations and must be rechecked at assembly ordering.",
+    "Positive stock does not certify package fit, electrical ratings, process eligibility, minimum order, feeder attrition allowance, or completed PCB/assembly quote acceptance.",
+    "MPN aliases generated with underscores or an A_ prefix are not treated as confirmed identity mismatches."
+  ],
+  "verifiedUniqueIds": 47,
+  "unverifiedUniqueIds": [],
+  "blockers": [
+    {
+      "component": "U_PSRAM",
+      "jlcId": "C5333729",
+      "reason": "Exact selected APS6404L-3SQR-SN shows 1 In Stock but 0 Available Order Qty. Immediate assembly availability not established."
+    }
+  ],
+  "lowStock": [
+    {
+      "component": "R_RGB_DATA",
+      "jlcId": "C100375",
+      "availableOrderQty": 5,
+      "reason": "Low count; may not cover a batch plus assembly attrition allowance."
+    }
+  ],
+  "identityNotes": [
+    {
+      "component": "Q_BAT_CUTOFF",
+      "jlcId": "C347476",
+      "mpn": "AO3401A",
+      "brand": "UMW (Youtai)",
+      "note": "Selected listing is UMW, not Alpha & Omega Semiconductor. Source MPN matches; this audit does not assume an AOS manufacturer identity."
+    }
+  ],
+  "checkedUnavailableExactPsrAmAlternate": {
+    "jlcId": "C9900003354",
+    "mpn": "APS6404L-3SQR-SN",
+    "brand": "JLCPCB Assembly",
+    "inStock": 0,
+    "availableOrderQty": 0,
+    "isBuyComponent": "0",
+    "url": "https://jlcpcb.com/partdetail/C9900003354",
+    "checkedAt": "2026-09-07T09:02:39.356Z",
+    "note": "Consignment-style JLCPCB Assembly listing is not evidence of a currently purchasable APM part. Its no-longer-manufactured reason is not proof that the exact device is globally discontinued."
+  },
+  "parts": [
+    {
+      "jlcId": "C1525",
+      "components": [
+        {
+          "name": "C_FLASH",
+          "value": "100nF"
+        },
+        {
+          "name": "C_PSRAM_HF",
+          "mpn": "CL05B104KO5NNNC",
+          "value": "100nF"
+        },
+        {
+          "name": "C_RGB_BUF",
+          "value": "100nF"
+        },
+        {
+          "name": "C_RGB",
+          "value": "100nF"
+        },
+        {
+          "name": "C_SD_HF",
+          "mpn": "CL05B104KO5NNNC",
+          "value": "100nF"
+        }
+      ],
+      "mpn": "CL05B104KO5NNNC",
+      "brand": "Samsung Electro-Mechanics",
+      "package": "0402",
+      "inStock": 36739405,
+      "availableOrderQty": 30237516,
+      "isBuyComponent": "1",
+      "noBuyReason": null,
+      "url": "https://jlcpcb.com/partdetail/C1525",
+      "checkedAt": "2026-09-07T09:13:54.642Z"
+    },
+    {
+      "jlcId": "C1530",
+      "components": [
+        {
+          "name": "C_SPK_EMI_POS",
+          "value": "220pF"
+        },
+        {
+          "name": "C_SPK_EMI_NEG",
+          "value": "220pF"
+        }
+      ],
+      "mpn": "0402B221K500NT",
+      "brand": "FH (Guangdong Fenghua Advanced Tech)",
+      "package": "0402",
+      "inStock": 1094347,
+      "availableOrderQty": 995865,
+      "isBuyComponent": "1",
+      "noBuyReason": null,
+      "url": "https://jlcpcb.com/partdetail/C1530",
+      "checkedAt": "2026-09-07T09:14:08.293Z"
+    },
+    {
+      "jlcId": "C7484",
+      "components": [
+        {
+          "name": "U_RGB_BUF",
+          "mpn": "SN74AHCT1G125DBVR",
+          "value": null
+        }
+      ],
+      "mpn": "SN74AHCT1G125DBVR",
+      "brand": "Texas Instruments",
+      "package": "SOT-23-5",
+      "inStock": 25657,
+      "availableOrderQty": 17794,
+      "isBuyComponent": "1",
+      "noBuyReason": null,
+      "url": "https://jlcpcb.com/partdetail/C7484",
+      "checkedAt": "2026-09-07T09:13:59.127Z"
+    },
+    {
+      "jlcId": "C8678",
+      "components": [
+        {
+          "name": "D_BAT_BOOST",
+          "mpn": "SS34",
+          "value": null
+        },
+        {
+          "name": "D_USB_POWER",
+          "mpn": "SS34",
+          "value": null
+        }
+      ],
+      "mpn": "SS34",
+      "brand": "MDD(Microdiode Semiconductor)",
+      "package": "SMA(DO-214AC)",
+      "inStock": 5269663,
+      "availableOrderQty": 5083789,
+      "isBuyComponent": "1",
+      "noBuyReason": null,
+      "url": "https://jlcpcb.com/partdetail/C8678",
+      "checkedAt": "2026-09-07T09:14:04.453Z"
+    },
+    {
+      "jlcId": "C11702",
+      "components": [
+        {
+          "name": "R_PWR_LED",
+          "value": "1kΩ"
+        },
+        {
+          "name": "R_AMP_IN",
+          "value": "1kΩ"
+        }
+      ],
+      "mpn": "0402WGF1001TCE",
+      "brand": "UNI-ROYAL(Uniroyal Elec)",
+      "package": "0402",
+      "inStock": 11204274,
+      "availableOrderQty": 8694348,
+      "isBuyComponent": "1",
+      "noBuyReason": null,
+      "url": "https://jlcpcb.com/partdetail/C11702",
+      "checkedAt": "2026-09-07T09:13:57.299Z"
+    },
+    {
+      "jlcId": "C14709",
+      "components": [
+        {
+          "name": "FB_SPK_POS",
+          "mpn": "BLM18PG121SN1D",
+          "value": null
+        },
+        {
+          "name": "FB_SPK_NEG",
+          "mpn": "BLM18PG121SN1D",
+          "value": null
+        }
+      ],
+      "mpn": "BLM18PG121SN1D",
+      "brand": "Murata Electronics",
+      "package": "0603",
+      "inStock": 3092884,
+      "availableOrderQty": 2953762,
+      "isBuyComponent": "1",
+      "noBuyReason": null,
+      "url": "https://jlcpcb.com/partdetail/C14709",
+      "checkedAt": "2026-09-07T09:14:07.726Z"
+    },
+    {
+      "jlcId": "C15195",
+      "components": [
+        {
+          "name": "C_AMP_PWM_FILTER",
+          "value": "10nF"
+        }
+      ],
+      "mpn": "CL05B103KB5NNNC",
+      "brand": "Samsung Electro-Mechanics",
+      "package": "0402",
+      "inStock": 6726125,
+      "availableOrderQty": 5834662,
+      "isBuyComponent": "1",
+      "noBuyReason": null,
+      "url": "https://jlcpcb.com/partdetail/C15195",
+      "checkedAt": "2026-09-07T09:14:06.486Z"
+    },
+    {
+      "jlcId": "C15849",
+      "components": [
+        {
+          "name": "C_PSRAM_BULK",
+          "mpn": "CL10A105KB8NNNC",
+          "value": "1uF"
+        },
+        {
+          "name": "C_3V3_IN",
+          "value": "1uF"
+        },
+        {
+          "name": "C_3V3_OUT",
+          "value": "1uF"
+        }
+      ],
+      "mpn": "CL10A105KB8NNNC",
+      "brand": "Samsung Electro-Mechanics",
+      "package": "0603",
+      "inStock": 8958692,
+      "availableOrderQty": 6311656,
+      "isBuyComponent": "1",
+      "noBuyReason": null,
+      "url": "https://jlcpcb.com/partdetail/C15849",
+      "checkedAt": "2026-09-07T09:13:55.165Z"
+    },
+    {
+      "jlcId": "C17168",
+      "components": [
+        {
+          "name": "R_STEMMA_POWER",
+          "value": "0Ω"
+        }
+      ],
+      "mpn": "0402WGF0000TCE",
+      "brand": "UNI-ROYAL(Uniroyal Elec)",
+      "package": "0402",
+      "inStock": 13038502,
+      "availableOrderQty": 11360269,
+      "isBuyComponent": "1",
+      "noBuyReason": null,
+      "url": "https://jlcpcb.com/partdetail/C17168",
+      "checkedAt": "2026-09-07T09:13:57.781Z"
+    },
+    {
+      "jlcId": "C17337",
+      "components": [
+        {
+          "name": "U_SPK_AMP"
+        }
+      ],
+      "mpn": "PAM8403DR-H",
+      "brand": "Diodes Incorporated",
+      "inStock": 4345,
+      "availableOrderQty": 4319,
+      "url": "https://jlcpcb.com/partdetail/C17337",
+      "checkedAt": "2026-09-07T09:01:17.114Z"
+    },
+    {
+      "jlcId": "C19702",
+      "components": [
+        {
+          "name": "C_VBUS",
+          "value": "10uF"
+        },
+        {
+          "name": "C_BAT_IN",
+          "mpn": "CL10A106KP8NNNC",
+          "value": "10uF"
+        },
+        {
+          "name": "C_BAT_IN_BULK",
+          "mpn": "CL10A106KP8NNNC",
+          "value": "10uF"
+        },
+        {
+          "name": "C_SD_BULK",
+          "mpn": "CL10A106KP8NNNC",
+          "value": "10uF"
+        }
+      ],
+      "mpn": "CL10A106KP8NNNC",
+      "brand": "Samsung Electro-Mechanics",
+      "package": "0603",
+      "inStock": 15236190,
+      "availableOrderQty": 13109819,
+      "isBuyComponent": "1",
+      "noBuyReason": null,
+      "url": "https://jlcpcb.com/partdetail/C19702",
+      "checkedAt": "2026-09-07T09:14:01.147Z"
+    },
+    {
+      "jlcId": "C20526",
+      "components": [
+        {
+          "name": "Q_BAT_GATE",
+          "mpn": "MMBT3904_RANGE_100_300_",
+          "value": null
+        },
+        {
+          "name": "Q_USB_BOOST_OFF",
+          "mpn": "MMBT3904_RANGE_100_300_",
+          "value": null
+        }
+      ],
+      "mpn": "MMBT3904(RANGE:100-300)",
+      "brand": "Jiangsu Changjing Electronics Technology Co., Ltd.",
+      "package": "SOT-23",
+      "inStock": 382742,
+      "availableOrderQty": 291640,
+      "isBuyComponent": "1",
+      "noBuyReason": null,
+      "url": "https://jlcpcb.com/partdetail/C20526",
+      "checkedAt": "2026-09-07T09:14:03.388Z"
+    },
+    {
+      "jlcId": "C23267",
+      "components": [
+        {
+          "name": "R_BOOST_TOP",
+          "mpn": "A_0603WAF9532T5E",
+          "value": "95.3kΩ"
+        }
+      ],
+      "mpn": "0603WAF9532T5E",
+      "brand": "UNI-ROYAL(Uniroyal Elec)",
+      "package": "0603",
+      "inStock": 44428,
+      "availableOrderQty": 44260,
+      "isBuyComponent": "1",
+      "noBuyReason": null,
+      "url": "https://jlcpcb.com/partdetail/C23267",
+      "checkedAt": "2026-09-07T09:14:05.482Z"
+    },
+    {
+      "jlcId": "C25744",
+      "components": [
+        {
+          "name": "R_BOOT",
+          "value": "10kΩ"
+        },
+        {
+          "name": "R_PSRAM_CS",
+          "mpn": "0402WGF1002TCE",
+          "value": "10kΩ"
+        },
+        {
+          "name": "R_RUN",
+          "value": "10kΩ"
+        },
+        {
+          "name": "R_SD_DAT2",
+          "mpn": "0402WGF1002TCE",
+          "value": "10kΩ"
+        },
+        {
+          "name": "R_SD_CS",
+          "mpn": "0402WGF1002TCE",
+          "value": "10kΩ"
+        },
+        {
+          "name": "R_SD_CMD",
+          "mpn": "0402WGF1002TCE",
+          "value": "10kΩ"
+        },
+        {
+          "name": "R_SD_DAT0",
+          "mpn": "0402WGF1002TCE",
+          "value": "10kΩ"
+        },
+        {
+          "name": "R_SD_DAT1",
+          "mpn": "0402WGF1002TCE",
+          "value": "10kΩ"
+        },
+        {
+          "name": "R_SD_CD",
+          "mpn": "0402WGF1002TCE",
+          "value": "10kΩ"
+        }
+      ],
+      "mpn": "0402WGF1002TCE",
+      "brand": "UNI-ROYAL(Uniroyal Elec)",
+      "package": "0402",
+      "inStock": 30348303,
+      "availableOrderQty": 26523348,
+      "isBuyComponent": "1",
+      "noBuyReason": null,
+      "url": "https://jlcpcb.com/partdetail/C25744",
+      "checkedAt": "2026-09-07T09:13:54.061Z"
+    },
+    {
+      "jlcId": "C25803",
+      "components": [
+        {
+          "name": "R_BAT_GATE_PULLUP",
+          "mpn": "A_0603WAF1003T5E",
+          "value": "100kΩ"
+        },
+        {
+          "name": "R_BAT_GATE_BASE",
+          "mpn": "A_0603WAF1003T5E",
+          "value": "100kΩ"
+        },
+        {
+          "name": "R_BOOST_EN_PULLUP",
+          "mpn": "A_0603WAF1003T5E",
+          "value": "100kΩ"
+        },
+        {
+          "name": "R_USB_BOOST_OFF",
+          "mpn": "A_0603WAF1003T5E",
+          "value": "100kΩ"
+        },
+        {
+          "name": "R_USB_BOOST_OFF_PULLDOWN",
+          "mpn": "A_0603WAF1003T5E",
+          "value": "100kΩ"
+        }
+      ],
+      "mpn": "0603WAF1003T5E",
+      "brand": "UNI-ROYAL(Uniroyal Elec)",
+      "package": "0603",
+      "inStock": 24898618,
+      "availableOrderQty": 23019368,
+      "isBuyComponent": "1",
+      "noBuyReason": null,
+      "url": "https://jlcpcb.com/partdetail/C25803",
+      "checkedAt": "2026-09-07T09:14:02.699Z"
+    },
+    {
+      "jlcId": "C25905",
+      "components": [
+        {
+          "name": "R_CC1",
+          "value": "5.1kΩ"
+        },
+        {
+          "name": "R_CC2",
+          "value": "5.1kΩ"
+        }
+      ],
+      "mpn": "0402WGF5101TCE",
+      "brand": "UNI-ROYAL(Uniroyal Elec)",
+      "package": "0402",
+      "inStock": 8044535,
+      "availableOrderQty": 7414512,
+      "isBuyComponent": "1",
+      "noBuyReason": null,
+      "url": "https://jlcpcb.com/partdetail/C25905",
+      "checkedAt": "2026-09-07T09:13:56.778Z"
+    },
+    {
+      "jlcId": "C51118",
+      "components": [
+        {
+          "name": "U_3V3"
+        }
+      ],
+      "mpn": "AP2112K-3.3TRG1",
+      "brand": "Diodes Incorporated",
+      "inStock": 64877,
+      "availableOrderQty": 62523,
+      "url": "https://jlcpcb.com/partdetail/C51118",
+      "checkedAt": "2026-09-07T09:02:39.017Z"
+    },
+    {
+      "jlcId": "C52923",
+      "components": [
+        {
+          "name": "C_AMP_IN_COUPLE",
+          "value": "1uF"
+        },
+        {
+          "name": "C_AMP_VDD",
+          "value": "1uF"
+        },
+        {
+          "name": "C_AMP_VREF",
+          "value": "1uF"
+        }
+      ],
+      "mpn": "CL05A105KA5NQNC",
+      "brand": "Samsung Electro-Mechanics",
+      "package": "0402",
+      "inStock": 10500162,
+      "availableOrderQty": 8667888,
+      "isBuyComponent": "1",
+      "noBuyReason": null,
+      "url": "https://jlcpcb.com/partdetail/C52923",
+      "checkedAt": "2026-09-07T09:14:07.216Z"
+    },
+    {
+      "jlcId": "C59461",
+      "components": [
+        {
+          "name": "C_BAT_OUT",
+          "mpn": "CL10A226MQ8NRNC",
+          "value": "22uF"
+        },
+        {
+          "name": "C_BAT_OUT_BULK",
+          "mpn": "CL10A226MQ8NRNC",
+          "value": "22uF"
+        },
+        {
+          "name": "C_AMP_VDD_BULK",
+          "value": "22uF"
+        }
+      ],
+      "mpn": "CL10A226MQ8NRNC",
+      "brand": "Samsung Electro-Mechanics",
+      "package": "0603",
+      "inStock": 10532291,
+      "availableOrderQty": 9866468,
+      "isBuyComponent": "1",
+      "noBuyReason": null,
+      "url": "https://jlcpcb.com/partdetail/C59461",
+      "checkedAt": "2026-09-07T09:14:04.990Z"
+    },
+    {
+      "jlcId": "C76950",
+      "components": [
+        {
+          "name": "C3",
+          "value": "15pF"
+        },
+        {
+          "name": "C4",
+          "value": "15pF"
+        }
+      ],
+      "mpn": "GRM1555C1H150JA01D",
+      "brand": "Murata Electronics",
+      "package": "0402",
+      "inStock": 131772,
+      "availableOrderQty": 129614,
+      "isBuyComponent": "1",
+      "noBuyReason": null,
+      "url": "https://jlcpcb.com/partdetail/C76950",
+      "checkedAt": "2026-09-07T09:13:51.609Z"
+    },
+    {
+      "jlcId": "C77014",
+      "components": [
+        {
+          "name": "C8",
+          "value": "100nF"
+        },
+        {
+          "name": "C10",
+          "value": "100nF"
+        },
+        {
+          "name": "C11",
+          "value": "100nF"
+        },
+        {
+          "name": "C12",
+          "value": "100nF"
+        },
+        {
+          "name": "C13",
+          "value": "100nF"
+        },
+        {
+          "name": "C14",
+          "value": "100nF"
+        },
+        {
+          "name": "C15",
+          "value": "100nF"
+        },
+        {
+          "name": "C16",
+          "value": "100nF"
+        },
+        {
+          "name": "C17",
+          "value": "100nF"
+        },
+        {
+          "name": "C18",
+          "value": "100nF"
+        },
+        {
+          "name": "C_IOVDD1",
+          "value": "100nF"
+        }
+      ],
+      "mpn": "GRM155R71E104KE14D",
+      "brand": "Murata Electronics",
+      "package": "0402",
+      "inStock": 513091,
+      "availableOrderQty": 478091,
+      "isBuyComponent": "1",
+      "noBuyReason": null,
+      "url": "https://jlcpcb.com/partdetail/C77014",
+      "checkedAt": "2026-09-07T09:13:53.071Z"
+    },
+    {
+      "jlcId": "C82453",
+      "components": [
+        {
+          "name": "C6",
+          "value": "4.7uF"
+        },
+        {
+          "name": "C7",
+          "value": "4.7uF"
+        },
+        {
+          "name": "C9",
+          "value": "4.7uF"
+        }
+      ],
+      "mpn": "GRM155R60J475ME47D",
+      "brand": "Murata Electronics",
+      "package": "0402",
+      "inStock": 505619,
+      "availableOrderQty": 502652,
+      "isBuyComponent": "1",
+      "noBuyReason": null,
+      "url": "https://jlcpcb.com/partdetail/C82453",
+      "checkedAt": "2026-09-07T09:13:52.290Z"
+    },
+    {
+      "jlcId": "C84817",
+      "components": [
+        {
+          "name": "U_BAT_BOOST"
+        }
+      ],
+      "mpn": "MT3608",
+      "brand": "Aerosemi",
+      "inStock": 215472,
+      "availableOrderQty": 210463,
+      "url": "https://jlcpcb.com/partdetail/C84817",
+      "checkedAt": "2026-09-07T09:01:16.755Z"
+    },
+    {
+      "jlcId": "C85364",
+      "components": [
+        {
+          "name": "U_SD_ESD",
+          "mpn": "SRV05-4-P-T7",
+          "value": null
+        }
+      ],
+      "mpn": "SRV05-4-P-T7",
+      "brand": "ProTek Devices",
+      "package": "SOT-23-6",
+      "inStock": 6346,
+      "availableOrderQty": 153,
+      "isBuyComponent": "1",
+      "noBuyReason": null,
+      "url": "https://jlcpcb.com/partdetail/C85364",
+      "checkedAt": "2026-09-07T09:14:10.230Z"
+    },
+    {
+      "jlcId": "C91145",
+      "components": [
+        {
+          "name": "J_SD"
+        }
+      ],
+      "mpn": "TF-01A",
+      "brand": "Korean Hroparts Elec",
+      "inStock": 228498,
+      "availableOrderQty": 226729,
+      "url": "https://jlcpcb.com/partdetail/C91145",
+      "checkedAt": "2026-09-07T09:01:15.657Z"
+    },
+    {
+      "jlcId": "C100375",
+      "components": [
+        {
+          "name": "R_RGB_DATA",
+          "value": "330Ω"
+        }
+      ],
+      "mpn": "CR0402FF3300G",
+      "brand": "LIZ Elec",
+      "package": "0402",
+      "inStock": 5,
+      "availableOrderQty": 5,
+      "isBuyComponent": "1",
+      "noBuyReason": null,
+      "url": "https://jlcpcb.com/partdetail/C100375",
+      "checkedAt": "2026-09-07T09:13:59.845Z"
+    },
+    {
+      "jlcId": "C106235",
+      "components": [
+        {
+          "name": "R2",
+          "value": "1kΩ"
+        },
+        {
+          "name": "R_BOOT_SERIES",
+          "value": "1kΩ"
+        }
+      ],
+      "mpn": "RC0402FR-071KL",
+      "brand": "YAGEO",
+      "package": "0402",
+      "inStock": 4594065,
+      "availableOrderQty": 4182167,
+      "isBuyComponent": "1",
+      "noBuyReason": null,
+      "url": "https://jlcpcb.com/partdetail/C106235",
+      "checkedAt": "2026-09-07T09:13:49.834Z"
+    },
+    {
+      "jlcId": "C128694",
+      "components": [
+        {
+          "name": "L_BAT_BOOST",
+          "mpn": "SMMS0630_220M",
+          "value": "22µH"
+        }
+      ],
+      "mpn": "SMMS0630-220M",
+      "brand": "SXN(Shun Xiang Nuo Elec)",
+      "package": "SMD,7.1x6.6mm",
+      "inStock": 247845,
+      "availableOrderQty": 245793,
+      "isBuyComponent": "1",
+      "noBuyReason": null,
+      "url": "https://jlcpcb.com/partdetail/C128694",
+      "checkedAt": "2026-09-07T09:14:03.888Z"
+    },
+    {
+      "jlcId": "C136720",
+      "components": [
+        {
+          "name": "J_PWR_SW",
+          "mpn": "SK_12E12_G5",
+          "value": null
+        }
+      ],
+      "mpn": "SK-12E12-G5",
+      "brand": "Korean Hroparts Elec",
+      "package": "Plugin",
+      "inStock": 7630,
+      "availableOrderQty": 7175,
+      "isBuyComponent": "1",
+      "noBuyReason": null,
+      "url": "https://jlcpcb.com/partdetail/C136720",
+      "checkedAt": "2026-09-07T09:14:10.947Z"
+    },
+    {
+      "jlcId": "C138002",
+      "components": [
+        {
+          "name": "R3",
+          "value": "33Ω"
+        }
+      ],
+      "mpn": "RC0402FR-0733RL",
+      "brand": "YAGEO",
+      "package": "0402",
+      "inStock": 5431513,
+      "availableOrderQty": 5326616,
+      "isBuyComponent": "1",
+      "noBuyReason": null,
+      "url": "https://jlcpcb.com/partdetail/C138002",
+      "checkedAt": "2026-09-07T09:13:50.342Z"
+    },
+    {
+      "jlcId": "C138021",
+      "components": [
+        {
+          "name": "R7",
+          "value": "27Ω"
+        },
+        {
+          "name": "R8",
+          "value": "27Ω"
+        }
+      ],
+      "mpn": "RC0402FR-0727RL",
+      "brand": "YAGEO",
+      "package": "0402",
+      "inStock": 129652,
+      "availableOrderQty": 103985,
+      "isBuyComponent": "1",
+      "noBuyReason": null,
+      "url": "https://jlcpcb.com/partdetail/C138021",
+      "checkedAt": "2026-09-07T09:13:50.837Z"
+    },
+    {
+      "jlcId": "C139797",
+      "components": [
+        {
+          "name": "U_BOOTSEL",
+          "mpn": "SKRPACE010",
+          "value": null
+        },
+        {
+          "name": "U_RUN",
+          "mpn": "SKRPACE010",
+          "value": null
+        }
+      ],
+      "mpn": "SKRPACE010",
+      "brand": "ALPSALPINE",
+      "package": "SMD-4P,4.2x3.2mm",
+      "inStock": 113783,
+      "availableOrderQty": 111468,
+      "isBuyComponent": "1",
+      "noBuyReason": null,
+      "url": "https://jlcpcb.com/partdetail/C139797",
+      "checkedAt": "2026-09-07T09:13:53.546Z"
+    },
+    {
+      "jlcId": "C160404",
+      "components": [
+        {
+          "name": "J_STEMMA_QT",
+          "mpn": "SM04B-SRSS-TB(LF)(SN)",
+          "value": null
+        }
+      ],
+      "mpn": "SM04B-SRSS-TB(LF)(SN)",
+      "brand": "JST",
+      "package": "SMD,P=1mm,Surface Mount，Right Angle",
+      "inStock": 69219,
+      "availableOrderQty": 53145,
+      "isBuyComponent": "1",
+      "noBuyReason": null,
+      "url": "https://jlcpcb.com/partdetail/C160404",
+      "checkedAt": "2026-09-07T09:13:55.670Z"
+    },
+    {
+      "jlcId": "C160405",
+      "components": [
+        {
+          "name": "J_SPI",
+          "mpn": "SM06B-SRSS-TB(LF)(SN)",
+          "value": null
+        }
+      ],
+      "mpn": "SM06B-SRSS-TB(LF)(SN)",
+      "brand": "JST",
+      "package": "SMD,P=1mm,Surface Mount，Right Angle",
+      "inStock": 2119,
+      "availableOrderQty": 1426,
+      "isBuyComponent": "1",
+      "noBuyReason": null,
+      "url": "https://jlcpcb.com/partdetail/C160405",
+      "checkedAt": "2026-09-07T09:13:56.268Z"
+    },
+    {
+      "jlcId": "C173752",
+      "components": [
+        {
+          "name": "J_BAT",
+          "mpn": "S2B_PH_K_S_LF__SN_",
+          "value": null
+        }
+      ],
+      "mpn": "S2B-PH-K-S(LF)(SN)",
+      "brand": "JST",
+      "package": "Push-Pull,P=2mm",
+      "inStock": 29468,
+      "availableOrderQty": 8052,
+      "isBuyComponent": "1",
+      "noBuyReason": null,
+      "url": "https://jlcpcb.com/partdetail/C173752",
+      "checkedAt": "2026-09-07T09:14:01.680Z"
+    },
+    {
+      "jlcId": "C265417",
+      "components": [
+        {
+          "name": "J_SPK",
+          "mpn": "SM02B_PASS_TBT_LF__SN_",
+          "value": null
+        }
+      ],
+      "mpn": "SM02B-PASS-TBT(LF)(SN)",
+      "brand": "JST",
+      "package": "SMD,P=2mm,Surface Mount，Right Angle",
+      "inStock": 9248,
+      "availableOrderQty": 9211,
+      "isBuyComponent": "1",
+      "noBuyReason": null,
+      "url": "https://jlcpcb.com/partdetail/C265417",
+      "checkedAt": "2026-09-07T09:14:08.783Z"
+    },
+    {
+      "jlcId": "C347476",
+      "components": [
+        {
+          "name": "Q_BAT_CUTOFF",
+          "mpn": "AO3401A",
+          "value": null
+        }
+      ],
+      "mpn": "AO3401A",
+      "brand": "UMW(Youtai Semiconductor Co., Ltd.)",
+      "package": "SOT-23",
+      "inStock": 1088994,
+      "availableOrderQty": 1078748,
+      "isBuyComponent": "1",
+      "noBuyReason": null,
+      "url": "https://jlcpcb.com/partdetail/C347476",
+      "checkedAt": "2026-09-07T09:14:02.187Z"
+    },
+    {
+      "jlcId": "C965799",
+      "components": [
+        {
+          "name": "D_PWR",
+          "mpn": "XL-1608SURC-06",
+          "value": null
+        }
+      ],
+      "mpn": "XL-1608SURC-06",
+      "brand": "XINGLIGHT",
+      "package": "0603",
+      "inStock": 5568519,
+      "availableOrderQty": 5510560,
+      "isBuyComponent": "1",
+      "noBuyReason": null,
+      "url": "https://jlcpcb.com/partdetail/C965799",
+      "checkedAt": "2026-09-07T09:13:58.331Z"
+    },
+    {
+      "jlcId": "C2765186",
+      "components": [
+        {
+          "name": "J_USB"
+        }
+      ],
+      "mpn": "TYPE-C16PIN2MD(073)",
+      "brand": "SHOUHAN",
+      "inStock": 987019,
+      "availableOrderQty": 936811,
+      "url": "https://jlcpcb.com/partdetail/C2765186",
+      "checkedAt": "2026-09-07T09:01:15.098Z"
+    },
+    {
+      "jlcId": "C2843335",
+      "components": [
+        {
+          "name": "U2"
+        }
+      ],
+      "mpn": "W25Q16JVUXIQ",
+      "brand": "Winbond",
+      "inStock": 3778,
+      "availableOrderQty": 2748,
+      "url": "https://jlcpcb.com/partdetail/C2843335",
+      "checkedAt": "2026-09-07T09:01:14.244Z"
+    },
+    {
+      "jlcId": "C2906992",
+      "components": [
+        {
+          "name": "R_BOOST_BOT",
+          "mpn": "FRC0603F1302TS",
+          "value": "13kΩ"
+        }
+      ],
+      "mpn": "FRC0603F1302TS",
+      "brand": "FOJAN",
+      "package": "0603",
+      "inStock": 989802,
+      "availableOrderQty": 984165,
+      "isBuyComponent": "1",
+      "noBuyReason": null,
+      "url": "https://jlcpcb.com/partdetail/C2906992",
+      "checkedAt": "2026-09-07T09:14:05.995Z"
+    },
+    {
+      "jlcId": "C5333729",
+      "components": [
+        {
+          "name": "U_PSRAM"
+        }
+      ],
+      "mpn": "APS6404L-3SQR-SN",
+      "brand": "AP Memory",
+      "inStock": 1,
+      "availableOrderQty": 0,
+      "url": "https://jlcpcb.com/partdetail/C5333729",
+      "checkedAt": "2026-09-07T09:01:14.748Z"
+    },
+    {
+      "jlcId": "C20625731",
+      "components": [
+        {
+          "name": "X1",
+          "mpn": "ABM8-272-T3",
+          "value": null
+        }
+      ],
+      "mpn": "ABM8-272-T3",
+      "brand": "Abracon LLC",
+      "package": "SMD3225-4P",
+      "inStock": 22468,
+      "availableOrderQty": 21796,
+      "isBuyComponent": "1",
+      "noBuyReason": null,
+      "url": "https://jlcpcb.com/partdetail/C20625731",
+      "checkedAt": "2026-09-07T09:13:49.333Z"
+    },
+    {
+      "jlcId": "C22461793",
+      "components": [
+        {
+          "name": "D_RGB",
+          "mpn": "XL-5050RGBC-2812B-S",
+          "value": null
+        }
+      ],
+      "mpn": "XL-5050RGBC-2812B-S",
+      "brand": "XINGLIGHT",
+      "package": "SMD-4P,5x5mm",
+      "inStock": 580143,
+      "availableOrderQty": 512178,
+      "isBuyComponent": "1",
+      "noBuyReason": null,
+      "url": "https://jlcpcb.com/partdetail/C22461793",
+      "checkedAt": "2026-09-07T09:14:00.628Z"
+    },
+    {
+      "jlcId": "C41426875",
+      "components": [
+        {
+          "name": "J_HEADER",
+          "mpn": "B254N02-0B14P51-H85C32",
+          "value": null
+        }
+      ],
+      "mpn": "B254N02-0B14P51-H85C32",
+      "brand": "JXTCONN",
+      "package": "Plugin,P=2.54mm",
+      "inStock": 105,
+      "availableOrderQty": 101,
+      "isBuyComponent": "1",
+      "noBuyReason": null,
+      "url": "https://jlcpcb.com/partdetail/C41426875",
+      "checkedAt": "2026-09-07T09:14:09.491Z"
+    },
+    {
+      "jlcId": "C42411118",
+      "components": [
+        {
+          "name": "U1"
+        }
+      ],
+      "mpn": "RP2350A",
+      "brand": "Raspberry Pi",
+      "inStock": 10416,
+      "availableOrderQty": 9966,
+      "url": "https://jlcpcb.com/partdetail/C42411118",
+      "checkedAt": "2026-09-07T09:01:13.819Z"
+    },
+    {
+      "jlcId": "C42411119",
+      "components": [
+        {
+          "name": "L1"
+        }
+      ],
+      "mpn": "AOTA-B201610S3R3-101-T",
+      "brand": "Abracon",
+      "inStock": 13117,
+      "availableOrderQty": 12404,
+      "url": "https://jlcpcb.com/partdetail/C42411119",
+      "checkedAt": "2026-09-07T09:01:17.438Z"
+    }
+  ]
+}

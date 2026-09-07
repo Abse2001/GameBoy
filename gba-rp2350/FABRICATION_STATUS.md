@@ -16,6 +16,10 @@ Heavy routing and Gerber short checks run only in GitHub CI.
 | `f8690c3` / reference contacts, single phase | 277 PCB traces, 262 vias; routing completed | 29, plus 20 length warnings | 12 detected at 50 pixels/mm; rejected despite lower Core error count |
 | `d3e9752` / closer decouplers, single phase | 277 PCB traces, 270 vias; routing completed | 18, plus 18 length warnings | 8 detected at 50 pixels/mm; not ready |
 | `c48bc09` / V1V1 inner plane, global and clock first | Both failed in high-density routing; no finished copper | Each has 1 router failure and 422 consequent missing-connection errors | Not checked: no completed routed output |
+| `d3e7619` / larger phase margin | 277 PCB traces, 285 vias; routing completed, but regressed | 50, plus 18 length warnings | 18 at 50 pixels/mm; rejected |
+| `f39414b` / same larger margin, top fill outside contacts | 277 PCB traces, 285 vias; routing completed | 50, plus 18 length warnings | 13 at 50 pixels/mm; contact-field fill exclusion helps, margin still rejected |
+| `1249dbd` / shorter USB and shifted R2, global and clock first | Both exhausted HB solver iterations | Each has 1 routing failure plus 422 consequent missing-connection errors | Not checked: no completed routed output; these resistor moves reverted |
+| `b8bfd9d` / genuine LDO | Routing precheck rejected C_3V3_OUT ground distance: 5.96 mm exceeds 5.5 mm | 1 routing failure plus 422 consequent missing-connection errors | Not checked: no completed routed output; capacitor repositioned for next trial |
 
 Evidence: [single-phase run and broad-plane comparison](https://github.com/Abse2001/GameBoy/actions/runs/34096366893),
 [corrected-plane run](https://github.com/Abse2001/GameBoy/actions/runs/34097162607).
@@ -48,15 +52,16 @@ physical routing or short-check pass.
   generated GND pour touched SW_A signal copper along its boundary, despite
   the reference signal and ground electrode polygons being isolated. Buttons,
   logical connections and the bottom/inner ground coverage are unchanged.
-- Move R2 beside the crystal load capacitor, and R7/R8 1.2 mm toward their MCU
-  USB pins. MCU, crystal, PSRAM and all connector/button placements remain
-  unchanged. Test normal global and clock-first routing, without supply-plane
-  reservation, as the reserved-plane trials did not finish successfully.
+- The R2 and R7/R8 placement trial was reverted after both global and
+  clock-first runs failed. Retain the earlier resistor positions, without
+  extra routing margins or reserved supply planes. MCU, crystal, PSRAM and
+  all connector/button placements remain unchanged.
 - Correct the LDO to genuine Diodes C51118. The previous C23380830 supplier
   number resolves to TECH PUBLIC, so Diodes' specifications could not certify
   that silicon. The new JLC import includes its exact footprint, OBJ and STEP;
   rotate it 90 degrees relative to the old library to preserve the pin sides.
-  Move C_3V3_OUT clear of the new courtyard and closer to VOUT.
+  Move C_3V3_OUT clear of the new courtyard: direct distances are 1.795 mm to
+  VOUT and 4.753 mm to regulator GND, both below the unchanged 5.5 mm limit.
 
 ## Remaining signoff items
 

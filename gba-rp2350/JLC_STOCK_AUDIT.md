@@ -1,8 +1,15 @@
 # GBA key-part procurement audit
 
-Read-only JLC assembly-parts portal check on **2026-09-07, 09:01–09:03 UTC**.
+Read-only JLC assembly-parts portal check on **2026-09-07, 09:01–09:14 UTC**.
 These are not LCSC shop quantities. JLC labels `overseasStockCount` as “In Stock”
 and `canPresaleNumber` as “Available Order Qty.” Neither reserves inventory.
+
+All **47 unique populated-BOM selections** were checked, using corrected
+regulator C51118. PSRAM was the only zero-available selection. R_RGB_DATA
+[C100375](https://jlcpcb.com/partdetail/C100375) has only **5 available**, so
+confirm quantity before a batch order. The table below summarizes key parts.
+The [complete timestamped observations](checks/jlc-stock-audit-2026-09-07.json)
+include every selected ID and the original portal fields.
 
 | Part | JLC listing | In stock | Available order quantity |
 | --- | --- | ---: | ---: |
@@ -27,4 +34,6 @@ The other exact-MPN PSRAM entry [C9900003354](https://jlcpcb.com/partdetail/C990
 is a JLC Assembly/consignment-style listing with zero stock and zero available
 quantity. It is not a verified immediately orderable replacement. No RAM
 substitution or part purchase has been made. All remaining passives/connectors
-must also be rechecked against the final assembly BOM before ordering.
+had positive available quantities in this check and must be rechecked against
+the final assembly BOM before ordering. AO3401A [C347476](https://jlcpcb.com/partdetail/C347476)
+is the UMW part; AOS-branded datasheet ratings must not be assumed for it.
