@@ -12,6 +12,7 @@ export default ({
     segmentedSupplyPours={segmentedSupplyPours}
     psramCapEscape
     mcuPassiveEscape
+    flashCapEscape
     usbResistorEscape
     clockPassiveEscape
     westDecouplerEscape

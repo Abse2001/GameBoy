@@ -442,8 +442,8 @@ export const RP2350AEssentialKiCadReference = ({
 			supplierPartNumbers={{ jlcpcb: ["C77014"] }}
 			maxVoltageRating="25V"
 			maxDecouplingTraceLength={5.5}
-			pcbX={-3.8}
-			pcbY={-5.8}
+			pcbX={-1.5}
+			pcbY={-5.55}
 			pcbRotation={180}
 		/>
 
