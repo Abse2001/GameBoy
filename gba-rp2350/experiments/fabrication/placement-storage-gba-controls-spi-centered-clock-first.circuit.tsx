@@ -8,7 +8,7 @@ export default ({
   routingSafetyMargin = false,
   mcuPeripheralPlacements,
   sdHfCapRotation,
-}: { mcuGroundEscape?: "fanout" | "beta-pipeline9"; segmentedSupplyPours?: boolean; routeClockFirst?: boolean; routingSafetyMargin?: boolean; mcuPeripheralPlacements?: RP2350CompactLayoutProps["peripheralPlacements"]; sdHfCapRotation?: number } = {}) => (
+}: { mcuGroundEscape?: "fanout" | "fanout-inward" | "beta-pipeline9"; segmentedSupplyPours?: boolean; routeClockFirst?: boolean; routingSafetyMargin?: boolean; mcuPeripheralPlacements?: RP2350CompactLayoutProps["peripheralPlacements"]; sdHfCapRotation?: number } = {}) => (
   <StorageBoard
     gbaHousingFit
     mcuPcbY={7}

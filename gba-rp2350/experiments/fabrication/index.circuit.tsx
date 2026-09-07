@@ -106,7 +106,7 @@ export default ({
   topLeftMountingHole = { x: -50, y: -32 },
   powerSwitchX = 60,
   effort,
-}: { mcuGroundEscape?: "fanout" | "beta-pipeline9"; mcuSubcircuit?: boolean; publishedMcuModule?: boolean; storage?: boolean; psramCapEscape?: boolean; mcuPassiveEscape?: boolean; clockPassiveEscape?: boolean; westDecouplerEscape?: boolean; eastSupplyCapEscape?: boolean; clockResistorEscape?: boolean; mcuLocalSameLayerEscapes?: boolean; mcuPeripheralPlacements?: RP2350CompactLayoutProps["peripheralPlacements"]; sdDetectEscape?: boolean; sdHfCapRotation?: number; debugTestpointEscape?: boolean; mcuDebugTestpointPlacements?: Partial<Record<"TP_SWDIO" | "TP_SWCLK", { pcbX: number; pcbY: number }>>; flashCapEscape?: boolean; usbResistorEscape?: boolean; segmentedSupplyPours?: boolean; mcuHeaders?: boolean; allGlobal?: boolean; innerButtonContacts?: boolean; layers?: 2 | 4; copperIslands?: boolean; routeClockFirst?: boolean; routeHighSpeedFirst?: boolean; routeDecouplingFirst?: boolean; routeRegulatorFirst?: boolean; routeSupplyNetsFirst?: boolean; routeDisplayFirst?: boolean; feedMcuAtInputCap?: boolean; routingSafetyMargin?: boolean; router?: "auto" | "beta-pipeline9"; edgeConnectors?: boolean; spreadMcuPassives?: boolean; compactCoreIsland?: boolean; gbaHousingFit?: boolean; mcuPcbX?: number; mcuPcbY?: number; coreIslandOffsetX?: number; coreIslandOffsetY?: number; coreIslandRotation?: 0 | 90 | 180 | 270; clearUsbEscape?: boolean; mcuPlacements?: Partial<Record<string, McuPlacement>>; audioVrefPlacement?: { pcbX: number; pcbY: number; pcbRotation: number }; audioPlacements?: Partial<Record<"R_AMP_IN" | "C_AMP_PWM_FILTER" | "C_AMP_IN_COUPLE" | "C_AMP_VDD" | "C_AMP_VDD_BULK" | "FB_SPK_POS", { pcbX: number; pcbY: number; pcbRotation: number }>>; ldoOffset?: { x: number; y: number }; ldoFlipped?: boolean; ldoPlacements?: Partial<Record<"U_3V3" | "C_3V3_IN" | "C_3V3_OUT", { pcbX: number; pcbY: number; pcbRotation: number }>>; usbDiodeOffset?: { x: number; y: number }; powerOffsetX?: number; powerOffsetY?: number; powerPlacements?: Partial<Record<"R_BOOST_EN_PULLUP" | "R_BAT_GATE_PULLUP" | "R_BAT_GATE_BASE" | "D_BAT_BOOST" | "C_BAT_OUT" | "C_BAT_OUT_BULK" | "R_BOOST_TOP" | "R_BOOST_BOT" | "R_USB_BOOST_OFF" | "Q_USB_BOOST_OFF" | "R_USB_BOOST_OFF_PULLDOWN", { pcbX: number; pcbY: number; pcbRotation: number }>>; audioOffsetX?: number; topLeftMountingHole?: { x: number; y: number }; powerSwitchX?: number; effort?: "1x" | "2x" | "5x" | "10x" | "100x" } = {}) => (
+}: { mcuGroundEscape?: "fanout" | "fanout-inward" | "beta-pipeline9"; mcuSubcircuit?: boolean; publishedMcuModule?: boolean; storage?: boolean; psramCapEscape?: boolean; mcuPassiveEscape?: boolean; clockPassiveEscape?: boolean; westDecouplerEscape?: boolean; eastSupplyCapEscape?: boolean; clockResistorEscape?: boolean; mcuLocalSameLayerEscapes?: boolean; mcuPeripheralPlacements?: RP2350CompactLayoutProps["peripheralPlacements"]; sdDetectEscape?: boolean; sdHfCapRotation?: number; debugTestpointEscape?: boolean; mcuDebugTestpointPlacements?: Partial<Record<"TP_SWDIO" | "TP_SWCLK", { pcbX: number; pcbY: number }>>; flashCapEscape?: boolean; usbResistorEscape?: boolean; segmentedSupplyPours?: boolean; mcuHeaders?: boolean; allGlobal?: boolean; innerButtonContacts?: boolean; layers?: 2 | 4; copperIslands?: boolean; routeClockFirst?: boolean; routeHighSpeedFirst?: boolean; routeDecouplingFirst?: boolean; routeRegulatorFirst?: boolean; routeSupplyNetsFirst?: boolean; routeDisplayFirst?: boolean; feedMcuAtInputCap?: boolean; routingSafetyMargin?: boolean; router?: "auto" | "beta-pipeline9"; edgeConnectors?: boolean; spreadMcuPassives?: boolean; compactCoreIsland?: boolean; gbaHousingFit?: boolean; mcuPcbX?: number; mcuPcbY?: number; coreIslandOffsetX?: number; coreIslandOffsetY?: number; coreIslandRotation?: 0 | 90 | 180 | 270; clearUsbEscape?: boolean; mcuPlacements?: Partial<Record<string, McuPlacement>>; audioVrefPlacement?: { pcbX: number; pcbY: number; pcbRotation: number }; audioPlacements?: Partial<Record<"R_AMP_IN" | "C_AMP_PWM_FILTER" | "C_AMP_IN_COUPLE" | "C_AMP_VDD" | "C_AMP_VDD_BULK" | "FB_SPK_POS", { pcbX: number; pcbY: number; pcbRotation: number }>>; ldoOffset?: { x: number; y: number }; ldoFlipped?: boolean; ldoPlacements?: Partial<Record<"U_3V3" | "C_3V3_IN" | "C_3V3_OUT", { pcbX: number; pcbY: number; pcbRotation: number }>>; usbDiodeOffset?: { x: number; y: number }; powerOffsetX?: number; powerOffsetY?: number; powerPlacements?: Partial<Record<"R_BOOST_EN_PULLUP" | "R_BAT_GATE_PULLUP" | "R_BAT_GATE_BASE" | "D_BAT_BOOST" | "C_BAT_OUT" | "C_BAT_OUT_BULK" | "R_BOOST_TOP" | "R_BOOST_BOT" | "R_USB_BOOST_OFF" | "Q_USB_BOOST_OFF" | "R_USB_BOOST_OFF_PULLDOWN", { pcbX: number; pcbY: number; pcbRotation: number }>>; audioOffsetX?: number; topLeftMountingHole?: { x: number; y: number }; powerSwitchX?: number; effort?: "1x" | "2x" | "5x" | "10x" | "100x" } = {}) => (
   <board
     title="Game Boy Advance RP2350 handheld circuit"
     autorouter={router}
@@ -166,15 +166,24 @@ export default ({
       <autoroutingphase name="MCU_CLOCK_FIRST" phaseIndex={0} autorouter={router} />
     )}
 
+    {mcuGroundEscape === "fanout-inward" && (
+      <bus name="PGND_ESCAPE" connections={["U1_VREG_PGND"]} />
+    )}
+
     {mcuGroundEscape && (
       <autoroutingphase
         name="MCU_PGND_ESCAPE"
         phaseIndex={0}
-        autorouter={mcuGroundEscape}
+        autorouter={mcuGroundEscape === "fanout-inward" ? "fanout" : mcuGroundEscape}
         connection=".U1 > .VREG_PGND"
         // GND pours exist on several layers. Keep this a normal pad-to-pad
         // connection, not an inferred plane termination. Pours are unchanged.
-        fanoutPourNetMap={mcuGroundEscape === "fanout" ? {} : undefined}
+        fanoutPourNetMap={mcuGroundEscape !== "beta-pipeline9" ? {} : undefined}
+        // Escape inward, away from L1 and its required inner1 copper keepout.
+        // The native solver chooses the geometry; no route points are authored.
+        busFanoutDirections={mcuGroundEscape === "fanout-inward"
+          ? { PGND_ESCAPE: "topside_center" }
+          : undefined}
       />
     )}
 

@@ -32,6 +32,8 @@ Heavy routing and Gerber short checks run only in GitHub CI.
 | `e59bbc8` / C14 inner channel | 277 PCB traces, 275 vias, 93 copper regions; mixed result, not promoted | 17 (2 maximum-via, 14 via/pad clearance, 1 via/pad overlap), plus 23 length warnings | 1 at 50 pixels/mm: VREG_AVDD/GND at (-2.770, 4.970); 100 pixels/mm skipped, not passed |
 | `7f5e4ae` / C14 control repeat | 277 PCB traces, 275 vias, 93 copper regions; identical result | 17, plus 23 length warnings | 1 at 50 pixels/mm at the same VREG_AVDD/GND site; 100 pixels/mm skipped |
 | `7f5e4ae` / C14 + C6 VIN approach | 277 PCB traces, 273 vias, 103 copper regions; routing completed, rejected | 23 (3 trace, 2 via/trace clearance, 13 via/pad clearance, 5 via/pad overlap), plus 20 length warnings | 7 reported at 50 pixels/mm, including SWDIO/XIN and GPIO17/supply contacts; 100 pixels/mm skipped |
+| `ea32a18` / C14 PGND native fanout | Failed before global routing: zero traces and zero vias | 1 fanout failure and 422 consequent missing-connection errors | Not checked: no completed routed copper |
+| `ea32a18` / C14 PGND first, Pipeline 9 | PGND phase produced one trace; remaining global phase failed in high-density routing; no completed board | 1 routing failure and 422 consequent missing-connection errors | Not checked: no completed routed copper |
 
 Evidence: [single-phase run and broad-plane comparison](https://github.com/Abse2001/GameBoy/actions/runs/34096366893),
 [corrected-plane run](https://github.com/Abse2001/GameBoy/actions/runs/34097162607).
@@ -46,6 +48,7 @@ Evidence: [single-phase run and broad-plane comparison](https://github.com/Abse2
 [Ordinary-group repeat](https://github.com/Abse2001/GameBoy/actions/runs/34115710932/job/101721879869).
 [Root/C14 comparison](https://github.com/Abse2001/GameBoy/actions/runs/34123911135).
 [C14/C6 comparison](https://github.com/Abse2001/GameBoy/actions/runs/34130814106).
+[PGND fanout and routing-order comparison](https://github.com/Abse2001/GameBoy/actions/runs/34133897841).
 
 Later contact and capacitor-placement jobs are separate trials. Their local
 routing-disabled renders pass placement, type and netlist checks; that is not a
@@ -137,7 +140,7 @@ occupies top copper. The other five sites already include top in their logical
 spans, so hidden through-via occupancy does not explain all of the failures.
 Keep the full reported count in the acceptance gate.
 
-### Next comparison: automatic PGND escape versus routing order
+### Rejected comparison: automatic PGND escape versus routing order
 
 Keep the C14 control placement, including the original C6 position. Select only
 the existing `U1_VREG_PGND` connection with a board-owned phase. Compare native
@@ -171,6 +174,48 @@ receive automatic exits in the installed Core version. The selective phase
 does not permanently hide those pads behind a whole-chip keepout. All Core
 errors, critical length/via limits and physical Gerber shorts remain strict
 acceptance requirements.
+
+Completed native fanout result: PGND fanout failed with zero of one
+connections escaping U1. Its diagnostic reports a narrowest pad-to-boundary
+distance of 1.799 mm. No trace or via was emitted, so the 422 missing-connection
+errors are consequences of the aborted route, not 422 new physical shorts.
+Both Gerber checks were skipped, not passed. In the ordering-only Pipeline 9
+job, the PGND phase itself succeeded: one connection, 1,066 obstacles, one
+output trace, zero router-reported errors in 258.314 seconds. The subsequent
+148-connection global phase received that trace, then failed after 1,027.889
+seconds: B01 exceeded MAX_RIPS 200 and the regional fallback rejected its
+high-density scale solution after resizing to 8x at node `cmn_107`. No completed
+board copper was emitted. PGND alone is therefore routable by Pipeline 9;
+pre-routing it did not make the remaining board routable. Neither candidate
+is accepted, and neither has a physical shorts pass.
+
+Read-only geometry/source audit identifies a more local obstruction. The
+destination-guided fanout chooses downward from PGND toward C6. The gap from
+PGND's lower pad edge (Y=4.087575) to L1.pin2's upper edge (Y=3.799998) is
+0.287577 mm. A 0.15 mm track with two 0.1 mm clearances needs 0.35 mm; a
+0.45 mm via needs 0.65 mm. The required inner1 LX/L1 keepout also occupies
+X=[-5.05,-1.55], Y=[1.25,4.75], obstructing this downward through-via approach.
+Increasing the outer boundary alone cannot remove these local obstructions.
+The log lacks per-candidate rejection data, so this is geometry and installed
+source evidence, not a captured explanation for every solver candidate.
+
+### Next trial: native inward PGND escape
+
+Use native inward/upward direction on a named bus containing the same PGND
+trace (`busFanoutDirections: { PGND_ESCAPE: "topside_center" }`). This supplies
+no coordinates or copper path and changes no electrical connections, component
+positions or keepouts. Bus width, layers and impedance are not overridden.
+Compare with the completed outward-fanout result rather than rerunning an
+identical rejected control. It must pass the same complete routing, length,
+DRC and physical-short checks. Do not move L1 or enlarge the boundary blindly.
+Local typecheck and routing-disabled render pass with the same parts, source
+netlist and all 106 component placements as C14. Phase-plan inspection confirms
+the direction is attached to the PGND-only fanout phase; the remaining 290
+source traces and 22 nets retain the global plan. No routed pass is claimed.
+
+CI diagnostics now retain the CLI's exact phase SRJ inputs, trace outputs and
+error JSON in the job log, because artifact uploads currently fail from quota.
+This preserves evidence only; it does not change routing or acceptance checks.
 
 - Replace concave comb contacts whose inferred route endpoints fell in empty
   gaps with the actual OpenTendo contact geometry. All 22 new endpoints are

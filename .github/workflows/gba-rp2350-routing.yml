@@ -22,10 +22,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - candidate: gba-c14-pgnd-fanout
-            entry: experiments/fabrication/placement-storage-gba-c14-pgnd-fanout
-          - candidate: gba-c14-pgnd-first
-            entry: experiments/fabrication/placement-storage-gba-c14-pgnd-first
+          - candidate: gba-c14-pgnd-inward
+            entry: experiments/fabrication/placement-storage-gba-c14-pgnd-inward
     defaults:
       run:
         working-directory: gba-rp2350
