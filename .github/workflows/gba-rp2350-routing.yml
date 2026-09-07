@@ -22,8 +22,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - candidate: gba-manufacturing-margin
-            entry: placement-storage-gba-manufacturing-margin
+          - candidate: gba-clock-escape-global
+            entry: placement-storage-gba-single-phase
+          - candidate: gba-clock-escape-first
+            entry: placement-storage-gba-controls-spi-centered-clock-first
     defaults:
       run:
         working-directory: gba-rp2350

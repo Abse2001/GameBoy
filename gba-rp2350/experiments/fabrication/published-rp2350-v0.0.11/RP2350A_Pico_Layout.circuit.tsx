@@ -210,7 +210,7 @@ export const RP2350AEssentialKiCadReference = ({
 			supplierPartNumbers={{ jlcpcb: ["C138021"] }}
 			tolerance="1%"
 			pcbX={usbResistorEscape ? 0.4 : 1.5}
-			pcbY={7}
+			pcbY={usbResistorEscape ? 5.8 : 7}
 			pcbRotation={90}
 		/>
 		<resistor
@@ -223,7 +223,7 @@ export const RP2350AEssentialKiCadReference = ({
 			supplierPartNumbers={{ jlcpcb: ["C138021"] }}
 			tolerance="1%"
 			pcbX={usbResistorEscape ? 1.5 : 0.4}
-			pcbY={7}
+			pcbY={usbResistorEscape ? 5.8 : 7}
 			pcbRotation={90}
 		/>
 

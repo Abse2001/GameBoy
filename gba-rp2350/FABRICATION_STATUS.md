@@ -15,11 +15,13 @@ Heavy routing and Gerber short checks run only in GitHub CI.
 | `66c5aa6` / corrected planes, global | Routing timeout after 2411 seconds; no completed circuit emitted | Not available, not zero | Not checked: no completed routed output |
 | `f8690c3` / reference contacts, single phase | 277 PCB traces, 262 vias; routing completed | 29, plus 20 length warnings | 12 detected at 50 pixels/mm; rejected despite lower Core error count |
 | `d3e9752` / closer decouplers, single phase | 277 PCB traces, 270 vias; routing completed | 18, plus 18 length warnings | 8 detected at 50 pixels/mm; not ready |
+| `c48bc09` / V1V1 inner plane, global and clock first | Both failed in high-density routing; no finished copper | Each has 1 router failure and 422 consequent missing-connection errors | Not checked: no completed routed output |
 
 Evidence: [single-phase run and broad-plane comparison](https://github.com/Abse2001/GameBoy/actions/runs/34096366893),
 [corrected-plane run](https://github.com/Abse2001/GameBoy/actions/runs/34097162607).
 [Reference-contact result](https://github.com/Abse2001/GameBoy/actions/runs/34099225875/job/101669578145).
 [Closer-decoupler result](https://github.com/Abse2001/GameBoy/actions/runs/34099573916/job/101670670212).
+[V1V1-plane comparison](https://github.com/Abse2001/GameBoy/actions/runs/34100690651).
 
 Later contact and capacitor-placement jobs are separate trials. Their local
 routing-disabled renders pass placement, type and netlist checks; that is not a
@@ -46,6 +48,10 @@ physical routing or short-check pass.
   generated GND pour touched SW_A signal copper along its boundary, despite
   the reference signal and ground electrode polygons being isolated. Buttons,
   logical connections and the bottom/inner ground coverage are unchanged.
+- Move R2 beside the crystal load capacitor, and R7/R8 1.2 mm toward their MCU
+  USB pins. MCU, crystal, PSRAM and all connector/button placements remain
+  unchanged. Test normal global and clock-first routing, without supply-plane
+  reservation, as the reserved-plane trials did not finish successfully.
 
 ## Remaining signoff items
 
