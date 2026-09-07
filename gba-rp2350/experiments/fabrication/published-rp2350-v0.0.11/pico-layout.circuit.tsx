@@ -183,7 +183,24 @@ export interface RP2350CompactLayoutProps {
   localSameLayerEscapes?: boolean
   peripheralPlacements?: Partial<
     Record<
-      "U_RUN" | "R_RUN" | "U_RGB_BUF" | "C_RGB_BUF" | "R_RGB_DATA",
+      | "U_RUN"
+      | "R_RUN"
+      | "U_RGB_BUF"
+      | "C_RGB_BUF"
+      | "R_RGB_DATA"
+      | "J_STEMMA_QT"
+      | "J_SPI"
+      | "J_USB"
+      | "R_CC1"
+      | "R_CC2"
+      | "C_VBUS"
+      | "R_PWR_LED"
+      | "D_PWR"
+      | "R_STEMMA_POWER"
+      | "D_RGB"
+      | "C_RGB"
+      | "TP_GND"
+      | "TP_3V3",
       { pcbX: number; pcbY: number; pcbRotation?: number }
     >
   >
@@ -526,6 +543,7 @@ export const RP2350CompactLayout = ({
       pcbRotation={180}
       schX={0}
       schY={-6.5}
+      {...peripheralPlacements?.J_STEMMA_QT}
     />
     <SM06B_SRSS_TB_LF__SN_
       name="J_SPI" pcbStyle={{ silkscreenTextVisibility: "hidden" }}
@@ -536,6 +554,7 @@ export const RP2350CompactLayout = ({
       pcbRotation={180}
       schX={6.5}
       schY={-6.5}
+      {...peripheralPlacements?.J_SPI}
     />
 
     {/* USB-C receptacle, matching the Pico's USB 2.0 device-side topology. */}
@@ -548,12 +567,13 @@ export const RP2350CompactLayout = ({
       pcbY={-36}
       schX={-11}
       schY={5.5}
+      {...peripheralPlacements?.J_USB}
     />
 
     <resistor name="R_RUN" resistance="10k" footprint="0402" supplierPartNumbers={{ jlcpcb: ["C25744"] }} schSheetName="core" schSectionName="controls" schX={-6.5} schY={-6.5} pcbX={-12} pcbY={-16.5} pcbRotation={90} {...peripheralPlacements?.R_RUN} />
-    <resistor name="R_CC1" resistance="5.1k" footprint="0402" supplierPartNumbers={{ jlcpcb: ["C25905"] }} schSheetName="interfaces" schSectionName="usb" schX={-13} schY={3.5} pcbX={-3.2} pcbY={-31.5} />
-    <resistor name="R_CC2" resistance="5.1k" footprint="0402" supplierPartNumbers={{ jlcpcb: ["C25905"] }} schSheetName="interfaces" schSectionName="usb" schX={-9.5} schY={3.5} pcbX={3.9} pcbY={-31.3} pcbRotation={270} />
-    <resistor name="R_PWR_LED" resistance="1k" footprint="0402" supplierPartNumbers={{ jlcpcb: ["C11702"] }} schSheetName="interfaces" schSectionName="status" schX={-3} schY={-4} pcbX={-14} pcbY={-19.4} pcbRotation={90} />
+    <resistor name="R_CC1" resistance="5.1k" footprint="0402" supplierPartNumbers={{ jlcpcb: ["C25905"] }} schSheetName="interfaces" schSectionName="usb" schX={-13} schY={3.5} pcbX={-3.2} pcbY={-31.5} {...peripheralPlacements?.R_CC1} />
+    <resistor name="R_CC2" resistance="5.1k" footprint="0402" supplierPartNumbers={{ jlcpcb: ["C25905"] }} schSheetName="interfaces" schSectionName="usb" schX={-9.5} schY={3.5} pcbX={3.9} pcbY={-31.3} pcbRotation={270} {...peripheralPlacements?.R_CC2} />
+    <resistor name="R_PWR_LED" resistance="1k" footprint="0402" supplierPartNumbers={{ jlcpcb: ["C11702"] }} schSheetName="interfaces" schSectionName="status" schX={-3} schY={-4} pcbX={-14} pcbY={-19.4} pcbRotation={90} {...peripheralPlacements?.R_PWR_LED} />
     <resistor
       name="R_STEMMA_POWER"
       resistance="0ohm"
@@ -564,6 +584,7 @@ export const RP2350CompactLayout = ({
       pcbX={14}
       pcbY={31.5}
       pcbRotation={90}
+      {...peripheralPlacements?.R_STEMMA_POWER}
     />
 
     <XL_1608SURC_06
@@ -577,6 +598,7 @@ export const RP2350CompactLayout = ({
       pcbX={-14}
       pcbY={-22.5}
       pcbRotation={90}
+      {...peripheralPlacements?.D_PWR}
     />
 
     {/* 5 V addressable RGB test LED, level-shifted from RP2350 GPIO15. */}
@@ -616,17 +638,18 @@ export const RP2350CompactLayout = ({
       pcbX={0}
       pcbY={21}
       pcbRotation={270}
+      {...peripheralPlacements?.D_RGB}
     />
 
-    <capacitor name="C_VBUS" capacitance="10uF" footprint="0603" supplierPartNumbers={{ jlcpcb: ["C19702"] }} schSheetName="interfaces" schSectionName="usb" schX={-7.5} schY={5.5} schOrientation="vertical" pcbX={-6.8} pcbY={-33.5} />
+    <capacitor name="C_VBUS" capacitance="10uF" footprint="0603" supplierPartNumbers={{ jlcpcb: ["C19702"] }} schSheetName="interfaces" schSectionName="usb" schX={-7.5} schY={5.5} schOrientation="vertical" pcbX={-6.8} pcbY={-33.5} {...peripheralPlacements?.C_VBUS} />
     {/* Explicit local limits include the short pad escape and ground-plane via.
         The original net-only regulator capacitors had no decoupling limit. */}
     <capacitor name="C_RGB_BUF" capacitance="100nF" maxDecouplingTraceLength={5.5} footprint="0402" supplierPartNumbers={{ jlcpcb: ["C1525"] }} schSheetName="interfaces" schSectionName="status" schX={-4} schY={-8} schOrientation="vertical" pcbX={5.4} pcbY={16.5} pcbRotation={270} {...peripheralPlacements?.C_RGB_BUF} />
-    <capacitor name="C_RGB" capacitance="100nF" maxDecouplingTraceLength={6.5} footprint="0402" supplierPartNumbers={{ jlcpcb: ["C1525"] }} schSheetName="interfaces" schSectionName="status" schX={4} schY={-8} schOrientation="vertical" pcbX={-3.5} pcbY={21} pcbRotation={270} />
+    <capacitor name="C_RGB" capacitance="100nF" maxDecouplingTraceLength={6.5} footprint="0402" supplierPartNumbers={{ jlcpcb: ["C1525"] }} schSheetName="interfaces" schSectionName="status" schX={4} schY={-8} schOrientation="vertical" pcbX={-3.5} pcbY={21} pcbRotation={270} {...peripheralPlacements?.C_RGB} />
 
     <testpoint name="TP_SWDIO" pcbStyle={{ silkscreenTextVisibility: "hidden" }} footprintVariant="pad" padShape="circle" padDiameter="1.1mm" schSheetName="core" schSectionName="debug" schX={12} schY={-3.5} pcbX={debugTestpointPlacements?.TP_SWDIO?.pcbX ?? (debugTestpointEscape ? -1.8 : -6)} pcbY={debugTestpointPlacements?.TP_SWDIO?.pcbY ?? (debugTestpointEscape ? 5.95 : 10)} />
-    <testpoint name="TP_GND" pcbStyle={{ silkscreenTextVisibility: "hidden" }} footprintVariant="pad" padShape="circle" padDiameter="1.1mm" schSheetName="core" schSectionName="debug" schX={12} schY={-6.9} pcbX={-7} pcbY={16} />
-    <testpoint name="TP_3V3" pcbStyle={{ silkscreenTextVisibility: "hidden" }} footprintVariant="pad" padShape="circle" padDiameter="1.1mm" schSheetName="core" schSectionName="debug" schX={12} schY={-8.6} pcbX={-4.5} pcbY={16} />
+    <testpoint name="TP_GND" pcbStyle={{ silkscreenTextVisibility: "hidden" }} footprintVariant="pad" padShape="circle" padDiameter="1.1mm" schSheetName="core" schSectionName="debug" schX={12} schY={-6.9} pcbX={-7} pcbY={16} {...peripheralPlacements?.TP_GND} />
+    <testpoint name="TP_3V3" pcbStyle={{ silkscreenTextVisibility: "hidden" }} footprintVariant="pad" padShape="circle" padDiameter="1.1mm" schSheetName="core" schSectionName="debug" schX={12} schY={-8.6} pcbX={-4.5} pcbY={16} {...peripheralPlacements?.TP_3V3} />
 
     {/* Board supplies feed the MCU's ordinary placement group. */}
     <trace name="PWR_LED_3V3" from="net.V3V3" to=".R_PWR_LED > .pin1" {...v3v3Label} />

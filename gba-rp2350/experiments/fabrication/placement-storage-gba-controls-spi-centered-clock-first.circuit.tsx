@@ -1,0 +1,38 @@
+import StorageBoard from "./placement-published-mcu-header-module.circuit"
+
+export default () => (
+  <StorageBoard
+    gbaHousingFit
+    mcuPcbY={7}
+    mcuSubcircuit={false}
+    routeClockFirst
+    psramCapEscape
+    mcuPassiveEscape
+    usbResistorEscape
+    clockPassiveEscape
+    westDecouplerEscape
+    mcuDebugTestpointPlacements={{
+      TP_SWDIO: { pcbX: -18, pcbY: 18 },
+    }}
+    mcuPeripheralPlacements={{
+      U_RUN: { pcbX: -9, pcbY: 9 },
+      R_RUN: { pcbX: -13, pcbY: 9, pcbRotation: 90 },
+      U_RGB_BUF: { pcbX: 8, pcbY: 8, pcbRotation: 270 },
+      C_RGB_BUF: { pcbX: 5.4, pcbY: 9.8, pcbRotation: 270 },
+      R_RGB_DATA: { pcbX: 8.95, pcbY: 12, pcbRotation: 90 },
+      J_STEMMA_QT: { pcbX: 10.5, pcbY: -39, pcbRotation: 0 },
+      J_SPI: { pcbX: 22, pcbY: -39, pcbRotation: 0 },
+      J_USB: { pcbX: 8.5, pcbY: 25.25, pcbRotation: 180 },
+      R_CC1: { pcbX: 4.5, pcbY: 20, pcbRotation: 90 },
+      R_CC2: { pcbX: 12.5, pcbY: 20, pcbRotation: 90 },
+      C_VBUS: { pcbX: 15.5, pcbY: 24, pcbRotation: 90 },
+      R_PWR_LED: { pcbX: 15.5, pcbY: 20.5, pcbRotation: 90 },
+      D_PWR: { pcbX: 15.5, pcbY: 17.5, pcbRotation: 90 },
+      R_STEMMA_POWER: { pcbX: 10.5, pcbY: -34, pcbRotation: 90 },
+      D_RGB: { pcbX: 20, pcbY: 11, pcbRotation: 270 },
+      C_RGB: { pcbX: 16.5, pcbY: 11, pcbRotation: 270 },
+      TP_GND: { pcbX: -15.5, pcbY: 18 },
+      TP_3V3: { pcbX: -13, pcbY: 18 },
+    }}
+  />
+)

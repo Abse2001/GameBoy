@@ -3,7 +3,7 @@ import {
   PowerBoost_MT3608,
 } from "@tscircuit/common"
 import { LCDWiki_2_8_SPI_ILI9341_MSP2807 } from "./LCDWiki_2_8_SPI_ILI9341_MSP2807"
-import { KH_6X6X15H_SMT_FS_D } from "./imports/KH_6X6X15H_SMT_FS_D"
+import { GbaMembraneButtonContact } from "./GbaMembraneButtonContact.circuit"
 import { SK_12E12_G5 } from "../../imports/SK_12E12_G5"
 import { Microcontroller_RP2350, type McuPlacement } from "./Microcontroller_RP2350.circuit"
 import { AP2112K_3_3TRG1 } from "../../imports/AP2112K_3_3TRG1"
@@ -13,6 +13,9 @@ import { AudioAmplifier_GlobalLayout } from "./AudioAmplifier_GlobalLayout.circu
 import { PowerBoost_GlobalLayout } from "./PowerBoost_GlobalLayout.circuit"
 import { RP2350CompactLayout } from "./published-rp2350-v0.0.11/pico-layout.circuit"
 import { MicroSDStorage } from "./MicroSD_Storage.circuit"
+import {
+  gbaHousingOutline,
+} from "./gba-housing-mechanics"
 
 const denseTraceProps = { thickness: "0.1mm" } as const
 const batteryTraceProps = { thickness: "0.3mm" } as const
@@ -63,6 +66,9 @@ export default ({
   edgeConnectors = false,
   spreadMcuPassives = false,
   compactCoreIsland = false,
+  gbaHousingFit = false,
+  mcuPcbX = 0,
+  mcuPcbY = 0,
   coreIslandOffsetX = 0,
   coreIslandOffsetY = 0,
   coreIslandRotation = 0,
@@ -81,14 +87,14 @@ export default ({
   topLeftMountingHole = { x: -50, y: -32 },
   powerSwitchX = 60,
   effort,
-}: { mcuSubcircuit?: boolean; publishedMcuModule?: boolean; storage?: boolean; psramCapEscape?: boolean; mcuPassiveEscape?: boolean; clockPassiveEscape?: boolean; westDecouplerEscape?: boolean; eastSupplyCapEscape?: boolean; clockResistorEscape?: boolean; mcuLocalSameLayerEscapes?: boolean; mcuPeripheralPlacements?: Partial<Record<"U_RUN" | "R_RUN" | "U_RGB_BUF" | "C_RGB_BUF" | "R_RGB_DATA", { pcbX: number; pcbY: number; pcbRotation?: number }>>; sdDetectEscape?: boolean; debugTestpointEscape?: boolean; mcuDebugTestpointPlacements?: Partial<Record<"TP_SWDIO" | "TP_SWCLK", { pcbX: number; pcbY: number }>>; flashCapEscape?: boolean; usbResistorEscape?: boolean; segmentedSupplyPours?: boolean; mcuHeaders?: boolean; allGlobal?: boolean; innerButtonContacts?: boolean; layers?: 2 | 4; copperIslands?: boolean; routeClockFirst?: boolean; routeHighSpeedFirst?: boolean; routeDecouplingFirst?: boolean; routeRegulatorFirst?: boolean; routeSupplyNetsFirst?: boolean; routeDisplayFirst?: boolean; feedMcuAtInputCap?: boolean; routingSafetyMargin?: boolean; router?: "auto" | "beta-pipeline9"; edgeConnectors?: boolean; spreadMcuPassives?: boolean; compactCoreIsland?: boolean; coreIslandOffsetX?: number; coreIslandOffsetY?: number; coreIslandRotation?: 0 | 90 | 180 | 270; clearUsbEscape?: boolean; mcuPlacements?: Partial<Record<string, McuPlacement>>; audioVrefPlacement?: { pcbX: number; pcbY: number; pcbRotation: number }; audioPlacements?: Partial<Record<"R_AMP_IN" | "C_AMP_PWM_FILTER" | "C_AMP_IN_COUPLE" | "C_AMP_VDD" | "C_AMP_VDD_BULK" | "FB_SPK_POS", { pcbX: number; pcbY: number; pcbRotation: number }>>; ldoOffset?: { x: number; y: number }; ldoFlipped?: boolean; ldoPlacements?: Partial<Record<"U_3V3" | "C_3V3_IN" | "C_3V3_OUT", { pcbX: number; pcbY: number; pcbRotation: number }>>; usbDiodeOffset?: { x: number; y: number }; powerOffsetX?: number; powerOffsetY?: number; powerPlacements?: Partial<Record<"R_BOOST_EN_PULLUP" | "R_BAT_GATE_PULLUP" | "D_BAT_BOOST" | "C_BAT_OUT" | "C_BAT_OUT_BULK" | "R_BOOST_TOP" | "R_BOOST_BOT" | "R_USB_BOOST_OFF" | "Q_USB_BOOST_OFF" | "R_USB_BOOST_OFF_PULLDOWN", { pcbX: number; pcbY: number; pcbRotation: number }>>; audioOffsetX?: number; topLeftMountingHole?: { x: number; y: number }; powerSwitchX?: number; effort?: "1x" | "2x" | "5x" | "10x" | "100x" } = {}) => (
+}: { mcuSubcircuit?: boolean; publishedMcuModule?: boolean; storage?: boolean; psramCapEscape?: boolean; mcuPassiveEscape?: boolean; clockPassiveEscape?: boolean; westDecouplerEscape?: boolean; eastSupplyCapEscape?: boolean; clockResistorEscape?: boolean; mcuLocalSameLayerEscapes?: boolean; mcuPeripheralPlacements?: Partial<Record<"U_RUN" | "R_RUN" | "U_RGB_BUF" | "C_RGB_BUF" | "R_RGB_DATA" | "J_STEMMA_QT" | "J_SPI" | "J_USB" | "R_CC1" | "R_CC2" | "C_VBUS" | "R_PWR_LED" | "D_PWR" | "R_STEMMA_POWER" | "D_RGB" | "C_RGB" | "TP_GND" | "TP_3V3", { pcbX: number; pcbY: number; pcbRotation?: number }>>; sdDetectEscape?: boolean; debugTestpointEscape?: boolean; mcuDebugTestpointPlacements?: Partial<Record<"TP_SWDIO" | "TP_SWCLK", { pcbX: number; pcbY: number }>>; flashCapEscape?: boolean; usbResistorEscape?: boolean; segmentedSupplyPours?: boolean; mcuHeaders?: boolean; allGlobal?: boolean; innerButtonContacts?: boolean; layers?: 2 | 4; copperIslands?: boolean; routeClockFirst?: boolean; routeHighSpeedFirst?: boolean; routeDecouplingFirst?: boolean; routeRegulatorFirst?: boolean; routeSupplyNetsFirst?: boolean; routeDisplayFirst?: boolean; feedMcuAtInputCap?: boolean; routingSafetyMargin?: boolean; router?: "auto" | "beta-pipeline9"; edgeConnectors?: boolean; spreadMcuPassives?: boolean; compactCoreIsland?: boolean; gbaHousingFit?: boolean; mcuPcbX?: number; mcuPcbY?: number; coreIslandOffsetX?: number; coreIslandOffsetY?: number; coreIslandRotation?: 0 | 90 | 180 | 270; clearUsbEscape?: boolean; mcuPlacements?: Partial<Record<string, McuPlacement>>; audioVrefPlacement?: { pcbX: number; pcbY: number; pcbRotation: number }; audioPlacements?: Partial<Record<"R_AMP_IN" | "C_AMP_PWM_FILTER" | "C_AMP_IN_COUPLE" | "C_AMP_VDD" | "C_AMP_VDD_BULK" | "FB_SPK_POS", { pcbX: number; pcbY: number; pcbRotation: number }>>; ldoOffset?: { x: number; y: number }; ldoFlipped?: boolean; ldoPlacements?: Partial<Record<"U_3V3" | "C_3V3_IN" | "C_3V3_OUT", { pcbX: number; pcbY: number; pcbRotation: number }>>; usbDiodeOffset?: { x: number; y: number }; powerOffsetX?: number; powerOffsetY?: number; powerPlacements?: Partial<Record<"R_BOOST_EN_PULLUP" | "R_BAT_GATE_PULLUP" | "R_BAT_GATE_BASE" | "D_BAT_BOOST" | "C_BAT_OUT" | "C_BAT_OUT_BULK" | "R_BOOST_TOP" | "R_BOOST_BOT" | "R_USB_BOOST_OFF" | "Q_USB_BOOST_OFF" | "R_USB_BOOST_OFF_PULLDOWN", { pcbX: number; pcbY: number; pcbRotation: number }>>; audioOffsetX?: number; topLeftMountingHole?: { x: number; y: number }; powerSwitchX?: number; effort?: "1x" | "2x" | "5x" | "10x" | "100x" } = {}) => (
   <board
     title="Game Boy Advance RP2350 handheld circuit"
     autorouter={router}
     autorouterEffortLevel={effort}
-    width="144.5mm"
-    height="87.5mm"
-    thickness="0.8mm"
+    width={gbaHousingFit ? "131.32mm" : "144.5mm"}
+    height={gbaHousingFit ? "72.42mm" : "87.5mm"}
+    thickness={gbaHousingFit ? "1mm" : "0.8mm"}
     layers={layers}
     minViaHoleDiameter="0.2mm"
     minViaPadDiameter="0.45mm"
@@ -97,7 +103,7 @@ export default ({
     minPlatedHoleDrillEdgeToDrillEdgeClearance="0.45mm"
     minTraceToPadEdgeClearance="0.1mm"
     minPadEdgeToPadEdgeClearance="0.1mm"
-    outline={[
+    outline={gbaHousingFit ? [...gbaHousingOutline] : [
       { x: -66, y: -43.5 },
       { x: 66, y: -43.5 },
       { x: 69.5, y: -42 },
@@ -176,10 +182,14 @@ export default ({
       <autoroutingphase name="MCU_FLASH_USB_FIRST" phaseIndex={1} autorouter={router} />
     )}
 
-    <hole name="MH_TOP_LEFT" diameter="3.3mm" pcbX={topLeftMountingHole.x} pcbY={topLeftMountingHole.y} />
-    <hole name="MH_TOP_RIGHT" diameter="3.3mm" pcbX={50} pcbY={-32} />
-    <hole name="MH_BOTTOM_LEFT" diameter="3.3mm" pcbX={-60} pcbY={31} />
-    <hole name="MH_BOTTOM_RIGHT" diameter="3.3mm" pcbX={60} pcbY={31} />
+    {!gbaHousingFit && (
+      <>
+        <hole name="MH_TOP_LEFT" diameter="3.3mm" pcbX={topLeftMountingHole.x} pcbY={topLeftMountingHole.y} />
+        <hole name="MH_TOP_RIGHT" diameter="3.3mm" pcbX={50} pcbY={-32} />
+        <hole name="MH_BOTTOM_LEFT" diameter="3.3mm" pcbX={-60} pcbY={31} />
+        <hole name="MH_BOTTOM_RIGHT" diameter="3.3mm" pcbX={60} pcbY={31} />
+      </>
+    )}
 
     {publishedMcuModule ? (
     <RP2350CompactLayout
@@ -201,8 +211,8 @@ export default ({
       usbResistorEscape={usbResistorEscape}
       segmentedSupplyPours={segmentedSupplyPours}
       headers={mcuHeaders}
-      pcbX={0}
-      pcbY={0}
+      pcbX={mcuPcbX}
+      pcbY={mcuPcbY}
       pcbRotation={0}
     />
     ) : (
@@ -306,7 +316,7 @@ export default ({
       vrefPlacement={audioVrefPlacement}
       placements={audioPlacements}
       pcbX={14 + audioOffsetX}
-      pcbY={13}
+      pcbY={gbaHousingFit ? 10 : 13}
       pcbRotation={0}
       schX={25}
       schY={12}
@@ -341,13 +351,17 @@ export default ({
       layer="top"
       pcbX={0}
       pcbY={1}
+      connectorOnly={gbaHousingFit}
+      headerPcbX={gbaHousingFit ? -40 : undefined}
+      headerPcbY={gbaHousingFit ? 30 : undefined}
+      headerPcbRotation={gbaHousingFit ? 0 : undefined}
       schX={-2}
       schY={16}
     />
 
     {storage && publishedMcuModule && (
       <group name="STORAGE" schX={26} schY={32}>
-        <MicroSDStorage name="SD" pcbX={34} pcbY={-33.7} pcbRotation={180} sdDetectEscape={sdDetectEscape} />
+        <MicroSDStorage name="SD" pcbX={gbaHousingFit ? 46 : 34} pcbY={gbaHousingFit ? -29 : -33.7} pcbRotation={180} sdDetectEscape={sdDetectEscape} />
         <trace name="SD_SCK" from=".SD .J_SD > .CLK" to={mcuHeaders ? ".MCU .J_LEFT > .pin17" : ".MCU .MCU_CORE .U1 > .GPIO18"} />
         <trace name="SD_MOSI" from=".SD .J_SD > .MOSI" to={mcuHeaders ? ".MCU .J_LEFT > .pin15" : ".MCU .MCU_CORE .U1 > .GPIO19"} />
         <trace name="SD_MISO" from=".SD .J_SD > .MISO" to={mcuHeaders ? ".MCU .J_LEFT > .pin19" : ".MCU .MCU_CORE .U1 > .GPIO16"} />
@@ -368,7 +382,7 @@ export default ({
       name="J_PWR_SW"
       schSectionName={schSections.power}
       pcbX={powerSwitchX}
-      pcbY={-30}
+      pcbY={gbaHousingFit ? -28 : -30}
       pcbRotation={0}
       schX={-33}
       schY={8}
@@ -378,39 +392,35 @@ export default ({
     <trace name="BATTERY_TO_SWITCH" from="net.BAT_POS" to=".J_PWR_SW > .pin1" {...batteryTraceProps} />
     <trace name="SWITCH_TO_BOOST" from=".J_PWR_SW > .pin2" to="net.BAT_SWITCHED" {...batteryTraceProps} />
 
-    <KH_6X6X15H_SMT_FS_D name="SW_UP" schSectionName={schSections.controls} pcbX={-64} pcbY={-7} schX={-36} schY={31} />
-    <KH_6X6X15H_SMT_FS_D name="SW_DOWN" schSectionName={schSections.controls} pcbX={-64} pcbY={7} schX={-36} schY={34} />
-    <KH_6X6X15H_SMT_FS_D name="SW_LEFT" schSectionName={schSections.controls} pcbX={-52} pcbY={7} schX={-36} schY={37} />
-    <KH_6X6X15H_SMT_FS_D name="SW_RIGHT" schSectionName={schSections.controls} pcbX={-52} pcbY={-8} schX={-36} schY={40} />
-    <KH_6X6X15H_SMT_FS_D name="SW_A" schSectionName={schSections.controls} pcbX={64} pcbY={-7} schX={-27} schY={31} />
-    <KH_6X6X15H_SMT_FS_D name="SW_B" schSectionName={schSections.controls} pcbX={64} pcbY={7} schX={-27} schY={34} />
-    <KH_6X6X15H_SMT_FS_D name="SW_X" schSectionName={schSections.controls} pcbX={52} pcbY={-7} schX={-27} schY={37} />
-    <KH_6X6X15H_SMT_FS_D name="SW_Y" schSectionName={schSections.controls} pcbX={52} pcbY={7} schX={-27} schY={40} />
-    <KH_6X6X15H_SMT_FS_D name="SW_SELECT" schSectionName={schSections.controls} pcbX={-50} pcbY={27} schX={-31.5} schY={43} />
-    <KH_6X6X15H_SMT_FS_D name="SW_START" schSectionName={schSections.controls} pcbX={50} pcbY={27} schX={-27} schY={43} />
+    {/* Housing-critical control centers follow the close-to-1:1 OpenTendo
+        AGB-CPU-01 mechanical reference. The original GBA has A/B only. */}
+    <GbaMembraneButtonContact name="SW_UP" schSectionName={schSections.controls} pcbX={-56.7} pcbY={13.3} schX={-36} schY={31} />
+    <GbaMembraneButtonContact name="SW_DOWN" schSectionName={schSections.controls} pcbX={-54.5} pcbY={-4.8} schX={-36} schY={34} />
+    <GbaMembraneButtonContact name="SW_LEFT" schSectionName={schSections.controls} pcbX={-64.7} pcbY={5.4} contactOffsetX={gbaHousingFit ? 2.1 : 0} schX={-36} schY={37} />
+    <GbaMembraneButtonContact name="SW_RIGHT" schSectionName={schSections.controls} pcbX={-46.5} pcbY={5.4} schX={-36} schY={40} />
+    <GbaMembraneButtonContact name="SW_A" schSectionName={schSections.controls} pcbX={57.2} pcbY={6.2} schX={-27} schY={31} />
+    <GbaMembraneButtonContact name="SW_B" schSectionName={schSections.controls} pcbX={44.1} pcbY={1.8} schX={-27} schY={34} />
+    <GbaMembraneButtonContact name="SW_SELECT" schSectionName={schSections.controls} pcbX={-45.2} pcbY={-22.7} schX={-31.5} schY={37} />
+    <GbaMembraneButtonContact name="SW_START" schSectionName={schSections.controls} pcbX={-45.2} pcbY={-14.6} schX={-27} schY={40} />
 
     {/* Keep left-side controls on the left MCU header to avoid unnecessary
         cross-board routes. The RP2350 GPIOs remain ordinary digital inputs. */}
-    <trace name="UP" from={innerButtonContacts ? ".SW_UP > .pin2" : ".SW_UP > .pin1"} to={publishedMcuModule ? (mcuHeaders ? ".MCU .J_LEFT > .pin8" : ".MCU .MCU_CORE .U1 > .GPIO25") : ".MCU .U1 > .GPIO2"} />
-    <trace name="UP_G" from=".SW_UP > .pin4" to="net.GND" {...gndLabel} />
-    <trace name="DN" from={innerButtonContacts ? ".SW_DOWN > .pin2" : ".SW_DOWN > .pin1"} to={publishedMcuModule ? (mcuHeaders ? ".MCU .J_LEFT > .pin9" : ".MCU .MCU_CORE .U1 > .GPIO24") : ".MCU .U1 > .GPIO3"} />
-    <trace name="DN_G" from=".SW_DOWN > .pin4" to="net.GND" {...gndLabel} />
-    <trace name="LFT" from={innerButtonContacts ? ".SW_LEFT > .pin2" : ".SW_LEFT > .pin1"} to={publishedMcuModule ? (mcuHeaders ? ".MCU .J_LEFT > .pin10" : ".MCU .MCU_CORE .U1 > .GPIO23") : ".MCU .U1 > .GPIO4"} />
-    <trace name="LFT_G" from=".SW_LEFT > .pin4" to="net.GND" {...gndLabel} />
-    <trace name="RGT" from={innerButtonContacts ? ".SW_RIGHT > .pin2" : ".SW_RIGHT > .pin1"} to={publishedMcuModule ? (mcuHeaders ? ".MCU .J_LEFT > .pin6" : ".MCU .MCU_CORE .U1 > .GPIO26_ADC0") : ".MCU .U1 > .GPIO5"} />
-    <trace name="RGT_G" from=".SW_RIGHT > .pin4" to="net.GND" {...gndLabel} />
-    <trace name="A" from=".SW_A > .pin1" to={publishedMcuModule ? (mcuHeaders ? ".MCU .J_RIGHT > .pin9" : ".MCU .MCU_CORE .U1 > .GPIO6") : ".MCU .U1 > .GPIO6"} />
-    <trace name="A_G" from={innerButtonContacts ? ".SW_A > .pin3" : ".SW_A > .pin4"} to="net.GND" {...gndLabel} />
-    <trace name="B" from=".SW_B > .pin1" to={publishedMcuModule ? (mcuHeaders ? ".MCU .J_RIGHT > .pin10" : ".MCU .MCU_CORE .U1 > .GPIO7") : ".MCU .U1 > .GPIO7"} />
-    <trace name="B_G" from={innerButtonContacts ? ".SW_B > .pin3" : ".SW_B > .pin4"} to="net.GND" {...gndLabel} />
-    <trace name="X" from=".SW_X > .pin1" to={publishedMcuModule ? (mcuHeaders ? ".MCU .J_RIGHT > .pin11" : ".MCU .MCU_CORE .U1 > .GPIO8") : ".MCU .U1 > .GPIO8"} />
-    <trace name="X_G" from={innerButtonContacts ? ".SW_X > .pin3" : ".SW_X > .pin4"} to="net.GND" {...gndLabel} />
-    <trace name="Y" from=".SW_Y > .pin1" to={publishedMcuModule ? (mcuHeaders ? ".MCU .J_RIGHT > .pin12" : ".MCU .MCU_CORE .U1 > .GPIO9") : ".MCU .U1 > .GPIO9"} />
-    <trace name="Y_G" from={innerButtonContacts ? ".SW_Y > .pin3" : ".SW_Y > .pin4"} to="net.GND" {...gndLabel} />
-    <trace name="SEL" from={innerButtonContacts ? ".SW_SELECT > .pin2" : ".SW_SELECT > .pin1"} to={publishedMcuModule ? (mcuHeaders ? ".MCU .J_LEFT > .pin5" : ".MCU .MCU_CORE .U1 > .GPIO27_ADC1") : ".MCU .U1 > .GPIO10"} />
-    <trace name="SEL_G" from=".SW_SELECT > .pin4" to="net.GND" {...gndLabel} />
-    <trace name="STA" from=".SW_START > .pin1" to={publishedMcuModule ? (mcuHeaders ? ".MCU .J_RIGHT > .pin15" : ".MCU .MCU_CORE .U1 > .GPIO11") : ".MCU .U1 > .GPIO11"} />
-    <trace name="STA_G" from={innerButtonContacts ? ".SW_START > .pin3" : ".SW_START > .pin4"} to="net.GND" {...gndLabel} />
+    <trace name="UP" from=".SW_UP > .signal" to={publishedMcuModule ? (mcuHeaders ? ".MCU .J_LEFT > .pin8" : ".MCU .MCU_CORE .U1 > .GPIO25") : ".MCU .U1 > .GPIO2"} />
+    <trace name="UP_G" from=".SW_UP > .ground" to="net.GND" {...gndLabel} />
+    <trace name="DN" from=".SW_DOWN > .signal" to={publishedMcuModule ? (mcuHeaders ? ".MCU .J_LEFT > .pin9" : ".MCU .MCU_CORE .U1 > .GPIO24") : ".MCU .U1 > .GPIO3"} />
+    <trace name="DN_G" from=".SW_DOWN > .ground" to="net.GND" {...gndLabel} />
+    <trace name="LFT" from=".SW_LEFT > .signal" to={publishedMcuModule ? (mcuHeaders ? ".MCU .J_LEFT > .pin10" : ".MCU .MCU_CORE .U1 > .GPIO23") : ".MCU .U1 > .GPIO4"} />
+    <trace name="LFT_G" from=".SW_LEFT > .ground" to="net.GND" {...gndLabel} />
+    <trace name="RGT" from=".SW_RIGHT > .signal" to={publishedMcuModule ? (mcuHeaders ? ".MCU .J_LEFT > .pin6" : ".MCU .MCU_CORE .U1 > .GPIO26_ADC0") : ".MCU .U1 > .GPIO5"} />
+    <trace name="RGT_G" from=".SW_RIGHT > .ground" to="net.GND" {...gndLabel} />
+    <trace name="A" from=".SW_A > .signal" to={publishedMcuModule ? (mcuHeaders ? ".MCU .J_RIGHT > .pin9" : ".MCU .MCU_CORE .U1 > .GPIO6") : ".MCU .U1 > .GPIO6"} />
+    <trace name="A_G" from=".SW_A > .ground" to="net.GND" {...gndLabel} />
+    <trace name="B" from=".SW_B > .signal" to={publishedMcuModule ? (mcuHeaders ? ".MCU .J_RIGHT > .pin10" : ".MCU .MCU_CORE .U1 > .GPIO7") : ".MCU .U1 > .GPIO7"} />
+    <trace name="B_G" from=".SW_B > .ground" to="net.GND" {...gndLabel} />
+    <trace name="SEL" from=".SW_SELECT > .signal" to={publishedMcuModule ? (mcuHeaders ? ".MCU .J_LEFT > .pin5" : ".MCU .MCU_CORE .U1 > .GPIO27_ADC1") : ".MCU .U1 > .GPIO10"} />
+    <trace name="SEL_G" from=".SW_SELECT > .ground" to="net.GND" {...gndLabel} />
+    <trace name="STA" from=".SW_START > .signal" to={publishedMcuModule ? (mcuHeaders ? ".MCU .J_RIGHT > .pin15" : ".MCU .MCU_CORE .U1 > .GPIO11") : ".MCU .U1 > .GPIO11"} />
+    <trace name="STA_G" from=".SW_START > .ground" to="net.GND" {...gndLabel} />
 
     <trace name="LCD_VCC" from=".J_LCD .J_HEADER > .VCC" to="net.VSYS" {...powerTraceProps} {...vsysLabel} />
     <trace name="LCD_GND" from=".J_LCD .J_HEADER > .GND" to="net.GND" {...gndLabel} />
@@ -517,16 +527,14 @@ export default ({
     <silkscreentext text="BAT" fontSize="0.9mm" pcbX={-58} pcbY={25} pcbRotation={90} />
     <silkscreentext text="USB-C / VBUS" fontSize="0.9mm" pcbX={0} pcbY={39} />
     <silkscreentext text="PWR SW" fontSize="0.9mm" pcbX={54} pcbY={-30} pcbRotation={90} />
-    <silkscreentext text="UP" fontSize="0.9mm" pcbX={-64} pcbY={-7} />
-    <silkscreentext text="DOWN" fontSize="0.9mm" pcbX={-64} pcbY={7} />
-    <silkscreentext text="LEFT" fontSize="0.9mm" pcbX={-52} pcbY={7} />
-    <silkscreentext text="RIGHT" fontSize="0.9mm" pcbX={-52} pcbY={-8} />
-    <silkscreentext text="A" fontSize="0.9mm" pcbX={64} pcbY={-7} />
-    <silkscreentext text="B" fontSize="0.9mm" pcbX={64} pcbY={7} />
-    <silkscreentext text="X" fontSize="0.9mm" pcbX={52} pcbY={-7} />
-    <silkscreentext text="Y" fontSize="0.9mm" pcbX={52} pcbY={7} />
-    <silkscreentext text="SELECT" fontSize="0.9mm" pcbX={-50} pcbY={31} />
-    <silkscreentext text="START" fontSize="0.9mm" pcbX={50} pcbY={31} />
+    <silkscreentext text="UP" fontSize="0.9mm" pcbX={-56.7} pcbY={13.3} />
+    <silkscreentext text="DOWN" fontSize="0.9mm" pcbX={-54.5} pcbY={-4.8} />
+    <silkscreentext text="LEFT" fontSize="0.9mm" pcbX={-64.7} pcbY={5.4} />
+    <silkscreentext text="RIGHT" fontSize="0.9mm" pcbX={-46.5} pcbY={5.4} />
+    <silkscreentext text="A" fontSize="0.9mm" pcbX={57.2} pcbY={6.2} />
+    <silkscreentext text="B" fontSize="0.9mm" pcbX={44.1} pcbY={1.8} />
+    <silkscreentext text="SELECT" fontSize="0.9mm" pcbX={-45.2} pcbY={-22.7} />
+    <silkscreentext text="START" fontSize="0.9mm" pcbX={-45.2} pcbY={-14.6} />
     <silkscreentext text="VOLUME" fontSize="0.9mm" pcbX={-55} pcbY={-27} />
     <silkscreentext text="SPK" fontSize="0.9mm" pcbX={-9} pcbY={-8} />
   </board>

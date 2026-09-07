@@ -22,10 +22,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - candidate: separated-mcu-peripherals-clock-first
-            entry: placement-storage-separated-mcu-peripherals-clock-first
-          - candidate: separated-mcu-peripherals-reset-east-clock-first
-            entry: placement-storage-separated-mcu-peripherals-reset-east-clock-first
+          - candidate: gba-controls-spi-centered-clock-first
+            entry: placement-storage-gba-controls-spi-centered-clock-first
     defaults:
       run:
         working-directory: gba-rp2350

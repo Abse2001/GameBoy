@@ -19,7 +19,10 @@ export default ({
   usbResistorEscape = false,
   segmentedSupplyPours = false,
   routingSafetyMargin = false,
-}: { mcuSubcircuit?: boolean; mcuHeaders?: boolean; routeClockFirst?: boolean; psramCapEscape?: boolean; mcuPassiveEscape?: boolean; clockPassiveEscape?: boolean; westDecouplerEscape?: boolean; eastSupplyCapEscape?: boolean; clockResistorEscape?: boolean; mcuLocalSameLayerEscapes?: boolean; mcuPeripheralPlacements?: Partial<Record<"U_RUN" | "R_RUN" | "U_RGB_BUF" | "C_RGB_BUF" | "R_RGB_DATA", { pcbX: number; pcbY: number; pcbRotation?: number }>>; sdDetectEscape?: boolean; debugTestpointEscape?: boolean; mcuDebugTestpointPlacements?: Partial<Record<"TP_SWDIO" | "TP_SWCLK", { pcbX: number; pcbY: number }>>; flashCapEscape?: boolean; usbResistorEscape?: boolean; segmentedSupplyPours?: boolean; routingSafetyMargin?: boolean } = {}) => (
+  gbaHousingFit = false,
+  mcuPcbX = 0,
+  mcuPcbY = 0,
+}: { mcuSubcircuit?: boolean; mcuHeaders?: boolean; routeClockFirst?: boolean; psramCapEscape?: boolean; mcuPassiveEscape?: boolean; clockPassiveEscape?: boolean; westDecouplerEscape?: boolean; eastSupplyCapEscape?: boolean; clockResistorEscape?: boolean; mcuLocalSameLayerEscapes?: boolean; mcuPeripheralPlacements?: Partial<Record<"U_RUN" | "R_RUN" | "U_RGB_BUF" | "C_RGB_BUF" | "R_RGB_DATA" | "J_STEMMA_QT" | "J_SPI" | "J_USB" | "R_CC1" | "R_CC2" | "C_VBUS" | "R_PWR_LED" | "D_PWR" | "R_STEMMA_POWER" | "D_RGB" | "C_RGB" | "TP_GND" | "TP_3V3", { pcbX: number; pcbY: number; pcbRotation?: number }>>; sdDetectEscape?: boolean; debugTestpointEscape?: boolean; mcuDebugTestpointPlacements?: Partial<Record<"TP_SWDIO" | "TP_SWCLK", { pcbX: number; pcbY: number }>>; flashCapEscape?: boolean; usbResistorEscape?: boolean; segmentedSupplyPours?: boolean; routingSafetyMargin?: boolean; gbaHousingFit?: boolean; mcuPcbX?: number; mcuPcbY?: number } = {}) => (
   <Board
     publishedMcuModule
     storage
@@ -38,6 +41,9 @@ export default ({
     usbResistorEscape={usbResistorEscape}
     segmentedSupplyPours={segmentedSupplyPours}
     routingSafetyMargin={routingSafetyMargin}
+    gbaHousingFit={gbaHousingFit}
+    mcuPcbX={mcuPcbX}
+    mcuPcbY={mcuPcbY}
     mcuHeaders={mcuHeaders}
     mcuSubcircuit={mcuSubcircuit}
     routeClockFirst={routeClockFirst}
@@ -49,10 +55,14 @@ export default ({
     edgeConnectors
     innerButtonContacts
     ldoOffset={{ x: -12, y: 0 }}
-    powerOffsetY={-3}
+    powerOffsetX={gbaHousingFit ? 1 : 0}
+    powerOffsetY={gbaHousingFit ? 3 : -3}
     powerPlacements={{
       R_BOOST_EN_PULLUP: { pcbX: 1.5, pcbY: 26.25, pcbRotation: 90 },
       R_BAT_GATE_PULLUP: { pcbX: -11.5, pcbY: 17, pcbRotation: 90 },
+      R_BAT_GATE_BASE: gbaHousingFit
+        ? { pcbX: -8, pcbY: 25.5, pcbRotation: 90 }
+        : { pcbX: -14.5, pcbY: 26.25, pcbRotation: 90 },
       D_BAT_BOOST: { pcbX: 19, pcbY: 24, pcbRotation: 180 },
       R_BOOST_TOP: { pcbX: 11.5, pcbY: 18, pcbRotation: 90 },
       R_BOOST_BOT: { pcbX: 8.5, pcbY: 18, pcbRotation: 90 },
@@ -60,7 +70,7 @@ export default ({
       Q_USB_BOOST_OFF: { pcbX: 27, pcbY: 18.25, pcbRotation: 0 },
       R_USB_BOOST_OFF_PULLDOWN: { pcbX: 25, pcbY: 27, pcbRotation: 90 },
     }}
-    usbDiodeOffset={{ x: -13, y: -2 }}
+    usbDiodeOffset={{ x: gbaHousingFit ? -8 : -13, y: gbaHousingFit ? -8 : -2 }}
     audioVrefPlacement={{ pcbX: 16.7, pcbY: -13, pcbRotation: 90 }}
     audioPlacements={{
       R_AMP_IN: { pcbX: 9.4, pcbY: 0, pcbRotation: -90 },

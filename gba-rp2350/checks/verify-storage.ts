@@ -113,18 +113,35 @@ for (const [name, part] of Object.entries(parts)) {
 const sd = elements.find((e) => e.type === "pcb_component" && e.source_component_id === component("J_SD").source_component_id)
 assert(sd?.type === "pcb_component")
 assert.equal(sd.rotation % 360, 0)
-assert.equal(sd.center.x, 34)
-assert(Math.abs(sd.center.y + 33.7) < 1e-6)
+const board = elements.find((e) => e.type === "pcb_board")
+assert(board?.type === "pcb_board")
+const { width: boardWidth, height: boardHeight } = board
+assert(boardWidth !== undefined && boardHeight !== undefined)
+const isGbaHousingEnvelope = Math.abs(boardWidth - 131.32) < 1e-6 && Math.abs(boardHeight - 72.42) < 1e-6
+assert.equal(sd.center.x, isGbaHousingEnvelope ? 46 : 34)
+assert(Math.abs(sd.center.y - (isGbaHousingEnvelope ? -29 : -33.7)) < 1e-6)
 
 for (const [name, x, y] of [
-  ["SW_UP", -64, -7], ["SW_DOWN", -64, 7], ["SW_LEFT", -52, 7], ["SW_RIGHT", -52, -8],
-  ["SW_A", 64, -7], ["SW_B", 64, 7], ["SW_X", 52, -7], ["SW_Y", 52, 7],
-  ["SW_SELECT", -50, 27], ["SW_START", 50, 27], ["X1", 0, 8.5],
+  ["SW_UP", -56.7, 13.3], ["SW_DOWN", -54.5, -4.8], ["SW_LEFT", -64.7, 5.4], ["SW_RIGHT", -46.5, 5.4],
+  ["SW_A", 57.2, 6.2], ["SW_B", 44.1, 1.8],
+  ["SW_SELECT", -45.2, -22.7], ["SW_START", -45.2, -14.6],
 ] as const) {
   const pcb = elements.find((e) => e.type === "pcb_component" && e.source_component_id === component(name).source_component_id)
   assert(pcb?.type === "pcb_component")
-  assert(Math.abs(pcb.center.x - x) < 1e-6 && Math.abs(pcb.center.y - y) < 1e-6, `${name}: protected placement changed`)
+  const placementX = typeof pcb.display_offset_x === "number" ? pcb.display_offset_x : pcb.center.x
+  const placementY = typeof pcb.display_offset_y === "number" ? pcb.display_offset_y : pcb.center.y
+  assert(Math.abs(placementX - x) < 1e-6 && Math.abs(placementY - y) < 1e-6, `${name}: protected placement changed`)
 }
+const pcbComponent = (name: string) => {
+  const pcb = elements.find((e) => e.type === "pcb_component" && e.source_component_id === component(name).source_component_id)
+  assert(pcb?.type === "pcb_component")
+  return pcb
+}
+const mcu = pcbComponent("U1")
+const crystal = pcbComponent("X1")
+assert(Math.abs(crystal.center.x - mcu.center.x) < 1e-6, "Crystal must stay aligned with the MCU")
+assert(Math.abs(crystal.center.y - mcu.center.y - 7.4) < 1e-6, "Crystal-to-MCU placement changed")
+assert(!components.some((c) => c.name === "SW_X" || c.name === "SW_Y"), "Original GBA housing has no X/Y face buttons")
 
 const errors = elements.filter((e) => e.type.endsWith("_error"))
 const errorCounts: Record<string, number> = {}

@@ -10,6 +10,10 @@ type LCDWikiMsp2807Props = {
   schX?: string | number
   schY?: string | number
   schRotation?: string | number
+  connectorOnly?: boolean
+  headerPcbX?: string | number
+  headerPcbY?: string | number
+  headerPcbRotation?: string | number
 }
 
 const pinLabels = {
@@ -40,9 +44,15 @@ const activeAreaX = "-4.9mm"
 const DisplayHeader = ({
   schSectionName,
   layer,
+  pcbX = "41mm",
+  pcbY = "0mm",
+  pcbRotation = 90,
 }: {
   schSectionName?: string
   layer: "top" | "bottom"
+  pcbX?: string | number
+  pcbY?: string | number
+  pcbRotation?: string | number
 }) => (
   <B254N02_0B14P51_H85C32
     name="J_HEADER"
@@ -60,9 +70,9 @@ const DisplayHeader = ({
     }}
     pcbPinLabels={pinLabels}
     schWidth={0.96}
-    pcbRotation={90}
-    pcbX="41mm"
-    pcbY="0mm"
+    pcbRotation={pcbRotation}
+    pcbX={pcbX}
+    pcbY={pcbY}
   />
 )
 
@@ -112,13 +122,23 @@ export const LCDWiki_2_8_SPI_ILI9341_MSP2807 = ({
   name,
   schSectionName,
   layer = "top",
+  connectorOnly = false,
+  headerPcbX,
+  headerPcbY,
+  headerPcbRotation,
   ...props
 }: LCDWikiMsp2807Props) => (
   <group name={name} {...props}>
 
-    <DisplayHeader schSectionName={schSectionName} layer={layer} />
-    <DisplayMountingHoles />
-    <DisplaySilkscreen />
+    <DisplayHeader
+      schSectionName={schSectionName}
+      layer={layer}
+      pcbX={headerPcbX}
+      pcbY={headerPcbY}
+      pcbRotation={headerPcbRotation}
+    />
+    {!connectorOnly && <DisplayMountingHoles />}
+    {!connectorOnly && <DisplaySilkscreen />}
 
   </group>
 

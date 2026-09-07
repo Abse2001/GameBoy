@@ -30,6 +30,7 @@ export type PowerBoostMT3608Props = Omit<SubcircuitProps, "children"> & {
     Record<
       | "R_BOOST_EN_PULLUP"
       | "R_BAT_GATE_PULLUP"
+      | "R_BAT_GATE_BASE"
       | "D_BAT_BOOST"
       | "C_BAT_OUT"
       | "C_BAT_OUT_BULK"
@@ -117,6 +118,7 @@ export const PowerBoost_GlobalLayout = ({
       pcbRotation={90}
       schX={-10.78}
       schY={-3}
+      {...placements?.R_BAT_GATE_BASE}
     />
     <MMBT3904_RANGE_100_300_
       name="Q_BAT_GATE"
