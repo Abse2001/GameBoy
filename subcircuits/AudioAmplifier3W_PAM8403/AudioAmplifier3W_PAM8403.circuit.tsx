@@ -86,8 +86,8 @@ export const AudioAmplifier3W_PAM8403 = ({
     <RK10J12E002L
       name="RV_VOLUME"
       schSectionName={schSections.input}
-      pcbX={-30.4}
-      pcbY={12}
+      pcbX={-12}
+      pcbY={-8}
       pcbRotation={90}
       schX={0}
       schY={5}
@@ -207,8 +207,8 @@ export const AudioAmplifier3W_PAM8403 = ({
     <SM02B_PASS_TBT_LF__SN_
       name="J_SPK"
       schSectionName={schSections.output}
-      pcbX={-4}
-      pcbY={18}
+      pcbX={33}
+      pcbY={10}
       schX={14}
       schY={3}
       schWidth={1.4}

@@ -64,7 +64,7 @@ export const PowerBoost_MT3608 = ({
     <S2B_PH_K_S_LF__SN_
       name="J_BAT"
       schSectionName={schSections.batteryInput}
-      pcbX={-31.5}
+      pcbX={47}
       pcbY={25.25}
       pcbRotation={90}
       schX={-10}

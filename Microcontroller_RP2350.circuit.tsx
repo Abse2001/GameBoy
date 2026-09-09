@@ -139,7 +139,7 @@ export const Microcontroller_RP2350 = (props: MicrocontrollerRP2350Props) => (
       pinAttributes={{ B8: { doNotConnect: true }, A8: { doNotConnect: true } }}
       schSectionName="usb"
       pcbX={0}
-      pcbY={-18}
+      pcbY={-20}
       schX={11}
       schY={-5.5}
     />

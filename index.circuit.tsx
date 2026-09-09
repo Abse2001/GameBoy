@@ -149,11 +149,11 @@ export default ({
     <trace name="REG_3V3_OUTPUT_CAP" from=".C_3V3_OUT > .pin1" to=".U_3V3 > .VOUT" maxLength="5.5mm" />
     <trace name="REG_3V3_OUTPUT_CAP_GND" from=".C_3V3_OUT > .pin2" to="net.GND" />
 
-  <AudioAmplifier3W_PAM8403
-    name="AUDIO"
-    pcbX={29}
-    pcbY={-2}
-    pcbRotation={90}
+    <AudioAmplifier3W_PAM8403
+      name="AUDIO"
+      pcbX={-53}
+      pcbY={-20}
+      pcbRotation={0}
     schX={25}
       schY={12}
     />
@@ -173,15 +173,13 @@ export default ({
       schY={16}
     />
 
-    <platedhole
-      name="BAT_CABLE_SLOT_STRAIGHT"
-      shape="pill"
-      holeWidth="5mm"
-      holeHeight="11mm"
-      outerWidth="5.1mm"
-      outerHeight="11.1mm"
-      pcbX="-66mm"
-      pcbY="25mm"
+    <cutout
+      name="BAT_CABLE_SLOT"
+      shape="rect"
+      width="8mm"
+      height="5mm"
+      pcbX="15mm"
+      pcbY="-35mm"
     />
     <SK_12E12_G5
       name="J_PWR_SW"
@@ -295,8 +293,8 @@ export default ({
     )}
 
     <silkscreentext text="LCDWIKI 2.8 SPI" fontSize="1.2mm" pcbX={0} pcbY={27} />
-    <silkscreentext text="BAT" fontSize="0.9mm" pcbX={-58} pcbY={25} pcbRotation={90} />
-    <silkscreentext text="USB-C / VBUS" fontSize="0.9mm" pcbX={0} pcbY={39} />
+    <silkscreentext text="BAT" fontSize="0.9mm" pcbX={15} pcbY={-29} />
+    <silkscreentext text="USB-C / VBUS" fontSize="0.9mm" pcbX={0} pcbY={31} />
     <silkscreentext text="PWR SW" fontSize="0.9mm" pcbX={54} pcbY={-30} pcbRotation={90} />
     <silkscreentext text="UP" fontSize="0.9mm" pcbX={-64} pcbY={-7} />
     <silkscreentext text="DOWN" fontSize="0.9mm" pcbX={-64} pcbY={7} />
@@ -308,7 +306,7 @@ export default ({
     <silkscreentext text="Y" fontSize="0.9mm" pcbX={52} pcbY={7} />
     <silkscreentext text="SELECT" fontSize="0.9mm" pcbX={-50} pcbY={31} />
     <silkscreentext text="START" fontSize="0.9mm" pcbX={50} pcbY={31} />
-    <silkscreentext text="VOLUME" fontSize="0.9mm" pcbX={-55} pcbY={-27} />
-    <silkscreentext text="SPK" fontSize="0.9mm" pcbX={-9} pcbY={-8} />
+    <silkscreentext text="VOLUME" fontSize="0.9mm" pcbX={-65} pcbY={-20} />
+    <silkscreentext text="SPK" fontSize="0.9mm" pcbX={-20} pcbY={-16} />
   </board>
 )
