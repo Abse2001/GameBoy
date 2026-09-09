@@ -1,6 +1,6 @@
 {
   "name": "@tsci/abse.gameboy-advance",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Game Boy Advance circuit",
   "main": "index.circuit.tsx",
   "keywords": [
@@ -16,7 +16,6 @@
     "snapshot:update": "tsci snapshot --update",
     "start": "tsci dev",
     "typecheck": "tsc --noEmit",
-    "check:board": "bun checks/verify-board.ts",
     "check:shorts": "tsci check shorts --mode gerber --layer all dist/index/circuit.json",
     "report:drc": "bun checks/report-drc.ts"
   },

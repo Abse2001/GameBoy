@@ -3,8 +3,6 @@
   "ignoredFiles": [
     "node_modules{,/**}",
     "dist{,/**}",
-    "__snapshots__{,/**}",
-    ".tscircuit{,/**}",
-    "experiments{,/**}"
+    ".tscircuit{,/**}"
   ]
 }
