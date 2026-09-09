@@ -55,7 +55,7 @@ export const AudioAmplifier3W_PAM8403 = ({
       resistance="1k"
       footprint="0402"
       pcbX={6}
-      pcbY={0}
+      pcbY={-10}
       pcbRotation={-90}
       schX={-8}
       schY={3}
@@ -67,7 +67,7 @@ export const AudioAmplifier3W_PAM8403 = ({
       footprint="0402"
       schOrientation="vertical"
       pcbX={10}
-      pcbY={0}
+      pcbY={-10}
       pcbRotation={90}
       schX={-6}
       schY={0}
@@ -78,8 +78,8 @@ export const AudioAmplifier3W_PAM8403 = ({
       capacitance="1uF"
       footprint="0402"
       schOrientation="vertical"
-      pcbX={9}
-      pcbY={4}
+      pcbX={14}
+      pcbY={3}
       schX={-2}
       schY={3}
     />
@@ -87,7 +87,7 @@ export const AudioAmplifier3W_PAM8403 = ({
       name="RV_VOLUME"
       schSectionName={schSections.input}
       pcbX={-12}
-      pcbY={-8}
+      pcbY={-20}
       pcbRotation={90}
       schX={0}
       schY={5}
@@ -356,6 +356,7 @@ export const AudioAmplifier3W_PAM8403 = ({
     <trace
       from=".C_AMP_VREF > .pin2"
       to="net.GND_INTERNAL"
+      maxLength="5.5mm"
       {...signalTraceProps}
       {...gndLabel}
     />

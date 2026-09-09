@@ -152,7 +152,7 @@ export default ({
     <AudioAmplifier3W_PAM8403
       name="AUDIO"
       pcbX={-53}
-      pcbY={-20}
+      pcbY={-8}
       pcbRotation={0}
     schX={25}
       schY={12}
