@@ -1,4 +1,4 @@
-import type { ChipProps } from "@tscircuit/props"
+import type { ConnectorProps } from "@tscircuit/props"
 
 const pinLabels = {
   pin13: ["EH1"],
@@ -19,9 +19,9 @@ const pinLabels = {
   pin28: ["B1A12"]
 } as const
 
-export const TYPE_C_16PIN_2MD_073_ = (props: ChipProps<typeof pinLabels>) => {
+export const TYPE_C_16PIN_2MD_073_ = (props: ConnectorProps) => {
   return (
-    <chip
+    <connector
       pinLabels={pinLabels}
       supplierPartNumbers={{
   "jlcpcb": [

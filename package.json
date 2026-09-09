@@ -1,8 +1,8 @@
 {
-  "name": "@tsci/abse.gameboy",
-  "version": "1.0.15",
-  "description": "absePico RP2040-compatible development board",
-  "main": "index.tsx",
+  "name": "@tsci/abse.gameboy-advance",
+  "version": "0.0.2",
+  "description": "Game Boy Advance circuit",
+  "main": "index.circuit.tsx",
   "keywords": [
     "tscircuit",
     "circuit",
@@ -15,12 +15,16 @@
     "snapshot": "tsci snapshot",
     "snapshot:update": "tsci snapshot --update",
     "start": "tsci dev",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "check:board": "bun checks/verify-board.ts",
+    "check:shorts": "tsci check shorts --mode gerber --layer all dist/index/circuit.json",
+    "report:drc": "bun checks/report-drc.ts"
   },
   "devDependencies": {
+    "@tscircuit/common": "^0.0.56",
     "@types/react": "^19.2.14",
-    "tscircuit": "^0.0.1985",
+    "tscircuit": "0.0.2465",
     "typescript": "^5.0.0"
   },
-  "author": "abse"
+  "author": "abdolsalamallawlabi"
 }
