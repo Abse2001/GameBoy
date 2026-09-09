@@ -207,7 +207,7 @@ export const AudioAmplifier3W_PAM8403 = ({
     <SM02B_PASS_TBT_LF__SN_
       name="J_SPK"
       schSectionName={schSections.output}
-      pcbX={16}
+      pcbX={-4}
       pcbY={18}
       schX={14}
       schY={3}
@@ -349,6 +349,7 @@ export const AudioAmplifier3W_PAM8403 = ({
     <trace
       from=".U_SPK_AMP > .VREF"
       to=".C_AMP_VREF > .pin1"
+      maxLength="5.5mm"
       {...signalTraceProps}
       schDisplayLabel="VREF"
     />
