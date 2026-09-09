@@ -1,3 +1,8 @@
 {
-  "$schema": "https://cdn.jsdelivr.net/npm/@tscircuit/cli/types/tscircuit.config.schema.json"
+  "$schema": "https://cdn.jsdelivr.net/npm/@tscircuit/cli/types/tscircuit.config.schema.json",
+  "ignoredFiles": [
+    "node_modules{,/**}",
+    "dist{,/**}",
+    ".tscircuit{,/**}"
+  ]
 }

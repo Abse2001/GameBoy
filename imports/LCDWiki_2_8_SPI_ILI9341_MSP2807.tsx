@@ -47,9 +47,17 @@ const DisplayHeader = ({
     schSectionName={schSectionName}
     layer={layer}
     pinCount={14}
+    footprint={"pinrow14_female_p2.54"}
     pitch="2.54mm"
     gender="female"
     pinLabels={pinLabels}
+    pinAttributes={{
+      T_CLK: { doNotConnect: true },
+      T_CS: { doNotConnect: true },
+      T_DIN: { doNotConnect: true },
+      T_DO: { doNotConnect: true },
+      T_IRQ: { doNotConnect: true },
+    }}
     pcbPinLabels={pinLabels}
     schWidth={0.96}
     pcbRotation={90}
@@ -109,11 +117,6 @@ export const LCDWiki_2_8_SPI_ILI9341_MSP2807 = ({
   <group name={name} {...props}>
 
     <DisplayHeader schSectionName={schSectionName} layer={layer} />
-    <trace name="LCD_TCLK_NC" from=".J_HEADER > .T_CLK" to="net.LCD_NC_TCLK" />
-    <trace name="LCD_TCS_NC" from=".J_HEADER > .T_CS" to="net.LCD_NC_TCS" />
-    <trace name="LCD_TDIN_NC" from=".J_HEADER > .T_DIN" to="net.LCD_NC_TDIN" />
-    <trace name="LCD_TDO_NC" from=".J_HEADER > .T_DO" to="net.LCD_NC_TDO" />
-    <trace name="LCD_TIRQ_NC" from=".J_HEADER > .T_IRQ" to="net.LCD_NC_TIRQ" />
     <DisplayMountingHoles />
     <DisplaySilkscreen />
 
