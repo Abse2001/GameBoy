@@ -1,9 +1,8 @@
 // Routing-only edits to the verified public abse/gameboy-advance 0.0.12 source.
-// Placement and electrical nets stay intact. No width or DRC minimum is reduced.
+// Component placement, electrical connections, widths and DRC limits stay intact.
 export const manualPaths: Record<string, {
   jsx: string
   width: number
-  thickness?: number
   waypoints?: Array<{ x: number; y: number }>
 }> = {
   XIN: { jsx: '[".U1 > .XIN"]', width: 0.1 },
@@ -23,40 +22,19 @@ export const manualPaths: Record<string, {
     // footprint bounding-box center rounded during layout. Keep exact checks.
     waypoints: [{ x: -32 + 0.00012699999999554734, y: -31.5 }, { x: -32 + 0.7499349999999972, y: -31.5 }],
   },
-  // Keep full-width copper at the composite VIN pad. All three original
-  // capacitor-to-VIN endpoints and their 5.5 mm limits are retained.
-  BAT_INPUT_CAP_LOCAL: { jsx: '[".U_BAT_BUCKBOOST > .VIN"]', width: 0.4 },
-  BAT_INPUT_CAP_A: { jsx: '[".U_BAT_BUCKBOOST > .VIN"]', width: 0.4 },
-  BAT_INPUT_CAP_B: {
-    // C_BAT_IN_BULK_B is rotated 90 degrees about (-36, -33.5).
-    // Keep the vertical leg left of EN/VSEL to leave room for their exits.
-    // The 5.847914361 mm path exceeds the retained 5.5 mm length limit;
-    // length violations are reported separately while physical DRC is fixed.
-    jsx: "[{ x: -0.05, y: -1.05 }, { x: 2.75, y: -1.05 }]", width: 0.4,
-    waypoints: [{ x: -34.95, y: -33.55 }, { x: -34.95, y: -30.75 }],
-  },
-  BAT_MODE_INPUT: {
-    // This same-net feed also carries the protected battery input, so make
-    // its entire path 0.4 mm rather than the original signal-width minimum.
-    // The bend clears L_BAT_BUCKBOOST; no length limit is removed.
-    jsx: "[{ x: -2.3, y: 1.9 }]", width: 0.4, thickness: 0.4,
-    waypoints: [{ x: -34.3, y: -29.1 }],
-  },
 }
 
-// Attach the external VIN-net feed at R_BAT_MODE's same-net pad, reached by
-// the fixed 0.4 mm path above. This branch has no length limit; all three
-// length-limited capacitor traces still end at VIN, not at a moved junction.
-// The rendered electrical-group fingerprint must remain exactly unchanged.
-const localConnections: Record<string, { field: "from" | "to"; original: string; selector: string }> = {
-  BAT_BUCKBOOST_INPUT: { field: "to", original: ".U_BAT_BUCKBOOST > .VIN", selector: ".R_BAT_MODE > .pin1" },
-}
+// Replace net-only destinations with nearby pads already on that same net.
+// This expresses the intended local decoupling connection without changing
+// the electrical groups; the rendered netlist fingerprint is checked in CI.
+const localConnections: Record<string, { net: string; to: string }> = {}
 export const manualTraceNames = Object.keys(manualPaths)
 
 const routingPhases = [
   { name: "clock", traces: ["XIN", "XOUT_DAMPING", "XOUT", "T_C_XIN", "T_C_XOUT"] },
   { name: "switching-power", traces: ["BAT_BUCKBOOST_L1", "BAT_BUCKBOOST_L2", "BUCK_SWITCH", "BUCK_BOOTSTRAP_BST"] },
   { name: "local-decoupling", traces: ["C_VREG_AVDD_P", "C_DVDD3_SUPPLY", "C_DVDD2_BULK_SUPPLY", "C_IOVDD1_SUPPLY", "SD_DECOUPLING", "BAT_OUTPUT_CAP_LOCAL", "BAT_INPUT_CAP_LOCAL"] },
+  { name: "memory-interface", traces: ["QSPI_SS", "QSPI_SD0", "QSPI_SD1", "QSPI_SD2", "QSPI_SD3", "QSPI_SCLK", "BOOT_PULLUP", "BOOTSEL_SERIES", "PSRAM_CE", "PSRAM_SIO0", "PSRAM_SIO1", "PSRAM_SIO2", "PSRAM_SIO3", "PSRAM_SCLK", "PSRAM_CE_PULLUP"] },
 ]
 
 export function applyRoutingPlan(source: string): string {
@@ -78,9 +56,9 @@ export function applyRoutingPlan(source: string): string {
     const end = result.indexOf("/>", start)
     if (end === -1) throw new Error(`Missing end of ${name} trace`)
     const original = result.slice(start, end + 2)
-    const destination = `${connection.field}="${connection.original}"`
-    if (original.split(destination).length !== 2) throw new Error(`Unexpected original endpoint for ${name}`)
-    const replacement = original.replace(destination, `${connection.field}="${connection.selector}"`)
+    const destination = `to="${connection.net}"`
+    if (original.split(destination).length !== 2) throw new Error(`Unexpected original net for ${name}`)
+    const replacement = original.replace(destination, `to="${connection.to}"`)
     result = result.replace(original, replacement)
     replacements.push([replacement, original])
   }
@@ -88,10 +66,7 @@ export function applyRoutingPlan(source: string): string {
     const marker = `<trace name="${name}"`
     if (result.split(marker).length !== 2) throw new Error(`Expected exactly one ${name} trace`)
     // This release recognizes only explicit nonempty paths as fixed copper.
-    const tag = result.slice(result.indexOf(marker), result.indexOf("/>", result.indexOf(marker)))
-    if (path.thickness !== undefined && /\bthickness=/.test(tag)) throw new Error(`Unexpected explicit thickness on ${name}`)
-    const thickness = path.thickness === undefined ? "" : ` thickness={${path.thickness}}`
-    const replacement = `${marker}${thickness} pcbPath={${path.jsx}}`
+    const replacement = `${marker} pcbPath={${path.jsx}}`
     result = result.replace(marker, replacement)
     replacements.push([replacement, marker])
   }
