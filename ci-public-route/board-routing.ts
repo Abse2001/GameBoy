@@ -20,35 +20,18 @@ export const manualPaths: Record<string, {
     jsx: "[{ x: 0.00012699999999554734, y: -0.5 }, { x: 0.7499349999999972, y: -0.5 }]", width: 0.4,
     waypoints: [{ x: -31.999873, y: -31.5 }, { x: -31.250065, y: -31.5 }],
   },
-  BAT_INPUT_CAP_LOCAL: { jsx: '[".U_BAT_BUCKBOOST > .VIN"]', width: 0.4 },
-  BAT_OUTPUT_CAP_C: {
-    jsx: "[{ x: -2.3000000000000007, y: 1.7999999999999972 }, { x: -2.3000000000000007, y: 4.027549533333332 }]", width: 0.4,
-    waypoints: [{ x: -29.7, y: -32.7 }, { x: -29.7, y: -30.47245046666667 }],
-  },
-  BAT_OUTPUT_CAP_LOCAL_GND: {
-    jsx: "[{ x: 0.7000239999999991, y: -2.8000000000000007 }]", width: 0.4,
-    waypoints: [{ x: -26, y: -30.299976 }],
-  },
-  SD_BULK_GND: {
-    jsx: "[{ x: -0.3000000000000007, y: 2.1000000000000014 }, { x: -2.3201159999999987, y: 2.1000000000000014 }]", width: 0.1,
-    waypoints: [{ x: 26.2, y: -22.3 }, { x: 26.2, y: -24.320116 }],
-  },
 }
 
 // Replace net-only destinations with nearby pads already on that same net.
 // This expresses the intended local decoupling connection without changing
 // the electrical groups; the rendered netlist fingerprint is checked in CI.
-const localConnections: Record<string, { net: string; to: string }> = {
-  BAT_OUTPUT_CAP_LOCAL_GND: { net: "net.GND", to: ".C_BAT_OUT_BULK_B > .pin2" },
-  SD_BULK_GND: { net: "net.GND", to: ".C_SD > .pin2" },
-}
+const localConnections: Record<string, { net: string; to: string }> = {}
 export const manualTraceNames = Object.keys(manualPaths)
 
 const routingPhases = [
   { name: "clock", traces: ["XIN", "XOUT_DAMPING", "XOUT", "T_C_XIN", "T_C_XOUT"] },
   { name: "switching-power", traces: ["BAT_BUCKBOOST_L1", "BAT_BUCKBOOST_L2", "BUCK_SWITCH", "BUCK_BOOTSTRAP_BST"] },
   { name: "local-decoupling", traces: ["C_VREG_AVDD_P", "C_DVDD3_SUPPLY", "C_DVDD2_BULK_SUPPLY", "C_IOVDD1_SUPPLY", "SD_DECOUPLING", "BAT_OUTPUT_CAP_LOCAL", "BAT_INPUT_CAP_LOCAL"] },
-  { name: "flash-and-psram", traces: ["QSPI_SS", "QSPI_SD0", "QSPI_SD1", "QSPI_SD2", "QSPI_SD3", "QSPI_SCLK", "BOOT_PULLUP", "BOOTSEL_SERIES", "PSRAM_CE", "PSRAM_SIO0", "PSRAM_SIO1", "PSRAM_SIO2", "PSRAM_SIO3", "PSRAM_SCLK", "PSRAM_CE_PULLUP"] },
 ]
 
 export function applyRoutingPlan(source: string): string {
