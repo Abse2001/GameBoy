@@ -1,8 +1,9 @@
 // Routing-only edits to the verified public abse/gameboy-advance 0.0.12 source.
-// Component placement, electrical connections, widths and DRC limits stay intact.
+// Placement and electrical nets stay intact. No width or DRC minimum is reduced.
 export const manualPaths: Record<string, {
   jsx: string
   width: number
+  thickness?: number
   waypoints?: Array<{ x: number; y: number }>
 }> = {
   XIN: { jsx: '[".U1 > .XIN"]', width: 0.1 },
@@ -32,15 +33,21 @@ export const manualPaths: Record<string, {
     jsx: "[{ x: -0.05, y: -1.05 }, { x: 2.75, y: -1.95 }]", width: 0.4,
     waypoints: [{ x: -34.95, y: -33.55 }, { x: -34.05, y: -30.75 }],
   },
+  BAT_MODE_INPUT: {
+    // This same-net feed also carries the protected battery input, so make
+    // its entire path 0.4 mm rather than the original signal-width minimum.
+    // The bend clears L_BAT_BUCKBOOST; no length limit is removed.
+    jsx: "[{ x: -2.3, y: 1.9 }]", width: 0.4, thickness: 0.4,
+    waypoints: [{ x: -34.3, y: -29.1 }],
+  },
 }
 
-// Attach the remaining VIN-net branches at the local capacitor's wide pad,
-// reached by the fixed 0.4 mm connection above. These two branches have no
-// length limit; the three length-limited capacitor traces still end at VIN.
+// Attach the external VIN-net feed at R_BAT_MODE's same-net pad, reached by
+// the fixed 0.4 mm path above. This branch has no length limit; all three
+// length-limited capacitor traces still end at VIN, not at a moved junction.
 // The rendered electrical-group fingerprint must remain exactly unchanged.
 const localConnections: Record<string, { field: "from" | "to"; original: string; selector: string }> = {
-  BAT_BUCKBOOST_INPUT: { field: "to", original: ".U_BAT_BUCKBOOST > .VIN", selector: ".C_BAT_IN_LOCAL > .pin1" },
-  BAT_MODE_INPUT: { field: "from", original: ".U_BAT_BUCKBOOST > .VIN", selector: ".C_BAT_IN_LOCAL > .pin1" },
+  BAT_BUCKBOOST_INPUT: { field: "to", original: ".U_BAT_BUCKBOOST > .VIN", selector: ".R_BAT_MODE > .pin1" },
 }
 export const manualTraceNames = Object.keys(manualPaths)
 
@@ -79,7 +86,10 @@ export function applyRoutingPlan(source: string): string {
     const marker = `<trace name="${name}"`
     if (result.split(marker).length !== 2) throw new Error(`Expected exactly one ${name} trace`)
     // This release recognizes only explicit nonempty paths as fixed copper.
-    const replacement = `${marker} pcbPath={${path.jsx}}`
+    const tag = result.slice(result.indexOf(marker), result.indexOf("/>", result.indexOf(marker)))
+    if (path.thickness !== undefined && /\bthickness=/.test(tag)) throw new Error(`Unexpected explicit thickness on ${name}`)
+    const thickness = path.thickness === undefined ? "" : ` thickness={${path.thickness}}`
+    const replacement = `${marker}${thickness} pcbPath={${path.jsx}}`
     result = result.replace(marker, replacement)
     replacements.push([replacement, marker])
   }
