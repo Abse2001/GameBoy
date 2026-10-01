@@ -1,6 +1,16 @@
 // Routing-only edits to the verified public abse/gameboy-advance 0.0.12 source.
 // Component placement, electrical connections, widths and DRC limits stay intact.
-export const manualTraceNames = ["XIN", "XOUT", "T_C_XIN", "T_C_XOUT"]
+const manualPaths: Record<string, string> = {
+  XIN: '[".U1 > .XIN"]',
+  XOUT: '[".U_XTAL > .pin3"]',
+  T_C_XIN: '[".U_XTAL > .pin1"]',
+  T_C_XOUT: '[".U_XTAL > .pin3"]',
+  // U1's footprint frame is rotated 180 degrees about (0.2, 15.15).
+  // This waypoint is board (0.49, 19.35), clearing the adjacent DVDD2 pad.
+  // The two-segment route is 4.969193631 mm, below the unchanged 5 mm limit.
+  XOUT_DAMPING: "[{ x: -0.29, y: -4.2 }]",
+}
+export const manualTraceNames = Object.keys(manualPaths)
 
 const routingPhases = [
   { name: "clock", traces: ["XIN", "XOUT_DAMPING", "XOUT", "T_C_XIN", "T_C_XOUT"] },
@@ -10,14 +20,17 @@ const routingPhases = [
 
 export function applyRoutingPlan(source: string): string {
   let result = source
+  const replacements: Array<[string, string]> = []
   for (const [phaseIndex, phase] of routingPhases.entries()) {
     for (const name of phase.traces) {
       const marker = `<trace name="${name}"`
       if (result.split(marker).length !== 2) throw new Error(`Expected exactly one ${name} trace`)
-      // An empty pcbPath explicitly joins the two selected pads. These four
-      // crystal paths were checked against the placed pad geometry; no vias.
-      const manual = manualTraceNames.includes(name) ? " pcbPath={[]}" : ""
-      result = result.replace(marker, `${marker} routingPhaseIndex={${phaseIndex}}${manual}`)
+      // Use explicit nonempty paths: this release recognizes only those as
+      // fixed manual copper. Empty arrays are editable by later repair phases.
+      const manual = manualPaths[name] ? ` pcbPath={${manualPaths[name]}}` : ""
+      const replacement = `${marker} routingPhaseIndex={${phaseIndex}}${manual}`
+      result = result.replace(marker, replacement)
+      replacements.push([replacement, marker])
     }
   }
   const marker = "    <bus"
@@ -26,9 +39,8 @@ export function applyRoutingPlan(source: string): string {
     `    <autoroutingphase phaseIndex={${index}} name="${phase.name}" />`,
   ).join("\n")
   result = result.replace(marker, `${phases}\n\n${marker}`)
-  const restored = result.replace(`${phases}\n\n`, "")
-    .replace(/ routingPhaseIndex=\{[012]\}/g, "")
-    .replace(/ pcbPath=\{\[\]\}/g, "")
+  let restored = result.replace(`${phases}\n\n`, "")
+  for (const [replacement, marker] of replacements) restored = restored.replace(replacement, marker)
   if (restored !== source) throw new Error("Routing plan changed something beyond phases and manual paths")
   return result
 }

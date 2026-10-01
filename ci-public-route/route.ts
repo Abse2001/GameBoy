@@ -185,15 +185,22 @@ try {
   if (routeStarts.some((event) => event.cacheStatus !== "disabled")) {
     throw new Error("Unexpected route cache")
   }
-  // Prior-phase copper and our four explicit pcbPaths are deliberate, not cached
+  // Prior-phase copper and our explicit pcbPaths are deliberate, not cached
   // output from an earlier board run. All phase inputs/outputs are retained.
   if (routeStarts.length < 3) throw new Error("Expected multiple routing phases")
   for (const name of manualTraceNames) {
     const sourceTrace = circuit.find((element) => element.type === "source_trace" && element.name === name)
     if (!sourceTrace || sourceTrace.type !== "source_trace") throw new Error(`Missing manual source trace ${name}`)
     const traces = circuit.filter((element) => element.type === "pcb_trace" && element.source_trace_id === sourceTrace.source_trace_id)
-    if (traces.length !== 1 || traces[0].type !== "pcb_trace" || traces[0].route.length !== 2 || traces[0].route.some((point) => point.route_type !== "wire")) {
+    if (traces.length !== 1 || traces[0].type !== "pcb_trace" || traces[0].route.length !== 3 || traces[0].route.some((point) => point.route_type !== "wire" || point.layer !== "top" || point.width !== 0.1)) {
       throw new Error(`Manual path ${name} was not preserved`)
+    }
+    const intermediate = traces[0].route[1]
+    const expectedIntermediate = name === "XOUT_DAMPING"
+      ? { x: 0.4900000000000005, y: 19.35 }
+      : traces[0].route[2]
+    if (intermediate.x !== expectedIntermediate.x || intermediate.y !== expectedIntermediate.y) {
+      throw new Error(`Manual path ${name} waypoint was moved`)
     }
     const expectedPorts = sourceTrace.connected_source_port_ids.map((id) => circuit.find((element) => element.type === "pcb_port" && element.source_port_id === id))
     for (const port of expectedPorts) {
