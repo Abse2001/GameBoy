@@ -1,7 +1,8 @@
 import { createHash } from "node:crypto"
 import { appendFileSync, mkdirSync, readFileSync, writeFileSync } from "node:fs"
 import { dirname, resolve } from "node:path"
-import { createCircuitWebWorker } from "tscircuit"
+import { chromium } from "@playwright/test"
+import { applyRoutingPlan, manualTraceNames } from "./board-routing"
 import { convertCircuitJsonToPcbSvg } from "circuit-to-svg"
 import { Resvg } from "@resvg/resvg-js"
 import type { AnyCircuitElement } from "circuit-json"
@@ -58,8 +59,8 @@ saveJson("provenance.json", {
   packageName: "abse/gameboy-advance", packageVersion: "0.0.12", releaseId,
   tscircuit: "0.0.2707", packages, bun: Bun.version, workerPath,
   workerSha256: actualWorkerHash, sourceSha256: sourceHash,
-  sourcePolicy: "Fetch the public registry release unchanged; no local project files",
-  executionPolicy: "Published tscircuit eval worker; no platform overrides or route cache",
+  sourcePolicy: "Verified public registry release plus explicit board-routing.ts phase/manual-path edits; no private project files",
+  executionPolicy: "Published tscircuit worker in Chromium; no platform overrides or route cache",
 })
 
 const response = await fetch(`https://registry-api.tscircuit.com/package_releases/get_filesystem_map?package_release_id=${releaseId}`)
@@ -76,15 +77,41 @@ saveJson("public-filesystem-map.json", fsMap)
 saveJson("source-hashes.json", Object.fromEntries(Object.entries(fsMap).map(([name, text]) => [name, sha256(text)])))
 const sourceManifest = JSON.parse(fsMap["package.json"])
 if (sourceManifest.main !== "index.circuit.tsx") throw new Error("Unexpected board entrypoint")
+fsMap["index.circuit.tsx"] = applyRoutingPlan(fsMap["index.circuit.tsx"])
+saveJson("candidate-filesystem-map.json", fsMap)
+saveJson("routing-plan.json", {
+  manualTraceNames, baselineSourceSha256: sourceHash,
+  candidateSourceSha256: sha256(fsMap["index.circuit.tsx"]),
+})
 
-const worker = await createCircuitWebWorker({ webWorkerUrl: new URL(`file://${workerPath}`) })
+const clientBuild = await Bun.build({ entrypoints: [resolve("browser-client.ts")], target: "browser" })
+if (!clientBuild.success) throw new AggregateError(clientBuild.logs, "Browser client build failed")
+const clientJs = await clientBuild.outputs[0].text()
+const server = Bun.serve({
+  hostname: "127.0.0.1", port: 0,
+  fetch(request): Response {
+    const path = new URL(request.url).pathname
+    if (path === "/worker.js") return new Response(Bun.file(workerPath), { headers: { "content-type": "text/javascript" } })
+    if (path === "/client.js") return new Response(clientJs, { headers: { "content-type": "text/javascript" } })
+    if (path === "/") return new Response('<!doctype html><script type="module" src="/client.js"></script>', { headers: { "content-type": "text/html" } })
+    return new Response("Not found", { status: 404 })
+  },
+})
+const browser = await chromium.launch({ headless: true })
+saveJson("browser-runtime.json", { version: browser.version(), engine: "Chromium", workerSha256: actualWorkerHash })
+const page = await browser.newPage()
+const browserErrors: string[] = []
+page.on("pageerror", (error): void => { browserErrors.push(String(error)) })
+page.on("console", (message): void => {
+  if (message.type() === "error") console.error("Browser:", message.text())
+})
 const routeStarts: RoutingEvent[] = []
 const routeEnds: RoutingEvent[] = []
 const routeErrors: RoutingEvent[] = []
 let lastProgressLog = 0
 
-for (const name of ["autorouting:start", "autorouting:progress", "autorouting:end", "autorouting:error"] as const) {
-  worker.on(name, (event: RoutingEvent): void => {
+await page.exposeFunction("captureRoutingEvent", (event: RoutingEvent): void => {
+    const name = event.type
     const elapsedMs = performance.now() - started
     if (name === "autorouting:progress" && elapsedMs - lastProgressLog < 15000) return
     if (name === "autorouting:progress") lastProgressLog = elapsedMs
@@ -100,21 +127,34 @@ for (const name of ["autorouting:start", "autorouting:progress", "autorouting:en
       saveJson(`output-${routeEnds.length}.srj.json`, simpleRouteJson)
     }
     if (name === "autorouting:error") routeErrors.push(metadata as RoutingEvent)
-  })
+})
+
+await page.goto(`http://127.0.0.1:${server.port}`)
+await page.waitForFunction((): boolean => typeof (window as any).runBoard === "function")
+const smoke = await page.evaluate(() => (window as any).runBoard(null))
+saveJson("copper-pour-smoke.json", smoke)
+if (smoke.renderFailure || smoke.asyncErrors.length || browserErrors.length) {
+  await browser.close()
+  server.stop()
+  throw new Error("Browser copper-pour initialization failed; full routing was not started")
 }
 
 let renderFailure: unknown
+let circuit: AnyCircuitElement[] = []
+let asyncErrors: unknown[] = []
 try {
-  await worker.executeWithFsMap({ fsMap, mainComponentPath: sourceManifest.main })
-  await worker.renderUntilSettled()
+  const result = await page.evaluate((source) => (window as any).runBoard(source), fsMap)
+  circuit = result.circuit
+  asyncErrors = result.asyncErrors
+  if (result.renderFailure) renderFailure = result.renderFailure
 } catch (error) {
   renderFailure = error
   saveJson("render-error.json", { message: String(error), stack: (error as Error).stack })
 }
 
 try {
-  const circuit = await worker.getCircuitJson() as AnyCircuitElement[]
   saveJson("circuit.json", circuit)
+  saveJson("runtime-errors.json", { asyncErrors, browserErrors })
   const errors = circuit.filter((element) => element.type.includes("error"))
   saveJson("core-errors.json", errors)
   const errorsByType: Record<string, number> = {}
@@ -123,7 +163,8 @@ try {
   writeFileSync(resolve(output, "board.svg"), pcbSvg)
   writeFileSync(resolve(output, "board.png"), new Resvg(pcbSvg).render().asPng())
   const summary = {
-    renderCompleted: renderFailure === undefined,
+    renderCompleted: renderFailure === undefined && asyncErrors.length === 0 && browserErrors.length === 0,
+    asyncErrors, browserErrors,
     elapsedMs: performance.now() - started,
     traceCount: circuit.filter((element) => element.type === "pcb_trace").length,
     viaCount: circuit.filter((element) => element.type === "pcb_via").length,
@@ -134,16 +175,35 @@ try {
   saveJson("summary.json", summary)
   console.log(JSON.stringify(summary, null, 2))
   if (renderFailure) throw renderFailure
+  if (asyncErrors.length || browserErrors.length) throw new Error("Browser/async render failure; see runtime-errors.json")
   if (routeStarts.length === 0 || routeStarts.length !== routeEnds.length || routeErrors.length > 0) {
     throw new Error("Routing did not complete every started phase successfully")
   }
   if (routeStarts.some((event) => !/Pipeline.*9|pipeline9/i.test(String(event.solverName)))) {
     throw new Error("Expected Pipeline 9 for every routing phase")
   }
-  if (routeStarts.some((event) => event.cacheStatus !== "disabled" || event.previousTraceCount !== 0)) {
-    throw new Error("Unexpected route cache or preloaded copper")
+  if (routeStarts.some((event) => event.cacheStatus !== "disabled")) {
+    throw new Error("Unexpected route cache")
+  }
+  // Prior-phase copper and our four explicit pcbPaths are deliberate, not cached
+  // output from an earlier board run. All phase inputs/outputs are retained.
+  if (routeStarts.length < 3) throw new Error("Expected multiple routing phases")
+  for (const name of manualTraceNames) {
+    const sourceTrace = circuit.find((element) => element.type === "source_trace" && element.name === name)
+    if (!sourceTrace || sourceTrace.type !== "source_trace") throw new Error(`Missing manual source trace ${name}`)
+    const traces = circuit.filter((element) => element.type === "pcb_trace" && element.source_trace_id === sourceTrace.source_trace_id)
+    if (traces.length !== 1 || traces[0].type !== "pcb_trace" || traces[0].route.length !== 2 || traces[0].route.some((point) => point.route_type !== "wire")) {
+      throw new Error(`Manual path ${name} was not preserved`)
+    }
+    const expectedPorts = sourceTrace.connected_source_port_ids.map((id) => circuit.find((element) => element.type === "pcb_port" && element.source_port_id === id))
+    for (const port of expectedPorts) {
+      if (!port || port.type !== "pcb_port" || !traces[0].route.some((point) => point.x === port.x && point.y === port.y)) {
+        throw new Error(`Manual path ${name} no longer terminates at its original pads`)
+      }
+    }
   }
   if (errors.length > 0) throw new Error(`Rendered board has ${errors.length} Core errors; see artifacts`)
 } finally {
-  await worker.kill()
+  await browser.close()
+  server.stop()
 }
