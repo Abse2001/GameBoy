@@ -2,7 +2,7 @@ import { createHash } from "node:crypto"
 import { appendFileSync, mkdirSync, readFileSync, writeFileSync } from "node:fs"
 import { dirname, resolve } from "node:path"
 import { chromium } from "@playwright/test"
-import { applyRoutingPlan, manualTraceNames } from "./board-routing"
+import { applyRoutingPlan, manualPaths, manualTraceNames } from "./board-routing"
 import { convertCircuitJsonToPcbSvg } from "circuit-to-svg"
 import { Resvg } from "@resvg/resvg-js"
 import type { AnyCircuitElement } from "circuit-json"
@@ -30,6 +30,21 @@ function sha256(content: string | Uint8Array): string {
 
 function saveJson(name: string, content: unknown): void {
   writeFileSync(resolve(output, name), JSON.stringify(content, null, 2))
+}
+
+function electricalGroups(circuit: AnyCircuitElement[]): { sha256: string; portCount: number; groupCount: number } {
+  const components = new Map(circuit.filter((element) => element.type === "source_component")
+    .map((component) => [component.source_component_id, component.name]))
+  const groups = new Map<string, string[]>()
+  const ports = circuit.filter((element) => element.type === "source_port")
+  for (const port of ports) {
+    const key = port.subcircuit_connectivity_map_key || port.source_port_id
+    const group = groups.get(key) ?? []
+    group.push(JSON.stringify([port.source_port_id, components.get(port.source_component_id), port.name, port.pin_number]))
+    groups.set(key, group)
+  }
+  const normalized = [...groups.values()].map((group) => JSON.stringify(group.sort())).sort()
+  return { sha256: sha256(JSON.stringify(normalized)), portCount: ports.length, groupCount: groups.size }
 }
 
 function readPackage(name: string): { version: string; path: string } {
@@ -80,7 +95,7 @@ if (sourceManifest.main !== "index.circuit.tsx") throw new Error("Unexpected boa
 fsMap["index.circuit.tsx"] = applyRoutingPlan(fsMap["index.circuit.tsx"])
 saveJson("candidate-filesystem-map.json", fsMap)
 saveJson("routing-plan.json", {
-  manualTraceNames, baselineSourceSha256: sourceHash,
+  manualPaths, manualTraceNames, baselineSourceSha256: sourceHash,
   candidateSourceSha256: sha256(fsMap["index.circuit.tsx"]),
 })
 
@@ -171,11 +186,15 @@ try {
     coreErrorCount: errors.length, errorsByType,
     routeStarts, routeEnds, routeErrors,
     circuitSha256: sha256(JSON.stringify(circuit)),
+    electricalGroups: electricalGroups(circuit),
   }
   saveJson("summary.json", summary)
   console.log(JSON.stringify(summary, null, 2))
   if (renderFailure) throw renderFailure
   if (asyncErrors.length || browserErrors.length) throw new Error("Browser/async render failure; see runtime-errors.json")
+  if (summary.electricalGroups.sha256 !== "cf657997ed461937945f7ce12388db63506538672c5e7ca414158f89f718cebf") {
+    throw new Error("Electrical port groups changed from the original public board")
+  }
   if (routeStarts.length === 0 || routeStarts.length !== routeEnds.length || routeErrors.length > 0) {
     throw new Error("Routing did not complete every started phase successfully")
   }
@@ -189,16 +208,15 @@ try {
   // output from an earlier board run. All phase inputs/outputs are retained.
   if (routeStarts.length < 3) throw new Error("Expected multiple routing phases")
   for (const name of manualTraceNames) {
+    const path = manualPaths[name]
     const sourceTrace = circuit.find((element) => element.type === "source_trace" && element.name === name)
     if (!sourceTrace || sourceTrace.type !== "source_trace") throw new Error(`Missing manual source trace ${name}`)
     const traces = circuit.filter((element) => element.type === "pcb_trace" && element.source_trace_id === sourceTrace.source_trace_id)
-    if (traces.length !== 1 || traces[0].type !== "pcb_trace" || traces[0].route.length !== 3 || traces[0].route.some((point) => point.route_type !== "wire" || point.layer !== "top" || point.width !== 0.1)) {
+    if (traces.length !== 1 || traces[0].type !== "pcb_trace" || traces[0].route.length !== 3 || traces[0].route.some((point) => point.route_type !== "wire" || point.layer !== "top" || point.width !== path.width)) {
       throw new Error(`Manual path ${name} was not preserved`)
     }
     const intermediate = traces[0].route[1]
-    const expectedIntermediate = name === "XOUT_DAMPING"
-      ? { x: 0.4900000000000005, y: 19.35 }
-      : traces[0].route[2]
+    const expectedIntermediate = path.waypoint ?? traces[0].route[2]
     if (intermediate.x !== expectedIntermediate.x || intermediate.y !== expectedIntermediate.y) {
       throw new Error(`Manual path ${name} waypoint was moved`)
     }
