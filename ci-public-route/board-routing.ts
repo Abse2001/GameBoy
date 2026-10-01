@@ -71,9 +71,14 @@ export function applyRoutingPlan(source: string): string {
   }
   const marker = "    <bus"
   if (!result.includes(marker)) throw new Error("Missing original bus section")
-  const phases = routingPhases.map((phase, index) =>
-    `    <autoroutingphase phaseIndex={${index}} name="${phase.name}" />`,
-  ).join("\n")
+  // Route with extra clearance; the board's original 0.13 mm acceptance
+  // rule and all other constraints remain unchanged.
+  const phases = [
+    ...routingPhases.map((phase, index) =>
+      `    <autoroutingphase phaseIndex={${index}} name="${phase.name}" minTraceToPadEdgeClearance="0.16mm" />`,
+    ),
+    '    <autoroutingphase name="remaining-connections" minTraceToPadEdgeClearance="0.16mm" />',
+  ].join("\n")
   result = result.replace(marker, `${phases}\n\n${marker}`)
   let restored = result.replace(`${phases}\n\n`, "")
   for (const [replacement, marker] of replacements.reverse()) restored = restored.replace(replacement, marker)
