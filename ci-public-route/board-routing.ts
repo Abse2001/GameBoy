@@ -22,12 +22,26 @@ export const manualPaths: Record<string, {
     // footprint bounding-box center rounded during layout. Keep exact checks.
     waypoints: [{ x: -32 + 0.00012699999999554734, y: -31.5 }, { x: -32 + 0.7499349999999972, y: -31.5 }],
   },
+  // Keep full-width copper at the composite VIN pad. All three original
+  // capacitor-to-VIN endpoints and their 5.5 mm limits are retained.
+  BAT_INPUT_CAP_LOCAL: { jsx: '[".U_BAT_BUCKBOOST > .VIN"]', width: 0.4 },
+  BAT_INPUT_CAP_A: { jsx: '[".U_BAT_BUCKBOOST > .VIN"]', width: 0.4 },
+  BAT_INPUT_CAP_B: {
+    // C_BAT_IN_BULK_B is rotated 90 degrees about (-36, -33.5).
+    // The 5.117675296 mm detour clears its ground pad and the EN/VSEL pads.
+    jsx: "[{ x: -0.05, y: -1.05 }, { x: 2.75, y: -1.95 }]", width: 0.4,
+    waypoints: [{ x: -34.95, y: -33.55 }, { x: -34.05, y: -30.75 }],
+  },
 }
 
-// Replace net-only destinations with nearby pads already on that same net.
-// This expresses the intended local decoupling connection without changing
-// the electrical groups; the rendered netlist fingerprint is checked in CI.
-const localConnections: Record<string, { net: string; to: string }> = {}
+// Attach the remaining VIN-net branches at the local capacitor's wide pad,
+// reached by the fixed 0.4 mm connection above. These two branches have no
+// length limit; the three length-limited capacitor traces still end at VIN.
+// The rendered electrical-group fingerprint must remain exactly unchanged.
+const localConnections: Record<string, { field: "from" | "to"; original: string; selector: string }> = {
+  BAT_BUCKBOOST_INPUT: { field: "to", original: ".U_BAT_BUCKBOOST > .VIN", selector: ".C_BAT_IN_LOCAL > .pin1" },
+  BAT_MODE_INPUT: { field: "from", original: ".U_BAT_BUCKBOOST > .VIN", selector: ".C_BAT_IN_LOCAL > .pin1" },
+}
 export const manualTraceNames = Object.keys(manualPaths)
 
 const routingPhases = [
@@ -55,9 +69,9 @@ export function applyRoutingPlan(source: string): string {
     const end = result.indexOf("/>", start)
     if (end === -1) throw new Error(`Missing end of ${name} trace`)
     const original = result.slice(start, end + 2)
-    const destination = `to="${connection.net}"`
-    if (original.split(destination).length !== 2) throw new Error(`Unexpected original net for ${name}`)
-    const replacement = original.replace(destination, `to="${connection.to}"`)
+    const destination = `${connection.field}="${connection.original}"`
+    if (original.split(destination).length !== 2) throw new Error(`Unexpected original endpoint for ${name}`)
+    const replacement = original.replace(destination, `${connection.field}="${connection.selector}"`)
     result = result.replace(original, replacement)
     replacements.push([replacement, original])
   }
