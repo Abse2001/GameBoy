@@ -18,7 +18,9 @@ export const manualPaths: Record<string, {
   },
   BAT_LOCAL_GROUND: {
     jsx: "[{ x: 0.00012699999999554734, y: -0.5 }, { x: 0.7499349999999972, y: -0.5 }]", width: 0.4,
-    waypoints: [{ x: -31.999873, y: -31.5 }, { x: -31.250065, y: -31.5 }],
+    // pcbPath uses the declared pre-layout frame (-32, -31), not the
+    // footprint bounding-box center rounded during layout. Keep exact checks.
+    waypoints: [{ x: -32 + 0.00012699999999554734, y: -31.5 }, { x: -32 + 0.7499349999999972, y: -31.5 }],
   },
 }
 
