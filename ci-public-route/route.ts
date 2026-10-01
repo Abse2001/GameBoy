@@ -172,6 +172,16 @@ try {
   saveJson("runtime-errors.json", { asyncErrors, browserErrors })
   const errors = circuit.filter((element) => element.type.includes("error"))
   saveJson("core-errors.json", errors)
+  const warnings = circuit.filter((element) => element.type.includes("warning"))
+  saveJson("core-warnings.json", warnings)
+  const board = circuit.find((element) => element.type === "pcb_board")
+  if (!board || board.type !== "pcb_board" || board.min_trace_width !== 0.1) throw new Error("Board minimum trace width changed")
+  const undersizedWirePoints = circuit.flatMap((element) => element.type === "pcb_trace"
+    ? element.route.flatMap((point, index) => point.route_type === "wire" && point.width < board.min_trace_width!
+      ? [{ pcbTraceId: element.pcb_trace_id, pointIndex: index, width: point.width, minimum: board.min_trace_width }]
+      : [])
+    : [])
+  saveJson("below-minimum-width.json", undersizedWirePoints)
   const errorsByType: Record<string, number> = {}
   for (const error of errors) errorsByType[error.type] = (errorsByType[error.type] ?? 0) + 1
   const pcbSvg = convertCircuitJsonToPcbSvg(circuit, { width: 1800, height: 1100 })
@@ -184,6 +194,7 @@ try {
     traceCount: circuit.filter((element) => element.type === "pcb_trace").length,
     viaCount: circuit.filter((element) => element.type === "pcb_via").length,
     coreErrorCount: errors.length, errorsByType,
+    coreWarningCount: warnings.length, belowMinimumWidthPointCount: undersizedWirePoints.length,
     routeStarts, routeEnds, routeErrors,
     circuitSha256: sha256(JSON.stringify(circuit)),
     electricalGroups: electricalGroups(circuit),
@@ -211,23 +222,31 @@ try {
     const path = manualPaths[name]
     const sourceTrace = circuit.find((element) => element.type === "source_trace" && element.name === name)
     if (!sourceTrace || sourceTrace.type !== "source_trace") throw new Error(`Missing manual source trace ${name}`)
-    const traces = circuit.filter((element) => element.type === "pcb_trace" && element.source_trace_id === sourceTrace.source_trace_id)
-    if (traces.length !== 1 || traces[0].type !== "pcb_trace" || traces[0].route.length !== 3 || traces[0].route.some((point) => point.route_type !== "wire" || point.layer !== "top" || point.width !== path.width)) {
+    const expectedPorts = sourceTrace.connected_source_port_ids.map((id) => {
+      const port = circuit.find((element) => element.type === "pcb_port" && element.source_port_id === id)
+      if (!port || port.type !== "pcb_port") throw new Error(`Missing original manual endpoint for ${name}`)
+      return port
+    })
+    if (expectedPorts.length !== 2) throw new Error(`Expected two manual endpoints for ${name}`)
+    // A merged power net can give other automatic branches this source id.
+    // Identify the manual connection by both physical endpoints, then verify
+    // every point, layer and width without accepting a changed manual path.
+    const traces = circuit.filter((element) => element.type === "pcb_trace" && element.source_trace_id === sourceTrace.source_trace_id
+      && expectedPorts.every((port) => element.route.some((point) => point.x === port.x && point.y === port.y)))
+    const expectedWaypointCount = path.waypoints?.length ?? 1
+    if (traces.length !== 1 || traces[0].type !== "pcb_trace" || traces[0].route.length !== expectedWaypointCount + 2 || traces[0].route.some((point) => point.route_type !== "wire" || point.layer !== "top" || point.width !== path.width)) {
       throw new Error(`Manual path ${name} was not preserved`)
     }
-    const intermediate = traces[0].route[1]
-    const expectedIntermediate = path.waypoint ?? traces[0].route[2]
-    if (intermediate.x !== expectedIntermediate.x || intermediate.y !== expectedIntermediate.y) {
-      throw new Error(`Manual path ${name} waypoint was moved`)
-    }
-    const expectedPorts = sourceTrace.connected_source_port_ids.map((id) => circuit.find((element) => element.type === "pcb_port" && element.source_port_id === id))
-    for (const port of expectedPorts) {
-      if (!port || port.type !== "pcb_port" || !traces[0].route.some((point) => point.x === port.x && point.y === port.y)) {
-        throw new Error(`Manual path ${name} no longer terminates at its original pads`)
+    const expectedWaypoints = path.waypoints ?? [traces[0].route.at(-1)!]
+    for (const [index, waypoint] of expectedWaypoints.entries()) {
+      const intermediate = traces[0].route[index + 1]
+      if (intermediate.x !== waypoint.x || intermediate.y !== waypoint.y) {
+        throw new Error(`Manual path ${name} waypoint ${index} was moved`)
       }
     }
   }
   if (errors.length > 0) throw new Error(`Rendered board has ${errors.length} Core errors; see artifacts`)
+  if (undersizedWirePoints.length > 0) throw new Error("Routed copper violates the unchanged board minimum width; see artifacts")
 } finally {
   await browser.close()
   server.stop()

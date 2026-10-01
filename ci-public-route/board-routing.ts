@@ -3,7 +3,7 @@
 export const manualPaths: Record<string, {
   jsx: string
   width: number
-  waypoint?: { x: number; y: number }
+  waypoints?: Array<{ x: number; y: number }>
 }> = {
   XIN: { jsx: '[".U1 > .XIN"]', width: 0.1 },
   XOUT: { jsx: '[".U_XTAL > .pin3"]', width: 0.1 },
@@ -14,38 +14,33 @@ export const manualPaths: Record<string, {
   // The two-segment route is 4.969193631 mm, below the unchanged 5 mm limit.
   XOUT_DAMPING: {
     jsx: "[{ x: -0.29, y: -4.2 }]", width: 0.1,
-    waypoint: { x: 0.4900000000000005, y: 19.35 },
+    waypoints: [{ x: 0.4900000000000005, y: 19.35 }],
   },
-  BUCK_BOOTSTRAP_BST: {
-    jsx: "[{ x: -0.5, y: 3.549999999999999 }]", width: 0.1,
-    waypoint: { x: -18.4, y: -12.95 },
+  BAT_LOCAL_GROUND: {
+    jsx: "[{ x: 0.00012699999999554734, y: -0.5 }, { x: 0.7499349999999972, y: -0.5 }]", width: 0.4,
+    waypoints: [{ x: -31.999873, y: -31.5 }, { x: -31.250065, y: -31.5 }],
   },
-  C_DVDD2_SUPPLY: {
-    jsx: "[{ x: -1.5500000000000007, y: -2.25 }]", width: 0.1,
-    waypoint: { x: 0.1499999999999999, y: 19.3 },
+  BAT_INPUT_CAP_LOCAL: { jsx: '[".U_BAT_BUCKBOOST > .VIN"]', width: 0.4 },
+  BAT_OUTPUT_CAP_C: {
+    jsx: "[{ x: -2.3000000000000007, y: 1.7999999999999972 }, { x: -2.3000000000000007, y: 4.027549533333332 }]", width: 0.4,
+    waypoints: [{ x: -29.7, y: -32.7 }, { x: -29.7, y: -30.47245046666667 }],
   },
-  C_DVDD2_BULK_SUPPLY: {
-    jsx: "[{ x: -1.25, y: 0.34999999999999787 }]", width: 0.1,
-    waypoint: { x: -6.6, y: 20.6 },
+  BAT_OUTPUT_CAP_LOCAL_GND: {
+    jsx: "[{ x: 0.7000239999999991, y: -2.8000000000000007 }]", width: 0.4,
+    waypoints: [{ x: -26, y: -30.299976 }],
+  },
+  SD_BULK_GND: {
+    jsx: "[{ x: -0.3000000000000007, y: 2.1000000000000014 }, { x: -2.3201159999999987, y: 2.1000000000000014 }]", width: 0.1,
+    waypoints: [{ x: 26.2, y: -22.3 }, { x: 26.2, y: -24.320116 }],
   },
 }
 
 // Replace net-only destinations with nearby pads already on that same net.
 // This expresses the intended local decoupling connection without changing
 // the electrical groups; the rendered netlist fingerprint is checked in CI.
-const localConnections: Record<string, { net: string; to: string; width: number }> = {
-  C_IOVDD6_GND: { net: "net.GND", to: ".C_DVDD3 > .pin2", width: 0.1 },
-  C_IOVDD5_GND: { net: "net.GND", to: ".C_DVDD3 > .pin2", width: 0.1 },
-  C_IOVDD3_GND: { net: "net.GND", to: ".C_IOVDD2 > .pin2", width: 0.1 },
-  C_DVDD2_BULK_GND: { net: "net.GND", to: ".C_IOVDD2 > .pin2", width: 0.1 },
-  C_VREG_IN_P: { net: "net.V3V3", to: ".C_FLASH > .pin1", width: 0.1 },
-  C_VREG_IN_G: { net: "net.GND", to: ".C_FLASH > .pin2", width: 0.1 },
-  C_VREG_AVDD_G: { net: "net.GND", to: ".C_ADC > .pin2", width: 0.1 },
-  C_QSPI_USB_P: { net: "net.V3V3", to: ".U1 > .IOVDD6", width: 0.1 },
-  BAT_INPUT_CAP_LOCAL_GND: { net: "net.GND", to: ".C_BAT_IN_BULK_B > .pin2", width: 0.4 },
-}
-for (const [name, connection] of Object.entries(localConnections)) {
-  manualPaths[name] = { jsx: JSON.stringify([connection.to]), width: connection.width }
+const localConnections: Record<string, { net: string; to: string }> = {
+  BAT_OUTPUT_CAP_LOCAL_GND: { net: "net.GND", to: ".C_BAT_OUT_BULK_B > .pin2" },
+  SD_BULK_GND: { net: "net.GND", to: ".C_SD > .pin2" },
 }
 export const manualTraceNames = Object.keys(manualPaths)
 
