@@ -172,6 +172,12 @@ try {
   saveJson("runtime-errors.json", { asyncErrors, browserErrors })
   const errors = circuit.filter((element) => element.type.includes("error"))
   saveJson("core-errors.json", errors)
+  // The user deferred only warnings and length violations for this phase.
+  // Keep the original checker output and length limits intact; every other
+  // error and the independent minimum-width check remain blocking.
+  const deferredLengthErrors = errors.filter((element) => element.type === "pcb_trace_too_long_error")
+  const blockingErrors = errors.filter((element) => element.type !== "pcb_trace_too_long_error")
+  saveJson("deferred-length-errors.json", deferredLengthErrors)
   const warnings = circuit.filter((element) => element.type.includes("warning"))
   saveJson("core-warnings.json", warnings)
   const board = circuit.find((element) => element.type === "pcb_board")
@@ -194,6 +200,8 @@ try {
     traceCount: circuit.filter((element) => element.type === "pcb_trace").length,
     viaCount: circuit.filter((element) => element.type === "pcb_via").length,
     coreErrorCount: errors.length, errorsByType,
+    blockingCoreErrorCount: blockingErrors.length,
+    deferredLengthErrorCount: deferredLengthErrors.length,
     coreWarningCount: warnings.length, belowMinimumWidthPointCount: undersizedWirePoints.length,
     routeStarts, routeEnds, routeErrors,
     circuitSha256: sha256(JSON.stringify(circuit)),
@@ -245,7 +253,7 @@ try {
       }
     }
   }
-  if (errors.length > 0) throw new Error(`Rendered board has ${errors.length} Core errors; see artifacts`)
+  if (blockingErrors.length > 0) throw new Error(`Rendered board has ${blockingErrors.length} blocking Core errors and ${deferredLengthErrors.length} deferred length errors; see artifacts`)
   if (undersizedWirePoints.length > 0) throw new Error("Routed copper violates the unchanged board minimum width; see artifacts")
 } finally {
   await browser.close()

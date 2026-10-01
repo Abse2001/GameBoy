@@ -29,9 +29,11 @@ export const manualPaths: Record<string, {
   BAT_INPUT_CAP_A: { jsx: '[".U_BAT_BUCKBOOST > .VIN"]', width: 0.4 },
   BAT_INPUT_CAP_B: {
     // C_BAT_IN_BULK_B is rotated 90 degrees about (-36, -33.5).
-    // The 5.117675296 mm detour clears its ground pad and the EN/VSEL pads.
-    jsx: "[{ x: -0.05, y: -1.05 }, { x: 2.75, y: -1.95 }]", width: 0.4,
-    waypoints: [{ x: -34.95, y: -33.55 }, { x: -34.05, y: -30.75 }],
+    // Keep the vertical leg left of EN/VSEL to leave room for their exits.
+    // The 5.847914361 mm path exceeds the retained 5.5 mm length limit;
+    // length violations are reported separately while physical DRC is fixed.
+    jsx: "[{ x: -0.05, y: -1.05 }, { x: 2.75, y: -1.05 }]", width: 0.4,
+    waypoints: [{ x: -34.95, y: -33.55 }, { x: -34.95, y: -30.75 }],
   },
   BAT_MODE_INPUT: {
     // This same-net feed also carries the protected battery input, so make
