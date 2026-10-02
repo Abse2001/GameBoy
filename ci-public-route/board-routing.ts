@@ -22,26 +22,45 @@ export const manualPaths: Record<string, {
     // footprint bounding-box center rounded during layout. Keep exact checks.
     waypoints: [{ x: -32 + 0.00012699999999554734, y: -31.5 }, { x: -32 + 0.7499349999999972, y: -31.5 }],
   },
-  // Escape QSPI_SD0 below U1's pad row, then between the existing passives.
-  // Keep this connection on top copper to avoid the old via-in-pad contact.
-  // Coordinates use U1's declared rotated frame, as the clock path above.
-  QSPI_SD0: {
-    jsx: "[{ x: -1.599946, y: 4.3 }, { x: -2.6, y: 4.3 }, { x: -2.6, y: 6.05 }, { x: -3.3, y: 6.75 }, { x: -5.550062, y: 6.75 }]",
-    width: 0.1,
+  // Explicitly connect every BAT_PROTECTED terminal, not just the VIN caps.
+  // This keeps an automatic net branch from re-entering the composite VIN pad
+  // and being narrowed by the published power-trace expansion stage.
+  BAT_INPUT_CAP_LOCAL: { jsx: '[".U_BAT_BUCKBOOST > .VIN"]', width: 0.4 },
+  BAT_INPUT_CAP_A: { jsx: '[".U_BAT_BUCKBOOST > .VIN"]', width: 0.4 },
+  BAT_INPUT_CAP_B: {
+    // C_BAT_IN_BULK_B is rotated 90 degrees about (-36, -33.5).
+    // Keep the vertical leg left of EN/VSEL, retaining its 5.5 mm limit.
+    jsx: "[{ x: -0.05, y: -1.05 }, { x: 2.75, y: -1.05 }]", width: 0.4,
+    waypoints: [{ x: -34.95, y: -33.55 }, { x: -34.95, y: -30.75 }],
+  },
+  BAT_MODE_INPUT: {
+    jsx: "[{ x: -2.3, y: 1.9 }]", width: 0.1,
+    waypoints: [{ x: -34.3, y: -29.1 }],
+  },
+  BAT_BUCKBOOST_INPUT: { jsx: '[".C_BAT_IN_LOCAL > .pin1"]', width: 0.4 },
+  BATTERY_TO_SWITCH: {
+    // Q_BAT_REVERSE's declared frame is (-39.8, -34), rotation zero.
+    // Use the clear bottom perimeter corridor, passing left of switch holes.
+    jsx: "[{ x: -0.2, y: 0.94996 }, { x: -0.2, y: -4.5 }, { x: 100.8, y: -4.5 }, { x: 102.3, y: -3 }, { x: 102.3, y: 7.175 }]",
+    width: 0.3,
     waypoints: [
-      { x: 1.7999459999999996, y: 10.850000000000001 },
-      { x: 2.8, y: 10.850000000000001 },
-      { x: 2.7999999999999994, y: 9.100000000000001 },
-      { x: 3.499999999999999, y: 8.4 },
-      { x: 5.750061999999999, y: 8.399999999999999 },
+      { x: -40, y: -33.05004 },
+      { x: -40, y: -38.5 },
+      { x: 61, y: -38.5 },
+      { x: 62.5, y: -37 },
+      { x: 62.5, y: -26.825 },
     ],
   },
 }
 
-// Replace net-only destinations with nearby pads already on that same net.
-// This expresses the intended local decoupling connection without changing
-// the electrical groups; the rendered netlist fingerprint is checked in CI.
-const localConnections: Record<string, { net: string; to: string }> = {}
+// Replace net-only branches with explicit same-net endpoints. The original
+// BAT_REVERSE_SOURCE still attaches the whole tree to net.BAT_PROTECTED.
+// The rendered electrical-group fingerprint must remain exactly unchanged.
+const localConnections: Array<{ name: string; field: "from" | "to"; original: string; selector: string }> = [
+  { name: "BAT_BUCKBOOST_INPUT", field: "from", original: "net.BAT_PROTECTED", selector: ".Q_BAT_REVERSE > .source" },
+  { name: "BAT_BUCKBOOST_INPUT", field: "to", original: ".U_BAT_BUCKBOOST > .VIN", selector: ".C_BAT_IN_LOCAL > .pin1" },
+  { name: "BATTERY_TO_SWITCH", field: "from", original: "net.BAT_PROTECTED", selector: ".Q_BAT_REVERSE > .source" },
+]
 export const manualTraceNames = Object.keys(manualPaths)
 
 const routingPhases = [
@@ -62,16 +81,17 @@ export function applyRoutingPlan(source: string): string {
       replacements.push([replacement, marker])
     }
   }
-  for (const [name, connection] of Object.entries(localConnections)) {
+  for (const connection of localConnections) {
+    const { name } = connection
     const marker = `<trace name="${name}"`
     if (result.split(marker).length !== 2) throw new Error(`Expected exactly one ${name} trace`)
     const start = result.indexOf(marker)
     const end = result.indexOf("/>", start)
     if (end === -1) throw new Error(`Missing end of ${name} trace`)
     const original = result.slice(start, end + 2)
-    const destination = `to="${connection.net}"`
-    if (original.split(destination).length !== 2) throw new Error(`Unexpected original net for ${name}`)
-    const replacement = original.replace(destination, `to="${connection.to}"`)
+    const destination = `${connection.field}="${connection.original}"`
+    if (original.split(destination).length !== 2) throw new Error(`Unexpected original endpoint for ${name}`)
+    const replacement = original.replace(destination, `${connection.field}="${connection.selector}"`)
     result = result.replace(original, replacement)
     replacements.push([replacement, original])
   }
