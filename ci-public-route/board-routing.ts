@@ -11,6 +11,14 @@ export const manualPaths: Record<string, {
   waypoints?: Array<{ x: number; y: number }>
   innerRoute?: ManualRoutePoint[]
 }> = {
+  // Keep this local return left of flash VCC instead of a wide automatic
+  // ground detour. Retain its inherited 0.10 mm width and 5.5 mm limit.
+  // C_QSPI_USB's declared frame is (4.1,10), rotated 180 degrees.
+  C_QSPI_USB_G: {
+    jsx: '[{"x":0.8000000000000003,"y":0},{"x":0.7999999999999998,"y":4}]',
+    width: 0.1,
+    waypoints: [{ x: 3.2999999999999994, y: 10 }, { x: 3.2999999999999994, y: 6 }],
+  },
   // Bridge the two existing 3.3 V islands at the full 0.60 mm rail width.
   // C_IOVDD4's frame is (5.6, 20.25), rotated 90 degrees. Both drills stay
   // outside pads and include inner1 on the way to inner2; no fifth layer.
@@ -608,6 +616,7 @@ export const manualPaths: Record<string, {
 // BAT_REVERSE_SOURCE still attaches the whole tree to net.BAT_PROTECTED.
 // The rendered electrical-group fingerprint must remain exactly unchanged.
 const localConnections: Array<{ name: string; field: "from" | "to"; original: string; selector: string }> = [
+  { name: "C_QSPI_USB_G", field: "to", original: "net.GND", selector: ".U2 > .EP" },
   { name: "C_IOVDD4_GND", field: "to", original: "net.GND", selector: ".C_IOVDD5 > .pin2" },
   { name: "C_CORE_G", field: "to", original: "net.GND", selector: ".U1 > .VREG_PGND" },
   { name: "R_SHOULDER_GND", field: "to", original: "net.GND", selector: ".J_LCD > .pin11" },
