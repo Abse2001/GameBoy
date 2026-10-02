@@ -11,6 +11,34 @@ export const manualPaths: Record<string, {
   waypoints?: Array<{ x: number; y: number }>
   innerRoute?: ManualRoutePoint[]
 }> = {
+  // Join the shared LCD/touch reset net explicitly. The connector frame is
+  // (34.951428, 15.4), rotated 90 degrees. Preserve exact native coordinates;
+  // the MCU trunk uses bottom copper, and the connector branch uses inner1.
+  LCD_RESET: {
+    jsx: '[{"x":7.749971800000004,"y":2.8514279999999985},{"x":7.749971800000004,"y":2.8514279999999985,"via":true,"fromLayer":"top","toLayer":"bottom"},{"x":7.749971800000004,"y":2.8514279999999985},{"x":7.749971800000001,"y":39.451428},{"x":1.7503769999999967,"y":39.451428},{"x":1.7503769999999967,"y":39.451428,"via":true,"fromLayer":"bottom","toLayer":"top"},{"x":1.7503769999999967,"y":39.451428}]',
+    width: 0.1,
+    innerRoute: [
+      {"route_type":"wire","x":32.1,"y":23.149971800000003,"layer":"top"},
+      {"route_type":"via","x":32.1,"y":23.149971800000003,"from_layer":"top","to_layer":"bottom"},
+      {"route_type":"wire","x":32.1,"y":23.149971800000003,"layer":"bottom"},
+      {"route_type":"wire","x":-4.5,"y":23.149971800000003,"layer":"bottom"},
+      {"route_type":"wire","x":-4.5,"y":17.150377,"layer":"bottom"},
+      {"route_type":"via","x":-4.5,"y":17.150377,"from_layer":"bottom","to_layer":"top"},
+      {"route_type":"wire","x":-4.5,"y":17.150377,"layer":"top"},
+    ],
+  },
+  TOUCH_RESET: {
+    jsx: '[{"x":-10.7499912,"y":3.6514279999999992},{"x":-10.7499912,"y":3.6514279999999992,"via":true,"fromLayer":"top","toLayer":"inner1"},{"x":-10.7499912,"y":3.6514279999999992},{"x":7.749971800000004,"y":3.6514279999999992},{"x":7.749971800000004,"y":3.6514279999999992,"via":true,"fromLayer":"inner1","toLayer":"top"},{"x":7.749971800000004,"y":3.6514279999999992}]',
+    width: 0.1,
+    innerRoute: [
+      {"route_type":"wire","x":31.3,"y":4.6500088,"layer":"top"},
+      {"route_type":"via","x":31.3,"y":4.6500088,"from_layer":"top","to_layer":"inner1"},
+      {"route_type":"wire","x":31.3,"y":4.6500088,"layer":"inner1"},
+      {"route_type":"wire","x":31.3,"y":23.149971800000003,"layer":"inner1"},
+      {"route_type":"via","x":31.3,"y":23.149971800000003,"from_layer":"inner1","to_layer":"top"},
+      {"route_type":"wire","x":31.3,"y":23.149971800000003,"layer":"top"},
+    ],
+  },
   XIN: { jsx: '[".U1 > .XIN"]', width: 0.1 },
   XOUT: { jsx: '[".U_XTAL > .pin3"]', width: 0.1 },
   T_C_XIN: { jsx: '[".U_XTAL > .pin1"]', width: 0.1 },
@@ -434,6 +462,7 @@ export const manualPaths: Record<string, {
 // BAT_REVERSE_SOURCE still attaches the whole tree to net.BAT_PROTECTED.
 // The rendered electrical-group fingerprint must remain exactly unchanged.
 const localConnections: Array<{ name: string; field: "from" | "to"; original: string; selector: string }> = [
+  { name: "TOUCH_RESET", field: "to", original: ".U1 > .GPIO21", selector: ".J_LCD > .pin10" },
   { name: "QSPI_IOVDD", field: "to", original: "net.V3V3", selector: ".U1 > .USB_OTP_VDD" },
   { name: "ADC_AVDD", field: "to", original: "net.V3V3", selector: ".U1 > .IOVDD1" },
   { name: "LCD_MODE_IM0", field: "to", original: "net.V3V3", selector: ".J_LCD > .pin8" },
