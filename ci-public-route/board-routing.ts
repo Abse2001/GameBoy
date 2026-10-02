@@ -23,6 +23,16 @@ export const manualPaths: Record<string, {
   LCD_MODE_IM1: { jsx: '[".J_LCD > .pin9"]', width: 0.1 },
   LCD_VDDI_40: { jsx: '[".J_LCD > .pin41"]', width: 0.1 },
   LCD_VDDI_41: { jsx: '[".J_LCD > .pin42"]', width: 0.1 },
+  // Short same-net supply branches join nearby islands without new vias.
+  // Keep the existing rail anchors and each branch's inherited 0.10 mm width.
+  TOUCH_SDA_PULLUP_V3V3: { jsx: '[".R_TOUCH_IRQ > .pin2"]', width: 0.1 },
+  TOUCH_SCL_PULLUP_V3V3: { jsx: '[".C_LCD_VCI > .pin1"]', width: 0.1 },
+  C_ADC_P: { jsx: '[".U1 > .IOVDD1"]', width: 0.1 },
+  SD_CMD_PULLUP_V3V3: { jsx: '[".C_SD_BULK > .pin1"]', width: 0.1 },
+  BOOT_PULLUP_3V3: { jsx: '[".C_FLASH > .pin1"]', width: 0.1 },
+  SD_DAT0_PULLUP_V3V3: { jsx: '[".C_SD > .pin1"]', width: 0.1 },
+  SD_CS_PULLUP_V3V3: { jsx: '[".R_SD_DAT2 > .pin2"]', width: 0.1 },
+  C_QSPI_USB_P: { jsx: '[".U1 > .IOVDD6"]', width: 0.1 },
   // U1's footprint frame is rotated 180 degrees about (0.2, 15.15).
   // This waypoint is board (0.49, 19.35), clearing the adjacent DVDD2 pad.
   // The two-segment route is 4.969193631 mm, below the unchanged 5 mm limit.
@@ -427,6 +437,14 @@ const localConnections: Array<{ name: string; field: "from" | "to"; original: st
   { name: "LCD_MODE_IM1", field: "to", original: "net.V3V3", selector: ".J_LCD > .pin9" },
   { name: "LCD_VDDI_40", field: "to", original: "net.V3V3", selector: ".J_LCD > .pin41" },
   { name: "LCD_VDDI_41", field: "to", original: "net.V3V3", selector: ".J_LCD > .pin42" },
+  { name: "TOUCH_SDA_PULLUP_V3V3", field: "to", original: "net.V3V3", selector: ".R_TOUCH_IRQ > .pin2" },
+  { name: "TOUCH_SCL_PULLUP_V3V3", field: "to", original: "net.V3V3", selector: ".C_LCD_VCI > .pin1" },
+  { name: "C_ADC_P", field: "to", original: "net.V3V3", selector: ".U1 > .IOVDD1" },
+  { name: "SD_CMD_PULLUP_V3V3", field: "to", original: "net.V3V3", selector: ".C_SD_BULK > .pin1" },
+  { name: "BOOT_PULLUP_3V3", field: "to", original: "net.V3V3", selector: ".C_FLASH > .pin1" },
+  { name: "SD_DAT0_PULLUP_V3V3", field: "to", original: "net.V3V3", selector: ".C_SD > .pin1" },
+  { name: "SD_CS_PULLUP_V3V3", field: "to", original: "net.V3V3", selector: ".R_SD_DAT2 > .pin2" },
+  { name: "C_QSPI_USB_P", field: "to", original: "net.V3V3", selector: ".U1 > .IOVDD6" },
   { name: "BAT_BUCKBOOST_INPUT", field: "from", original: "net.BAT_PROTECTED", selector: ".Q_BAT_REVERSE > .source" },
   { name: "BAT_BUCKBOOST_INPUT", field: "to", original: ".U_BAT_BUCKBOOST > .VIN", selector: ".C_BAT_IN_LOCAL > .pin1" },
   { name: "BATTERY_TO_SWITCH", field: "from", original: "net.BAT_PROTECTED", selector: ".Q_BAT_REVERSE > .source" },
