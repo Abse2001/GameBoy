@@ -678,9 +678,8 @@ const routingPhases = [
   // Route the existing two-port power branches before the 55-terminal net.
   // This preserves their endpoints, authored widths and length constraints.
   { name: "power-branches", traces: ["C_IOVDD2_SUPPLY", "C_IOVDD3_SUPPLY", "C_IOVDD4_SUPPLY", "C_IOVDD5_SUPPLY", "C_IOVDD6_SUPPLY", "PSRAM_DECOUPLING", "PSRAM_BULK", "SD_BULK", "BUCK_FEEDBACK", "BUCK_OUTPUT_CAP_A", "BUCK_OUTPUT_CAP_B", "LCD_VDDI_CAP", "LCD_VCI_CAP"] },
-  // Separate the long board-spanning controls from the remaining signal pass.
-  // Preserve every endpoint, width and clearance; only routing order changes.
-  { name: "button-controls", traces: ["L_SHOULDER", "R_SHOULDER", "UP", "DN", "LFT", "RGT", "A", "B", "X", "Y", "SEL", "STA"] },
+  // Leave board-spanning button controls for the remaining signal pass so
+  // their fixed copper does not consume corridors before the wide rails.
 ]
 
 // Keep the two largest multi-terminal nets out of the remaining signal pass.
@@ -691,7 +690,7 @@ const netRoutingPhases = [
 ]
 
 // Clock, switching-power and all power-branches now have exact manual paths.
-export const expectedAutomaticPhaseNames = ["local-decoupling", "button-controls", "ground-net", "v3v3-net", "remaining-connections"]
+export const expectedAutomaticPhaseNames = ["local-decoupling", "ground-net", "v3v3-net", "remaining-connections"]
 
 export function applyRoutingPlan(source: string): string {
   let result = source
