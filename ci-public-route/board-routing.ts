@@ -153,6 +153,29 @@ export const manualPaths: Record<string, {
     jsx: "[{ x: 0.5, y: 1.2 }]", width: 0.4,
     waypoints: [{ x: -30, y: -30.5 }],
   },
+  // Fix the five short MCU power branches explicitly. The published worker
+  // stalled while planning their shared power-branches phase. These native
+  // coordinates retain the original endpoints, 0.10 mm width and 5.5 mm limit.
+  C_IOVDD2_SUPPLY: {
+    jsx: "[{ x: -2.885, y: 0 }, { x: -2.885, y: 1.099618999999998 }]", width: 0.1,
+    waypoints: [{ x: -4.2, y: 16.25 }, { x: -4.2, y: 15.150381000000001 }],
+  },
+  C_IOVDD3_SUPPLY: {
+    jsx: "[{ x: -3.0849040000000003, y: 0 }]", width: 0.1,
+    waypoints: [{ x: -2.6000959999999993, y: 19.4 }],
+  },
+  C_IOVDD4_SUPPLY: {
+    jsx: "[{ x: -0.420116, y: 4.200103999999999 }]", width: 0.1,
+    waypoints: [{ x: 1.399896000000001, y: 19.829884 }],
+  },
+  C_IOVDD5_SUPPLY: {
+    jsx: "[{ x: -1.6, y: 0 }, { x: -1.6, y: -0.349977 }]", width: 0.1,
+    waypoints: [{ x: 4.6, y: 16.7 }, { x: 4.6, y: 16.350023 }],
+  },
+  C_IOVDD6_SUPPLY: {
+    jsx: "[{ x: -1.5, y: 0 }, { x: -1.5, y: -0.549969 }]", width: 0.1,
+    waypoints: [{ x: 4.6, y: 12.9 }, { x: 4.6, y: 12.350031 }],
+  },
   // Complete the SD0 net with an inward MCU escape and a bottom-layer leg.
   // The separate PSRAM branch reaches the same flash terminal on inner1.
   QSPI_SD0: {
