@@ -11,6 +11,18 @@ export const manualPaths: Record<string, {
   waypoints?: Array<{ x: number; y: number }>
   innerRoute?: ManualRoutePoint[]
 }> = {
+  // Enter touch SDA from the right of the LCD pad row, avoiding the existing
+  // SCL/reset copper. R_TOUCH_SDA's frame is (29.7, 3.4), rotated 180 degrees.
+  TOUCH_SDA_PULLUP: {
+    jsx: '[{"x":-1.5,"y":-4.440892098500626e-16},{"x":-1.5,"y":0.6999999999999993},{"x":-5.0000000000000036,"y":0.6999999999999988},{"x":-5.0000000000000036,"y":-2.250006800000001}]',
+    width: 0.1,
+    waypoints: [
+      { x: 31.2, y: 3.4000000000000004 },
+      { x: 31.2, y: 2.7 },
+      { x: 34.7, y: 2.7 },
+      { x: 34.7, y: 5.6500068 },
+    ],
+  },
   // Escape C_CORE ground on inner1 without crossing the VREG_LX switch trace.
   // Both blind vias stay outside pads; the original 5.5 mm limit is retained.
   C_CORE_G: {
