@@ -11,6 +11,13 @@ export const manualPaths: Record<string, {
   waypoints?: Array<{ x: number; y: number }>
   innerRoute?: ManualRoutePoint[]
 }> = {
+  // Join the MCU's two ground pads without crossing the neighboring VREG_LX
+  // pad. Keep the authored branch width; the ground rail remains 0.80 mm.
+  VREG_PGND: {
+    jsx: '[{"x":2.4000459999999997,"y":2.6500000000000004}]',
+    width: 0.1,
+    waypoints: [{ x: -2.200046, y: 12.5 }],
+  },
   // Feed the QSPI/USB supply island on bottom copper, retaining this
   // branch's original 0.10 mm width and the separate 0.60 mm main rail.
   USB_OTP_VDD: {
@@ -541,6 +548,7 @@ export const manualPaths: Record<string, {
 // BAT_REVERSE_SOURCE still attaches the whole tree to net.BAT_PROTECTED.
 // The rendered electrical-group fingerprint must remain exactly unchanged.
 const localConnections: Array<{ name: string; field: "from" | "to"; original: string; selector: string }> = [
+  { name: "VREG_PGND", field: "to", original: "net.GND", selector: ".U1 > .GND" },
   { name: "USB_OTP_VDD", field: "to", original: "net.V3V3", selector: ".U1 > .IOVDD6" },
   { name: "C_IOVDD6_GND", field: "to", original: "net.GND", selector: ".C_DVDD3 > .pin2" },
   { name: "TOUCH_RESET", field: "to", original: ".U1 > .GPIO21", selector: ".J_LCD > .pin10" },
