@@ -42,11 +42,16 @@ export function assertLayeredManualCopper(
   const expectedVias = interior.filter((point): point is Extract<ManualRoutePoint, { route_type: "via" }> => point.route_type === "via")
   const vias = circuit.filter((element): element is PcbVia => element.type === "pcb_via" && element.pcb_trace_id === trace.pcb_trace_id)
   if (vias.length !== expectedVias.length) throw new Error("Layered manual via count changed")
+  const stack = ["top", "inner1", "inner2", "bottom"]
   for (const target of expectedVias) {
     const matches = vias.filter((via): boolean => via.x === target.x && via.y === target.y && via.from_layer === target.from_layer && via.to_layer === target.to_layer)
     if (matches.length !== 1) throw new Error("Missing or duplicated layered manual via")
     const via = matches[0]
-    if (via.outer_diameter !== 0.45 || via.hole_diameter !== 0.15 || JSON.stringify([...via.layers].sort()) !== JSON.stringify(["inner1", "top"])) {
+    const from = stack.indexOf(target.from_layer)
+    const to = stack.indexOf(target.to_layer)
+    if (from < 0 || to < 0 || from === to) throw new Error("Invalid declared manual drill span")
+    const physicalSpan = stack.slice(Math.min(from, to), Math.max(from, to) + 1).sort()
+    if (via.outer_diameter !== 0.45 || via.hole_diameter !== 0.15 || JSON.stringify([...via.layers].sort()) !== JSON.stringify(physicalSpan)) {
       throw new Error("Layered manual via dimensions or physical span changed")
     }
   }

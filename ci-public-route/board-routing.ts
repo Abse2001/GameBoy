@@ -1,8 +1,9 @@
 // Routing-only edits to the verified public abse/gameboy-advance 0.0.12 source.
 // Component placement, electrical connections, widths and DRC limits stay intact.
+type ManualLayer = "top" | "inner1" | "inner2"
 export type ManualRoutePoint =
-  | { route_type: "wire"; x: number; y: number; layer: "top" | "inner1" }
-  | { route_type: "via"; x: number; y: number; from_layer: "top" | "inner1"; to_layer: "top" | "inner1" }
+  | { route_type: "wire"; x: number; y: number; layer: ManualLayer }
+  | { route_type: "via"; x: number; y: number; from_layer: ManualLayer; to_layer: ManualLayer }
 
 export const manualPaths: Record<string, {
   jsx: string
@@ -97,6 +98,29 @@ export const manualPaths: Record<string, {
     jsx: "[{ x: 0.249936, y: -2.45 }, { x: -6.650064, y: -2.45 }]", width: 0.1,
     waypoints: [{ x: 12.149936, y: 3.1499999999999995 }, { x: 5.249936, y: 3.1499999999999995 }],
   },
+  // The complete SD3 net uses inner2, separate from SD2's inner1 segment.
+  // Its top-to-inner2 drills still occupy inner1 and are checked on that layer.
+  QSPI_SD3: {
+    jsx: '[{ x: -0.799846, y: 4.4 }, { x: -0.799846, y: 4.4, via: true, fromLayer: "top", toLayer: "inner2" }, { x: -0.799846, y: 4.4 }, { x: -4.550064, y: 6.75 }, { x: -4.550064, y: 6.75, via: true, fromLayer: "inner2", toLayer: "top" }, { x: -4.550064, y: 6.75 }]',
+    width: 0.1,
+    innerRoute: [
+      { route_type: "wire", x: 0.9998459999999993, y: 10.75, layer: "top" },
+      { route_type: "via", x: 0.9998459999999993, y: 10.75, from_layer: "top", to_layer: "inner2" },
+      { route_type: "wire", x: 0.9998459999999993, y: 10.75, layer: "inner2" },
+      { route_type: "wire", x: 4.750063999999999, y: 8.399999999999999, layer: "inner2" },
+      { route_type: "via", x: 4.750063999999999, y: 8.399999999999999, from_layer: "inner2", to_layer: "top" },
+      { route_type: "wire", x: 4.750063999999999, y: 8.399999999999999, layer: "top" },
+    ],
+  },
+  PSRAM_SIO3: {
+    jsx: "[{ x: -0.249936, y: 2.6 }, { x: -7.149936, y: 2.6 }]", width: 0.1,
+    waypoints: [{ x: 11.650064, y: 8.2 }, { x: 4.750064, y: 8.2 }],
+  },
+  // Keep the short regulator switch-node path outside both C_CORE pads.
+  VREG_LX: {
+    jsx: "[{ x: 1.999996, y: 4.4 }, { x: 3.399998, y: 4.4 }]", width: 0.1,
+    waypoints: [{ x: -1.7999960000000006, y: 10.75 }, { x: -3.1999980000000003, y: 10.75 }],
+  },
 }
 
 // Replace net-only branches with explicit same-net endpoints. The original
@@ -107,6 +131,7 @@ const localConnections: Array<{ name: string; field: "from" | "to"; original: st
   { name: "BAT_BUCKBOOST_INPUT", field: "to", original: ".U_BAT_BUCKBOOST > .VIN", selector: ".C_BAT_IN_LOCAL > .pin1" },
   { name: "BATTERY_TO_SWITCH", field: "from", original: "net.BAT_PROTECTED", selector: ".Q_BAT_REVERSE > .source" },
   { name: "PSRAM_SIO2", field: "to", original: ".U1 > .QSPI_SD2", selector: ".U2 > .pin3" },
+  { name: "PSRAM_SIO3", field: "to", original: ".U1 > .QSPI_SD3", selector: ".U2 > .pin7" },
 ]
 export const manualTraceNames = Object.keys(manualPaths)
 
