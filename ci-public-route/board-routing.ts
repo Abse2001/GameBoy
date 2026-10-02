@@ -22,6 +22,20 @@ export const manualPaths: Record<string, {
     // footprint bounding-box center rounded during layout. Keep exact checks.
     waypoints: [{ x: -32 + 0.00012699999999554734, y: -31.5 }, { x: -32 + 0.7499349999999972, y: -31.5 }],
   },
+  // Escape QSPI_SD0 below U1's pad row, then between the existing passives.
+  // Keep this connection on top copper to avoid the old via-in-pad contact.
+  // Coordinates use U1's declared rotated frame, as the clock path above.
+  QSPI_SD0: {
+    jsx: "[{ x: -1.599946, y: 4.3 }, { x: -2.6, y: 4.3 }, { x: -2.6, y: 6.05 }, { x: -3.3, y: 6.75 }, { x: -5.550062, y: 6.75 }]",
+    width: 0.1,
+    waypoints: [
+      { x: 1.7999459999999996, y: 10.850000000000001 },
+      { x: 2.8, y: 10.850000000000001 },
+      { x: 2.7999999999999994, y: 9.100000000000001 },
+      { x: 3.499999999999999, y: 8.4 },
+      { x: 5.750061999999999, y: 8.399999999999999 },
+    ],
+  },
 }
 
 // Replace net-only destinations with nearby pads already on that same net.
@@ -34,7 +48,6 @@ const routingPhases = [
   { name: "clock", traces: ["XIN", "XOUT_DAMPING", "XOUT", "T_C_XIN", "T_C_XOUT"] },
   { name: "switching-power", traces: ["BAT_BUCKBOOST_L1", "BAT_BUCKBOOST_L2", "BUCK_SWITCH", "BUCK_BOOTSTRAP_BST"] },
   { name: "local-decoupling", traces: ["C_VREG_AVDD_P", "C_DVDD3_SUPPLY", "C_DVDD2_BULK_SUPPLY", "C_IOVDD1_SUPPLY", "SD_DECOUPLING", "BAT_OUTPUT_CAP_LOCAL", "BAT_INPUT_CAP_LOCAL"] },
-  { name: "memory-interface", traces: ["QSPI_SS", "QSPI_SD0", "QSPI_SD1", "QSPI_SD2", "QSPI_SD3", "QSPI_SCLK", "BOOT_PULLUP", "BOOTSEL_SERIES", "PSRAM_CE", "PSRAM_SIO0", "PSRAM_SIO1", "PSRAM_SIO2", "PSRAM_SIO3", "PSRAM_SCLK", "PSRAM_CE_PULLUP"] },
 ]
 
 export function applyRoutingPlan(source: string): string {
