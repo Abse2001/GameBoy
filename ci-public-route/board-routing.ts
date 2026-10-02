@@ -80,13 +80,17 @@ export const manualPaths: Record<string, {
   },
   // Connect the complete SD2 net explicitly. U1's frame is (0.2,15.15),
   // rotated 180 degrees. Both vias sit outside the fine-pitch pad rows.
+  // Internal elbows use inverse-transformed coordinates so the native
+  // emitted segments remain exactly horizontal/vertical. Preserve these
+  // coordinates: rounding a rotated-frame elbow fragments its obstacles.
   QSPI_SD2: {
-    jsx: '[{ x: -1.999996, y: 4.4 }, { x: -1.999996, y: 4.4, via: true, fromLayer: "top", toLayer: "inner1" }, { x: -1.999996, y: 4.4 }, { x: -5.049936, y: 11.55 }, { x: -5.049936, y: 11.55, via: true, fromLayer: "inner1", toLayer: "top" }, { x: -5.049936, y: 11.55 }]',
+    jsx: '[{ x: -1.999996, y: 4.4 }, { x: -1.999996, y: 4.4, via: true, fromLayer: "top", toLayer: "inner1" }, { x: -1.999996, y: 4.4 }, { x: -1.999996000000001, y: 11.55 }, { x: -5.049936, y: 11.55 }, { x: -5.049936, y: 11.55, via: true, fromLayer: "inner1", toLayer: "top" }, { x: -5.049936, y: 11.55 }]',
     width: 0.1,
     innerRoute: [
       { route_type: "wire", x: 2.1999959999999996, y: 10.75, layer: "top" },
       { route_type: "via", x: 2.1999959999999996, y: 10.75, from_layer: "top", to_layer: "inner1" },
       { route_type: "wire", x: 2.1999959999999996, y: 10.75, layer: "inner1" },
+      { route_type: "wire", x: 2.1999959999999996, y: 3.5999999999999996, layer: "inner1" },
       { route_type: "wire", x: 5.249935999999998, y: 3.5999999999999996, layer: "inner1" },
       { route_type: "via", x: 5.249935999999998, y: 3.5999999999999996, from_layer: "inner1", to_layer: "top" },
       { route_type: "wire", x: 5.249935999999998, y: 3.5999999999999996, layer: "top" },
@@ -101,13 +105,14 @@ export const manualPaths: Record<string, {
   // The complete SD3 net uses inner2, separate from SD2's inner1 segment.
   // Its top-to-inner2 drills still occupy inner1 and are checked on that layer.
   QSPI_SD3: {
-    jsx: '[{ x: -0.799846, y: 4.4 }, { x: -0.799846, y: 4.4, via: true, fromLayer: "top", toLayer: "inner2" }, { x: -0.799846, y: 4.4 }, { x: -0.799846, y: 5.15 }, { x: -4.550064, y: 6.75 }, { x: -4.550064, y: 6.75, via: true, fromLayer: "inner2", toLayer: "top" }, { x: -4.550064, y: 6.75 }]',
+    jsx: '[{ x: -0.799846, y: 4.4 }, { x: -0.799846, y: 4.4, via: true, fromLayer: "top", toLayer: "inner2" }, { x: -0.799846, y: 4.4 }, { x: -0.799846, y: 5.15 }, { x: -0.7998460000000002, y: 6.750000000000002 }, { x: -4.550064, y: 6.75 }, { x: -4.550064, y: 6.75, via: true, fromLayer: "inner2", toLayer: "top" }, { x: -4.550064, y: 6.75 }]',
     width: 0.1,
     innerRoute: [
       { route_type: "wire", x: 0.9998459999999993, y: 10.75, layer: "top" },
       { route_type: "via", x: 0.9998459999999993, y: 10.75, from_layer: "top", to_layer: "inner2" },
       { route_type: "wire", x: 0.9998459999999993, y: 10.75, layer: "inner2" },
       { route_type: "wire", x: 0.9998459999999993, y: 10, layer: "inner2" },
+      { route_type: "wire", x: 0.9998459999999993, y: 8.399999999999999, layer: "inner2" },
       { route_type: "wire", x: 4.750063999999999, y: 8.399999999999999, layer: "inner2" },
       { route_type: "via", x: 4.750063999999999, y: 8.399999999999999, from_layer: "inner2", to_layer: "top" },
       { route_type: "wire", x: 4.750063999999999, y: 8.399999999999999, layer: "top" },
@@ -125,13 +130,14 @@ export const manualPaths: Record<string, {
   // Escape between the SD2/SD3 vias, then use bottom copper for the clock.
   // SD3's inner2 shoulder above keeps clear of the clock's full-stack drill.
   QSPI_SCLK: {
-    jsx: '[{ x: -1.199896, y: 4.2 }, { x: -1.4, y: 4.47 }, { x: -1.4, y: 4.47, via: true, fromLayer: "top", toLayer: "bottom" }, { x: -1.4, y: 4.47 }, { x: -5.049936, y: 8.45 }, { x: -5.049936, y: 8.45, via: true, fromLayer: "bottom", toLayer: "top" }, { x: -5.049936, y: 8.45 }]',
+    jsx: '[{ x: -1.199896, y: 4.2 }, { x: -1.4, y: 4.47 }, { x: -1.4, y: 4.47, via: true, fromLayer: "top", toLayer: "bottom" }, { x: -1.4, y: 4.47 }, { x: -1.4000000000000006, y: 8.45 }, { x: -5.049936, y: 8.45 }, { x: -5.049936, y: 8.45, via: true, fromLayer: "bottom", toLayer: "top" }, { x: -5.049936, y: 8.45 }]',
     width: 0.1,
     innerRoute: [
       { route_type: "wire", x: 1.3998959999999996, y: 10.95, layer: "top" },
       { route_type: "wire", x: 1.5999999999999994, y: 10.68, layer: "top" },
       { route_type: "via", x: 1.5999999999999994, y: 10.68, from_layer: "top", to_layer: "bottom" },
       { route_type: "wire", x: 1.5999999999999994, y: 10.68, layer: "bottom" },
+      { route_type: "wire", x: 1.5999999999999994, y: 6.700000000000001, layer: "bottom" },
       { route_type: "wire", x: 5.249935999999999, y: 6.700000000000001, layer: "bottom" },
       { route_type: "via", x: 5.249935999999999, y: 6.700000000000001, from_layer: "bottom", to_layer: "top" },
       { route_type: "wire", x: 5.249935999999999, y: 6.700000000000001, layer: "top" },
@@ -150,24 +156,26 @@ export const manualPaths: Record<string, {
   // Complete the SD0 net with an inward MCU escape and a bottom-layer leg.
   // The separate PSRAM branch reaches the same flash terminal on inner1.
   QSPI_SD0: {
-    jsx: '[{ x: -1.599946, y: 2.65 }, { x: -1.599946, y: 2.65, via: true, fromLayer: "top", toLayer: "bottom" }, { x: -1.599946, y: 2.65 }, { x: -6.3, y: 7.65 }, { x: -6.3, y: 7.65, via: true, fromLayer: "bottom", toLayer: "top" }, { x: -6.3, y: 7.65 }]',
+    jsx: '[{ x: -1.599946, y: 2.65 }, { x: -1.599946, y: 2.65, via: true, fromLayer: "top", toLayer: "bottom" }, { x: -1.599946, y: 2.65 }, { x: -6.299999999999999, y: 2.6499999999999995 }, { x: -6.3, y: 7.65 }, { x: -6.3, y: 7.65, via: true, fromLayer: "bottom", toLayer: "top" }, { x: -6.3, y: 7.65 }]',
     width: 0.1,
     innerRoute: [
       { route_type: "wire", x: 1.7999459999999998, y: 12.5, layer: "top" },
       { route_type: "via", x: 1.7999459999999998, y: 12.5, from_layer: "top", to_layer: "bottom" },
       { route_type: "wire", x: 1.7999459999999998, y: 12.5, layer: "bottom" },
+      { route_type: "wire", x: 6.499999999999999, y: 12.5, layer: "bottom" },
       { route_type: "wire", x: 6.499999999999999, y: 7.499999999999999, layer: "bottom" },
       { route_type: "via", x: 6.499999999999999, y: 7.499999999999999, from_layer: "bottom", to_layer: "top" },
       { route_type: "wire", x: 6.499999999999999, y: 7.499999999999999, layer: "top" },
     ],
   },
   PSRAM_SIO0: {
-    jsx: '[{ x: 1.5, y: 1.50749 }, { x: 1.5, y: 1.50749, via: true, fromLayer: "top", toLayer: "inner1" }, { x: 1.5, y: 1.50749 }, { x: -4.7, y: 1.9 }, { x: -4.7, y: 1.9, via: true, fromLayer: "inner1", toLayer: "top" }, { x: -4.7, y: 1.9 }]',
+    jsx: '[{ x: 1.5, y: 1.50749 }, { x: 1.5, y: 1.50749, via: true, fromLayer: "top", toLayer: "inner1" }, { x: 1.5, y: 1.50749 }, { x: 1.5, y: 1.9000000000000004 }, { x: -4.7, y: 1.9 }, { x: -4.7, y: 1.9, via: true, fromLayer: "inner1", toLayer: "top" }, { x: -4.7, y: 1.9 }]',
     width: 0.1,
     innerRoute: [
       { route_type: "wire", x: 13.4, y: 7.107489999999999, layer: "top" },
       { route_type: "via", x: 13.4, y: 7.107489999999999, from_layer: "top", to_layer: "inner1" },
       { route_type: "wire", x: 13.4, y: 7.107489999999999, layer: "inner1" },
+      { route_type: "wire", x: 13.4, y: 7.5, layer: "inner1" },
       { route_type: "wire", x: 7.2, y: 7.5, layer: "inner1" },
       { route_type: "via", x: 7.2, y: 7.5, from_layer: "inner1", to_layer: "top" },
       { route_type: "wire", x: 7.2, y: 7.5, layer: "top" },
@@ -176,12 +184,13 @@ export const manualPaths: Record<string, {
   // SD1's inner1 shoulders clear the SD2 and SCLK physical drill spans.
   // Keep the exact Core-emitted coordinates, including their last bits.
   QSPI_SD1: {
-    jsx: '[{ x: -2.400046, y: 2.65 }, { x: -2.400046, y: 2.65, via: true, fromLayer: "top", toLayer: "inner1" }, { x: -2.400046, y: 2.65 }, { x: -3.6, y: 6.75 }, { x: -4.3, y: 8.45 }, { x: -5.6, y: 9.8 }, { x: -5.6, y: 9.8, via: true, fromLayer: "inner1", toLayer: "top" }, { x: -5.6, y: 9.8 }, { x: -4.550064, y: 9.95 }]',
+    jsx: '[{ x: -2.400046, y: 2.65 }, { x: -2.400046, y: 2.65, via: true, fromLayer: "top", toLayer: "inner1" }, { x: -2.400046, y: 2.65 }, { x: -2.4000460000000006, y: 6.75 }, { x: -3.6, y: 6.75 }, { x: -4.3, y: 8.45 }, { x: -5.6, y: 9.8 }, { x: -5.6, y: 9.8, via: true, fromLayer: "inner1", toLayer: "top" }, { x: -5.6, y: 9.8 }, { x: -4.550064, y: 9.95 }]',
     width: 0.1,
     innerRoute: [
       { route_type: "wire", x: 2.600046, y: 12.5, layer: "top" },
       { route_type: "via", x: 2.600046, y: 12.5, from_layer: "top", to_layer: "inner1" },
       { route_type: "wire", x: 2.600046, y: 12.5, layer: "inner1" },
+      { route_type: "wire", x: 2.600046, y: 8.4, layer: "inner1" },
       { route_type: "wire", x: 3.7999999999999994, y: 8.4, layer: "inner1" },
       { route_type: "wire", x: 4.499999999999999, y: 6.700000000000001, layer: "inner1" },
       { route_type: "wire", x: 5.799999999999999, y: 5.35, layer: "inner1" },
@@ -242,11 +251,12 @@ export const manualPaths: Record<string, {
     waypoints: [{ x: -1.0001500000000005, y: 10.65 }],
   },
   DVDD1_V1V1: {
-    jsx: '[{x:2.6,y:0.399923},{x:2.6,y:0.399923,via:true,fromLayer:"top",toLayer:"inner2"},{x:2.6,y:0.399923},{x:0.4,y:5.85},{x:0.4,y:5.85,via:true,fromLayer:"inner2",toLayer:"top"},{x:0.4,y:5.85},".C_CORE > .pin1",{x:1.20015,y:4.5}]', width: 0.1,
+    jsx: '[{x:2.6,y:0.399923},{x:2.6,y:0.399923,via:true,fromLayer:"top",toLayer:"inner2"},{x:2.6,y:0.399923},{x:2.599999999999999,y:5.85},{x:0.4,y:5.85},{x:0.4,y:5.85,via:true,fromLayer:"inner2",toLayer:"top"},{x:0.4,y:5.85},".C_CORE > .pin1",{x:1.20015,y:4.5}]', width: 0.1,
     innerRoute: [
       {route_type: "wire", x: -2.4, y: 14.750077000000001, layer: "top"},
       {route_type: "via", x: -2.4, y: 14.750077000000001, from_layer: "top", to_layer: "inner2"},
       {route_type: "wire", x: -2.4, y: 14.750077000000001, layer: "inner2"},
+      {route_type: "wire", x: -2.4, y: 9.3, layer: "inner2"},
       {route_type: "wire", x: -0.20000000000000073, y: 9.3, layer: "inner2"},
       {route_type: "via", x: -0.20000000000000073, y: 9.3, from_layer: "inner2", to_layer: "top"},
       {route_type: "wire", x: -0.20000000000000073, y: 9.3, layer: "top"},
@@ -255,11 +265,12 @@ export const manualPaths: Record<string, {
     ],
   },
   DVDD2_V1V1: {
-    jsx: '[{x:0,y:-2.65},{x:0,y:-2.65,via:true,fromLayer:"top",toLayer:"inner2"},{x:0,y:-2.65},{x:1.1,y:5.85},{x:1.1,y:5.85,via:true,fromLayer:"inner2",toLayer:"top"},{x:1.1,y:5.85},".C_CORE > .pin1",{x:1.20015,y:4.5}]', width: 0.1,
+    jsx: '[{x:0,y:-2.65},{x:0,y:-2.65,via:true,fromLayer:"top",toLayer:"inner2"},{x:0,y:-2.65},{x:-1.0494852848887486e-15,y:5.85},{x:1.1,y:5.85},{x:1.1,y:5.85,via:true,fromLayer:"inner2",toLayer:"top"},{x:1.1,y:5.85},".C_CORE > .pin1",{x:1.20015,y:4.5}]', width: 0.1,
     innerRoute: [
       {route_type: "wire", x: 0.20000000000000034, y: 17.8, layer: "top"},
       {route_type: "via", x: 0.20000000000000034, y: 17.8, from_layer: "top", to_layer: "inner2"},
       {route_type: "wire", x: 0.20000000000000034, y: 17.8, layer: "inner2"},
+      {route_type: "wire", x: 0.20000000000000034, y: 9.3, layer: "inner2"},
       {route_type: "wire", x: -0.9000000000000008, y: 9.3, layer: "inner2"},
       {route_type: "via", x: -0.9000000000000008, y: 9.3, from_layer: "inner2", to_layer: "top"},
       {route_type: "wire", x: -0.9000000000000008, y: 9.3, layer: "top"},
@@ -268,11 +279,12 @@ export const manualPaths: Record<string, {
     ],
   },
   DVDD3_V1V1: {
-    jsx: '[{x:-2.6,y:0.799973},{x:-2.6,y:0.799973,via:true,fromLayer:"top",toLayer:"inner2"},{x:-2.6,y:0.799973},{x:1.78,y:5.85},{x:1.78,y:5.85,via:true,fromLayer:"inner2",toLayer:"top"},{x:1.78,y:5.85},".C_CORE > .pin1",{x:1.20015,y:4.5}]', width: 0.1,
+    jsx: '[{x:-2.6,y:0.799973},{x:-2.6,y:0.799973,via:true,fromLayer:"top",toLayer:"inner2"},{x:-2.6,y:0.799973},{x:1.7800000000000007,y:0.7999729999999998},{x:1.78,y:5.85},{x:1.78,y:5.85,via:true,fromLayer:"inner2",toLayer:"top"},{x:1.78,y:5.85},".C_CORE > .pin1",{x:1.20015,y:4.5}]', width: 0.1,
     innerRoute: [
       {route_type: "wire", x: 2.8000000000000003, y: 14.350027, layer: "top"},
       {route_type: "via", x: 2.8000000000000003, y: 14.350027, from_layer: "top", to_layer: "inner2"},
       {route_type: "wire", x: 2.8000000000000003, y: 14.350027, layer: "inner2"},
+      {route_type: "wire", x: -1.5800000000000007, y: 14.350027, layer: "inner2"},
       {route_type: "wire", x: -1.5800000000000007, y: 9.3, layer: "inner2"},
       {route_type: "via", x: -1.5800000000000007, y: 9.3, from_layer: "inner2", to_layer: "top"},
       {route_type: "wire", x: -1.5800000000000007, y: 9.3, layer: "top"},
