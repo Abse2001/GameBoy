@@ -682,15 +682,19 @@ const routingPhases = [
   // their fixed copper does not consume corridors before the wide rails.
 ]
 
-// Keep the two largest multi-terminal nets out of the remaining signal pass.
+// Keep wide multi-terminal rails out of the remaining signal pass.
 // Explicit local-decoupling trace phases still take precedence over net phases.
 const netRoutingPhases = [
   { name: "ground-net", net: "GND" },
   { name: "v3v3-net", net: "V3V3" },
+  // The remaining pass stalled in port-point pathing with this 0.80 mm,
+  // 11-terminal rail mixed with 75 other connections. Keep its exact net
+  // and width, but route it after the completed ground and 3.3 V prefix.
+  { name: "vsys-net", net: "VSYS" },
 ]
 
 // Clock, switching-power and all power-branches now have exact manual paths.
-export const expectedAutomaticPhaseNames = ["local-decoupling", "ground-net", "v3v3-net", "remaining-connections"]
+export const expectedAutomaticPhaseNames = ["local-decoupling", "ground-net", "v3v3-net", "vsys-net", "remaining-connections"]
 
 export function applyRoutingPlan(source: string): string {
   let result = source
