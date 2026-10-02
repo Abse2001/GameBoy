@@ -11,6 +11,21 @@ export const manualPaths: Record<string, {
   waypoints?: Array<{ x: number; y: number }>
   innerRoute?: ManualRoutePoint[]
 }> = {
+  // Feed the QSPI/USB supply island on bottom copper, retaining this
+  // branch's original 0.10 mm width and the separate 0.60 mm main rail.
+  USB_OTP_VDD: {
+    jsx: '[{"x":-0.5000000000000002,"y":2.6500000000000004},{"x":-0.5000000000000002,"y":2.6500000000000004,"via":true,"fromLayer":"top","toLayer":"bottom"},{"x":-0.5000000000000002,"y":2.6500000000000004},{"x":-0.4999999999999998,"y":-0.9500000000000011},{"x":-4.8,"y":-0.9500000000000011},{"x":-4.8,"y":-0.9500000000000011,"via":true,"fromLayer":"bottom","toLayer":"top"},{"x":-4.8,"y":-0.9500000000000011}]',
+    width: 0.1,
+    innerRoute: [
+      { route_type: "wire", x: 0.7, y: 12.5, layer: "top" },
+      { route_type: "via", x: 0.7, y: 12.5, from_layer: "top", to_layer: "bottom" },
+      { route_type: "wire", x: 0.7, y: 12.5, layer: "bottom" },
+      { route_type: "wire", x: 0.7, y: 16.1, layer: "bottom" },
+      { route_type: "wire", x: 5, y: 16.1, layer: "bottom" },
+      { route_type: "via", x: 5, y: 16.1, from_layer: "bottom", to_layer: "top" },
+      { route_type: "wire", x: 5, y: 16.1, layer: "top" },
+    ],
+  },
   // Join the two adjacent I/O supply islands on inner1, below the DVDD trace.
   // Keep the 0.60 mm rail width and place both via holes outside the pads.
   IOVDD6_IOVDD5_BRIDGE: {
@@ -522,6 +537,7 @@ export const manualPaths: Record<string, {
 // BAT_REVERSE_SOURCE still attaches the whole tree to net.BAT_PROTECTED.
 // The rendered electrical-group fingerprint must remain exactly unchanged.
 const localConnections: Array<{ name: string; field: "from" | "to"; original: string; selector: string }> = [
+  { name: "USB_OTP_VDD", field: "to", original: "net.V3V3", selector: ".C_IOVDD5 > .pin1" },
   { name: "C_IOVDD6_GND", field: "to", original: "net.GND", selector: ".C_DVDD3 > .pin2" },
   { name: "TOUCH_RESET", field: "to", original: ".U1 > .GPIO21", selector: ".J_LCD > .pin10" },
   { name: "QSPI_IOVDD", field: "to", original: "net.V3V3", selector: ".U1 > .USB_OTP_VDD" },
