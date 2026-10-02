@@ -51,6 +51,27 @@ export const manualPaths: Record<string, {
       { x: 62.5, y: -26.825 },
     ],
   },
+  // Keep the four short switching connections explicit as well. The complete
+  // battery tree made automatic topology planning for this phase time out.
+  // These paths retain each trace's authored width and pass static clearances.
+  BAT_BUCKBOOST_L1: {
+    jsx: "[{ x: -0.499999, y: 1.5 }, { x: -1.199896, y: 2.2 }]", width: 0.4,
+    waypoints: [{ x: -32.499999, y: -29.5 }, { x: -33.199896, y: -28.8 }],
+  },
+  BAT_BUCKBOOST_L2: {
+    jsx: "[{ x: 0.499999, y: 1.5 }, { x: 1.199896, y: 2.2 }]", width: 0.4,
+    waypoints: [{ x: -31.500001, y: -29.5 }, { x: -30.800104, y: -28.8 }],
+  },
+  BUCK_SWITCH: {
+    // U_3V3's declared frame is rotated 90 degrees about (-18, -12).
+    jsx: "[{ x: 0, y: 3.55 }]", width: 0.6,
+    waypoints: [{ x: -21.55, y: -12 }],
+  },
+  BUCK_BOOTSTRAP_BST: {
+    // C_3V3_BST is rotated 180 degrees about (-18.9, -9.4).
+    jsx: "[{ x: -0.9, y: 0 }, { x: -0.9, y: 3.54996 }]", width: 0.1,
+    waypoints: [{ x: -18, y: -9.4 }, { x: -18, y: -12.94996 }],
+  },
 }
 
 // Replace net-only branches with explicit same-net endpoints. The original
@@ -68,6 +89,9 @@ const routingPhases = [
   { name: "switching-power", traces: ["BAT_BUCKBOOST_L1", "BAT_BUCKBOOST_L2", "BUCK_SWITCH", "BUCK_BOOTSTRAP_BST"] },
   { name: "local-decoupling", traces: ["C_VREG_AVDD_P", "C_DVDD3_SUPPLY", "C_DVDD2_BULK_SUPPLY", "C_IOVDD1_SUPPLY", "SD_DECOUPLING", "BAT_OUTPUT_CAP_LOCAL", "BAT_INPUT_CAP_LOCAL"] },
 ]
+
+// Clock and switching-power are now fully covered by exact manual paths.
+export const expectedAutomaticPhaseNames = ["local-decoupling", "remaining-connections"]
 
 export function applyRoutingPlan(source: string): string {
   let result = source

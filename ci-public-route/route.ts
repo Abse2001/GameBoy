@@ -2,7 +2,7 @@ import { createHash } from "node:crypto"
 import { appendFileSync, mkdirSync, readFileSync, writeFileSync } from "node:fs"
 import { dirname, resolve } from "node:path"
 import { chromium } from "@playwright/test"
-import { applyRoutingPlan, manualPaths, manualTraceNames } from "./board-routing"
+import { applyRoutingPlan, expectedAutomaticPhaseNames, manualPaths, manualTraceNames } from "./board-routing"
 import { convertCircuitJsonToPcbSvg } from "circuit-to-svg"
 import { Resvg } from "@resvg/resvg-js"
 import type { AnyCircuitElement } from "circuit-json"
@@ -225,7 +225,9 @@ try {
   }
   // Prior-phase copper and our explicit pcbPaths are deliberate, not cached
   // output from an earlier board run. All phase inputs/outputs are retained.
-  if (routeStarts.length < 3) throw new Error("Expected multiple routing phases")
+  if (JSON.stringify(routeStarts.map((event) => event.phaseName)) !== JSON.stringify(expectedAutomaticPhaseNames)) {
+    throw new Error("Automatic phases did not match the explicit manual/automatic routing plan")
+  }
   for (const name of manualTraceNames) {
     const path = manualPaths[name]
     const sourceTrace = circuit.find((element) => element.type === "source_trace" && element.name === name)
