@@ -11,6 +11,13 @@ export const manualPaths: Record<string, {
   waypoints?: Array<{ x: number; y: number }>
   innerRoute?: ManualRoutePoint[]
 }> = {
+  // Enter the LCD ground pad horizontally so the shoulder return does not
+  // cross adjacent pin 10. SW_R's declared frame is (45, 36), unrotated.
+  R_SHOULDER_GND: {
+    jsx: '[{"x":-9.5,"y":-13.3500272}]',
+    width: 0.1,
+    waypoints: [{ x: 35.5, y: 22.6499728 }],
+  },
   // Join the MCU's two ground pads without crossing the neighboring VREG_LX
   // pad. Keep the authored branch width; the ground rail remains 0.80 mm.
   VREG_PGND: {
@@ -548,6 +555,7 @@ export const manualPaths: Record<string, {
 // BAT_REVERSE_SOURCE still attaches the whole tree to net.BAT_PROTECTED.
 // The rendered electrical-group fingerprint must remain exactly unchanged.
 const localConnections: Array<{ name: string; field: "from" | "to"; original: string; selector: string }> = [
+  { name: "R_SHOULDER_GND", field: "to", original: "net.GND", selector: ".J_LCD > .pin11" },
   { name: "VREG_PGND", field: "to", original: "net.GND", selector: ".U1 > .GND" },
   { name: "USB_OTP_VDD", field: "to", original: "net.V3V3", selector: ".U1 > .IOVDD6" },
   { name: "C_IOVDD6_GND", field: "to", original: "net.GND", selector: ".C_DVDD3 > .pin2" },
