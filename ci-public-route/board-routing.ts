@@ -147,6 +147,53 @@ export const manualPaths: Record<string, {
     jsx: "[{ x: 0.5, y: 1.2 }]", width: 0.4,
     waypoints: [{ x: -30, y: -30.5 }],
   },
+  // Complete the SD0 net with an inward MCU escape and a bottom-layer leg.
+  // The separate PSRAM branch reaches the same flash terminal on inner1.
+  QSPI_SD0: {
+    jsx: '[{ x: -1.599946, y: 2.65 }, { x: -1.599946, y: 2.65, via: true, fromLayer: "top", toLayer: "bottom" }, { x: -1.599946, y: 2.65 }, { x: -6.3, y: 7.65 }, { x: -6.3, y: 7.65, via: true, fromLayer: "bottom", toLayer: "top" }, { x: -6.3, y: 7.65 }]',
+    width: 0.1,
+    innerRoute: [
+      { route_type: "wire", x: 1.7999459999999998, y: 12.5, layer: "top" },
+      { route_type: "via", x: 1.7999459999999998, y: 12.5, from_layer: "top", to_layer: "bottom" },
+      { route_type: "wire", x: 1.7999459999999998, y: 12.5, layer: "bottom" },
+      { route_type: "wire", x: 6.499999999999999, y: 7.499999999999999, layer: "bottom" },
+      { route_type: "via", x: 6.499999999999999, y: 7.499999999999999, from_layer: "bottom", to_layer: "top" },
+      { route_type: "wire", x: 6.499999999999999, y: 7.499999999999999, layer: "top" },
+    ],
+  },
+  PSRAM_SIO0: {
+    jsx: '[{ x: 1.5, y: 1.50749 }, { x: 1.5, y: 1.50749, via: true, fromLayer: "top", toLayer: "inner1" }, { x: 1.5, y: 1.50749 }, { x: -4.7, y: 1.9 }, { x: -4.7, y: 1.9, via: true, fromLayer: "inner1", toLayer: "top" }, { x: -4.7, y: 1.9 }]',
+    width: 0.1,
+    innerRoute: [
+      { route_type: "wire", x: 13.4, y: 7.107489999999999, layer: "top" },
+      { route_type: "via", x: 13.4, y: 7.107489999999999, from_layer: "top", to_layer: "inner1" },
+      { route_type: "wire", x: 13.4, y: 7.107489999999999, layer: "inner1" },
+      { route_type: "wire", x: 7.2, y: 7.5, layer: "inner1" },
+      { route_type: "via", x: 7.2, y: 7.5, from_layer: "inner1", to_layer: "top" },
+      { route_type: "wire", x: 7.2, y: 7.5, layer: "top" },
+    ],
+  },
+  // SD1's inner1 shoulders clear the SD2 and SCLK physical drill spans.
+  // Keep the exact Core-emitted coordinates, including their last bits.
+  QSPI_SD1: {
+    jsx: '[{ x: -2.400046, y: 2.65 }, { x: -2.400046, y: 2.65, via: true, fromLayer: "top", toLayer: "inner1" }, { x: -2.400046, y: 2.65 }, { x: -3.6, y: 6.75 }, { x: -4.3, y: 8.45 }, { x: -5.6, y: 9.8 }, { x: -5.6, y: 9.8, via: true, fromLayer: "inner1", toLayer: "top" }, { x: -5.6, y: 9.8 }, { x: -4.550064, y: 9.95 }]',
+    width: 0.1,
+    innerRoute: [
+      { route_type: "wire", x: 2.600046, y: 12.5, layer: "top" },
+      { route_type: "via", x: 2.600046, y: 12.5, from_layer: "top", to_layer: "inner1" },
+      { route_type: "wire", x: 2.600046, y: 12.5, layer: "inner1" },
+      { route_type: "wire", x: 3.7999999999999994, y: 8.4, layer: "inner1" },
+      { route_type: "wire", x: 4.499999999999999, y: 6.700000000000001, layer: "inner1" },
+      { route_type: "wire", x: 5.799999999999999, y: 5.35, layer: "inner1" },
+      { route_type: "via", x: 5.799999999999999, y: 5.35, from_layer: "inner1", to_layer: "top" },
+      { route_type: "wire", x: 5.799999999999999, y: 5.35, layer: "top" },
+      { route_type: "wire", x: 4.750063999999999, y: 5.200000000000001, layer: "top" },
+    ],
+  },
+  PSRAM_SIO1: {
+    jsx: "[{ x: -0.249936, y: -0.6 }, { x: -7.149936, y: -0.6 }]", width: 0.1,
+    waypoints: [{ x: 11.650064, y: 5 }, { x: 4.750064, y: 5 }],
+  },
 }
 
 // Replace net-only branches with explicit same-net endpoints. The original
@@ -159,6 +206,8 @@ const localConnections: Array<{ name: string; field: "from" | "to"; original: st
   { name: "PSRAM_SIO2", field: "to", original: ".U1 > .QSPI_SD2", selector: ".U2 > .pin3" },
   { name: "PSRAM_SIO3", field: "to", original: ".U1 > .QSPI_SD3", selector: ".U2 > .pin7" },
   { name: "PSRAM_SCLK", field: "to", original: ".U1 > .QSPI_SCLK", selector: ".U2 > .pin6" },
+  { name: "PSRAM_SIO0", field: "to", original: ".U1 > .QSPI_SD0", selector: ".U2 > .pin5" },
+  { name: "PSRAM_SIO1", field: "to", original: ".U1 > .QSPI_SD1", selector: ".U2 > .pin2" },
 ]
 export const manualTraceNames = Object.keys(manualPaths)
 
