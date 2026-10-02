@@ -5,12 +5,21 @@ export type ManualRoutePoint =
   | { route_type: "wire"; x: number; y: number; layer: ManualLayer }
   | { route_type: "via"; x: number; y: number; from_layer: ManualLayer; to_layer: ManualLayer }
 
+// Join the adjacent already-grounded LCD pins locally. Pin32 keeps the
+// original net.GND attachment; the separate 0.80 mm ground rail is unchanged.
+const lcdGroundRowBranches = Array.from({ length: 21 }, (_, index): { name: string; toPin: number } => ({
+  name: `LCD_UNUSED_${index + 11}_GND`, toPin: index + 12,
+}))
+
 export const manualPaths: Record<string, {
   jsx: string
   width: number
   waypoints?: Array<{ x: number; y: number }>
   innerRoute?: ManualRoutePoint[]
 }> = {
+  ...Object.fromEntries(lcdGroundRowBranches.map((branch): [string, { jsx: string; width: number }] => [
+    branch.name, { jsx: `[".J_LCD > .pin${branch.toPin}"]`, width: 0.1 },
+  ])),
   // Keep this local return left of flash VCC instead of a wide automatic
   // ground detour. Retain its inherited 0.10 mm width and 5.5 mm limit.
   // C_QSPI_USB's declared frame is (4.1,10), rotated 180 degrees.
@@ -616,6 +625,9 @@ export const manualPaths: Record<string, {
 // BAT_REVERSE_SOURCE still attaches the whole tree to net.BAT_PROTECTED.
 // The rendered electrical-group fingerprint must remain exactly unchanged.
 const localConnections: Array<{ name: string; field: "from" | "to"; original: string; selector: string }> = [
+  ...lcdGroundRowBranches.map((branch): { name: string; field: "to"; original: string; selector: string } => ({
+    name: branch.name, field: "to", original: "net.GND", selector: `.J_LCD > .pin${branch.toPin}`,
+  })),
   { name: "C_QSPI_USB_G", field: "to", original: "net.GND", selector: ".U2 > .EP" },
   { name: "C_IOVDD4_GND", field: "to", original: "net.GND", selector: ".C_IOVDD5 > .pin2" },
   { name: "C_CORE_G", field: "to", original: "net.GND", selector: ".U1 > .VREG_PGND" },
