@@ -11,6 +11,20 @@ export const manualPaths: Record<string, {
   waypoints?: Array<{ x: number; y: number }>
   innerRoute?: ManualRoutePoint[]
 }> = {
+  // Join the two adjacent I/O supply islands on inner1, below the DVDD trace.
+  // Keep the 0.60 mm rail width and place both via holes outside the pads.
+  IOVDD6_IOVDD5_BRIDGE: {
+    jsx: '[{"x":-0.2999999999999998,"y":0.5999999999999996},{"x":-0.2999999999999998,"y":0.5999999999999996,"via":true,"fromLayer":"top","toLayer":"inner1"},{"x":-0.2999999999999998,"y":0.5999999999999996},{"x":-0.2999999999999998,"y":3.200000000000001},{"x":-0.2999999999999998,"y":3.200000000000001,"via":true,"fromLayer":"inner1","toLayer":"top"},{"x":-0.2999999999999998,"y":3.200000000000001}]',
+    width: 0.6,
+    innerRoute: [
+      { route_type: "wire", x: 5.8, y: 13.5, layer: "top" },
+      { route_type: "via", x: 5.8, y: 13.5, from_layer: "top", to_layer: "inner1" },
+      { route_type: "wire", x: 5.8, y: 13.5, layer: "inner1" },
+      { route_type: "wire", x: 5.8, y: 16.1, layer: "inner1" },
+      { route_type: "via", x: 5.8, y: 16.1, from_layer: "inner1", to_layer: "top" },
+      { route_type: "wire", x: 5.8, y: 16.1, layer: "top" },
+    ],
+  },
   // Short, direct branches keep their authored endpoints and widths. Route
   // these without vias before solving the remaining multi-terminal nets.
   BAT_REVERSE_GATE: { jsx: '[".R_BAT_REVERSE_GATE > .pin1"]', width: 0.1 },
@@ -577,6 +591,13 @@ export function applyRoutingPlan(source: string): string {
   const styledBoard = `${boardMarker}    pcbStyle={{ viaPadDiameter: 0.45, viaHoleDiameter: 0.15 }}\n`
   result = result.replace(boardMarker, styledBoard)
   replacements.push([styledBoard, boardMarker])
+  // Add copper between already-connected source-net terminals, retaining
+  // both original rail attachments and every existing branch constraint.
+  const closingBoard = "  </board>"
+  if (result.split(closingBoard).length !== 2) throw new Error("Expected one board closing tag")
+  const supplyBridge = '    <trace name="IOVDD6_IOVDD5_BRIDGE" from=".C_IOVDD6 > .pin1" to=".C_IOVDD5 > .pin1" thickness={0.6} />\n'
+  result = result.replace(closingBoard, `${supplyBridge}${closingBoard}`)
+  replacements.push([`${supplyBridge}${closingBoard}`, closingBoard])
   for (const [phaseIndex, phase] of routingPhases.entries()) {
     for (const name of phase.traces) {
       const marker = `<trace name="${name}"`
@@ -631,6 +652,6 @@ export function applyRoutingPlan(source: string): string {
   result = result.replace(marker, `${phases}\n\n${marker}`)
   let restored = result.replace(`${phases}\n\n`, "")
   for (const [replacement, marker] of replacements.reverse()) restored = restored.replace(replacement, marker)
-  if (restored !== source) throw new Error("Routing plan changed something beyond phases, same-net local destinations and manual paths")
+  if (restored !== source) throw new Error("Routing plan changed something beyond phases, same-net copper and manual paths")
   return result
 }
