@@ -323,12 +323,12 @@ const routingPhases = [
 // Keep the two largest multi-terminal nets out of the remaining signal pass.
 // Explicit local-decoupling trace phases still take precedence over net phases.
 const netRoutingPhases = [
-  { name: "ground-net", net: "GND" },
   { name: "v3v3-net", net: "V3V3" },
+  { name: "ground-net", net: "GND" },
 ]
 
 // Clock and switching-power are now fully covered by exact manual paths.
-export const expectedAutomaticPhaseNames = ["local-decoupling", "ground-net", "v3v3-net", "remaining-connections"]
+export const expectedAutomaticPhaseNames = ["local-decoupling", "v3v3-net", "ground-net", "remaining-connections"]
 
 export function applyRoutingPlan(source: string): string {
   let result = source
