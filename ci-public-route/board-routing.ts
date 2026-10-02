@@ -194,6 +194,25 @@ export const manualPaths: Record<string, {
     jsx: "[{ x: -0.249936, y: -0.6 }, { x: -7.149936, y: -0.6 }]", width: 0.1,
     waypoints: [{ x: 11.650064, y: 5 }, { x: 4.750064, y: 5 }],
   },
+  // The remaining phase could not reach USB_DP around the memory escapes.
+  // R_USB_DP's declared frame is (2.1,9.63), rotated 90 degrees. Use inner1
+  // between two clear via sites; keep its neighboring USB_DM trace on top.
+  USB_DP: {
+    jsx: '[{ x: 0.27, y: 0.8 }, { x: 0.27, y: 0.8, via: true, fromLayer: "top", toLayer: "inner1" }, { x: 0.27, y: 0.8 }, { x: 0.87, y: 2.25 }, { x: 0.87, y: 2.25, via: true, fromLayer: "inner1", toLayer: "top" }, { x: 0.87, y: 2.25 }]',
+    width: 0.1,
+    innerRoute: [
+      { route_type: "wire", x: 1.3, y: 9.9, layer: "top" },
+      { route_type: "via", x: 1.3, y: 9.9, from_layer: "top", to_layer: "inner1" },
+      { route_type: "wire", x: 1.3, y: 9.9, layer: "inner1" },
+      { route_type: "wire", x: -0.1499999999999999, y: 10.5, layer: "inner1" },
+      { route_type: "via", x: -0.1499999999999999, y: 10.5, from_layer: "inner1", to_layer: "top" },
+      { route_type: "wire", x: -0.1499999999999999, y: 10.5, layer: "top" },
+    ],
+  },
+  USB_DM: {
+    jsx: "[{ x: 0.432816, y: 1.1001 }]", width: 0.1,
+    waypoints: [{ x: -0.6001000000000001, y: 10.062816000000002 }],
+  },
 }
 
 // Replace net-only branches with explicit same-net endpoints. The original
