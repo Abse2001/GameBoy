@@ -176,6 +176,62 @@ export const manualPaths: Record<string, {
     jsx: "[{ x: -1.5, y: 0 }, { x: -1.5, y: -0.549969 }]", width: 0.1,
     waypoints: [{ x: 4.6, y: 12.9 }, { x: 4.6, y: 12.350031 }],
   },
+  // Complete the remaining short power branches explicitly. PSRAM uses
+  // inner2 to cross the existing signal escapes; its drills include inner1.
+  // Core counts via travel in length, so its unchanged 5.5 mm limits remain
+  // reported as deferred length violations, not hidden or increased.
+  PSRAM_DECOUPLING: {
+    jsx: '[{"x":-0.42011600000000016,"y":0.75},{"x":-0.42011600000000016,"y":0.75,"via":true,"fromLayer":"top","toLayer":"inner2"},{"x":-0.42011600000000016,"y":0.75},{"x":0.05000000000000071,"y":0.75},{"x":0.05000000000000071,"y":-1.7499999999999991},{"x":0.05000000000000071,"y":-1.7499999999999991,"via":true,"fromLayer":"inner2","toLayer":"top"},{"x":0.05000000000000071,"y":-1.7499999999999991},{"x":0.9499380000000013,"y":-1.7499999999999991}]',
+    width: 0.1,
+    innerRoute: [
+      { route_type: "wire", x: 9.779884, y: 9.45, layer: "top" },
+      { route_type: "via", x: 9.779884, y: 9.45, from_layer: "top", to_layer: "inner2" },
+      { route_type: "wire", x: 9.779884, y: 9.45, layer: "inner2" },
+      { route_type: "wire", x: 10.25, y: 9.45, layer: "inner2" },
+      { route_type: "wire", x: 10.25, y: 6.95, layer: "inner2" },
+      { route_type: "via", x: 10.25, y: 6.95, from_layer: "inner2", to_layer: "top" },
+      { route_type: "wire", x: 10.25, y: 6.95, layer: "top" },
+      { route_type: "wire", x: 11.149938, y: 6.95, layer: "top" },
+    ],
+  },
+  PSRAM_BULK: {
+    jsx: '[{"x":-0.4200999999999997,"y":-0.9499999999999993},{"x":-0.4200999999999997,"y":-0.9499999999999993,"via":true,"fromLayer":"top","toLayer":"inner2"},{"x":-0.4200999999999997,"y":-0.9499999999999993},{"x":-0.4200999999999997,"y":1.6999999999999993},{"x":-1.7999999999999998,"y":1.6999999999999993},{"x":-1.7999999999999998,"y":1.6999999999999993,"via":true,"fromLayer":"inner2","toLayer":"top"},{"x":-1.7999999999999998,"y":1.6999999999999993},{"x":-1.7999999999999998,"y":1.6000619999999994}]',
+    width: 0.1,
+    innerRoute: [
+      { route_type: "wire", x: 13.7, y: 8.3299, layer: "top" },
+      { route_type: "via", x: 13.7, y: 8.3299, from_layer: "top", to_layer: "inner2" },
+      { route_type: "wire", x: 13.7, y: 8.3299, layer: "inner2" },
+      { route_type: "wire", x: 11.05, y: 8.3299, layer: "inner2" },
+      { route_type: "wire", x: 11.05, y: 6.95, layer: "inner2" },
+      { route_type: "via", x: 11.05, y: 6.95, from_layer: "inner2", to_layer: "top" },
+      { route_type: "wire", x: 11.05, y: 6.95, layer: "top" },
+      { route_type: "wire", x: 11.149938, y: 6.95, layer: "top" },
+    ],
+  },
+  SD_BULK: {
+    jsx: '[{"x":-0.4201000000000015,"y":-0.6398674999999976}]', width: 0.1,
+    waypoints: [{ x: 28.9398675, y: -22.4201 }],
+  },
+  BUCK_FEEDBACK: {
+    jsx: '[{"x":-1,"y":2.0998959999999975}]', width: 0.1,
+    waypoints: [{ x: -16.800104, y: -14.95 }],
+  },
+  BUCK_OUTPUT_CAP_A: {
+    jsx: '[{"x":-1,"y":-4.700000000000003}]', width: 0.6,
+    waypoints: [{ x: -23.6, y: -14.95 }],
+  },
+  BUCK_OUTPUT_CAP_B: {
+    jsx: '[{"x":-3.3499500000000015,"y":0}]', width: 0.6,
+    waypoints: [{ x: -22.4, y: -14.45005 }],
+  },
+  LCD_VDDI_CAP: {
+    jsx: '[{"x":-1.1999999999999993,"y":0},{"x":-1.1999999999999993,"y":1.2499982000000003}]', width: 0.1,
+    waypoints: [{ x: 32, y: 9.4 }, { x: 32, y: 8.1500018 }],
+  },
+  LCD_VCI_CAP: {
+    jsx: '[{"x":-2,"y":0},{"x":-2,"y":-0.15000380000000035}]', width: 0.1,
+    waypoints: [{ x: 31.8, y: 7 }, { x: 31.8, y: 7.1500038 }],
+  },
   // Complete the SD0 net with an inward MCU escape and a bottom-layer leg.
   // The separate PSRAM branch reaches the same flash terminal on inner1.
   QSPI_SD0: {
@@ -353,8 +409,8 @@ const netRoutingPhases = [
   { name: "ground-net", net: "GND" },
 ]
 
-// Clock and switching-power are now fully covered by exact manual paths.
-export const expectedAutomaticPhaseNames = ["local-decoupling", "power-branches", "v3v3-net", "ground-net", "remaining-connections"]
+// Clock, switching-power and all power-branches now have exact manual paths.
+export const expectedAutomaticPhaseNames = ["local-decoupling", "v3v3-net", "ground-net", "remaining-connections"]
 
 export function applyRoutingPlan(source: string): string {
   let result = source
