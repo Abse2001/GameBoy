@@ -11,6 +11,18 @@ export const manualPaths: Record<string, {
   waypoints?: Array<{ x: number; y: number }>
   innerRoute?: ManualRoutePoint[]
 }> = {
+  // Short, direct branches keep their authored endpoints and widths. Route
+  // these without vias before solving the remaining multi-terminal nets.
+  BAT_REVERSE_GATE: { jsx: '[".R_BAT_REVERSE_GATE > .pin1"]', width: 0.1 },
+  BAT_VAUX_CAP: { jsx: '[".U_BAT_BUCKBOOST > .VAUX"]', width: 0.1 },
+  USB_VALID_DECOUPLING: { jsx: '[".U_USB_VALID > .VDD"]', width: 0.1 },
+  SD_CMD_PULLUP: { jsx: '[".J_SD > .CMD"]', width: 0.1 },
+  SD_DAT0_PULLUP: { jsx: '[".J_SD > .DAT0"]', width: 0.1 },
+  SD_DAT2_PULLUP: { jsx: '[".J_SD > .DAT2"]', width: 0.1 },
+  BUCK_INPUT_CAP: { jsx: '[".U_3V3 > .VIN"]', width: 0.6 },
+  USB_VALID_TO_BASE_RESISTOR: { jsx: '[".R_USB_BOOST_OFF > .pin1"]', width: 0.1 },
+  USB_VALID_BASE_PULLDOWN: { jsx: '[".R_USB_BOOST_OFF_PULLDOWN > .pin1"]', width: 0.1 },
+  BAT_OUTPUT_CAP_A: { jsx: '[".U_BAT_BUCKBOOST > .VOUT"]', width: 0.4 },
   // Join the nearby decoupling grounds before routing the remaining ground net.
   // Keep the branch's inherited 0.10 mm width and original 5.5 mm length limit.
   C_IOVDD6_GND: { jsx: '[".C_DVDD3 > .pin2"]', width: 0.1 },
