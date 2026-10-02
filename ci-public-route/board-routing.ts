@@ -1,9 +1,14 @@
 // Routing-only edits to the verified public abse/gameboy-advance 0.0.12 source.
 // Component placement, electrical connections, widths and DRC limits stay intact.
+export type ManualRoutePoint =
+  | { route_type: "wire"; x: number; y: number; layer: "top" | "inner1" }
+  | { route_type: "via"; x: number; y: number; from_layer: "top" | "inner1"; to_layer: "top" | "inner1" }
+
 export const manualPaths: Record<string, {
   jsx: string
   width: number
   waypoints?: Array<{ x: number; y: number }>
+  innerRoute?: ManualRoutePoint[]
 }> = {
   XIN: { jsx: '[".U1 > .XIN"]', width: 0.1 },
   XOUT: { jsx: '[".U_XTAL > .pin3"]', width: 0.1 },
@@ -72,17 +77,25 @@ export const manualPaths: Record<string, {
     jsx: "[{ x: -0.9, y: 0 }, { x: -0.9, y: 3.54996 }]", width: 0.1,
     waypoints: [{ x: -18, y: -9.4 }, { x: -18, y: -12.94996 }],
   },
-  // Replace the short DVDD1 branch's two automatic vias with direct copper.
-  // C_DVDD1 is rotated 180 degrees about (-7.08, 14.3).
-  C_DVDD1_SUPPLY: {
-    jsx: "[{ x: -2.88, y: -0.450077 }]", width: 0.1,
-    waypoints: [{ x: -4.2, y: 14.750077000000001 }],
+  // Connect the complete SD2 net explicitly. U1's frame is (0.2,15.15),
+  // rotated 180 degrees. Both vias sit outside the fine-pitch pad rows.
+  QSPI_SD2: {
+    jsx: '[{ x: -1.999996, y: 4.4 }, { x: -1.999996, y: 4.4, via: true, fromLayer: "top", toLayer: "inner1" }, { x: -1.999996, y: 4.4 }, { x: -5.049936, y: 11.55 }, { x: -5.049936, y: 11.55, via: true, fromLayer: "inner1", toLayer: "top" }, { x: -5.049936, y: 11.55 }]',
+    width: 0.1,
+    innerRoute: [
+      { route_type: "wire", x: 2.1999959999999996, y: 10.75, layer: "top" },
+      { route_type: "via", x: 2.1999959999999996, y: 10.75, from_layer: "top", to_layer: "inner1" },
+      { route_type: "wire", x: 2.1999959999999996, y: 10.75, layer: "inner1" },
+      { route_type: "wire", x: 5.249935999999998, y: 3.5999999999999996, layer: "inner1" },
+      { route_type: "via", x: 5.249935999999998, y: 3.5999999999999996, from_layer: "inner1", to_layer: "top" },
+      { route_type: "wire", x: 5.249935999999998, y: 3.5999999999999996, layer: "top" },
+    ],
   },
-  // Keep reset below C_DVDD2's pads and above U1's top pad row. R_RUN is
-  // rotated 180 degrees about (-5.51, 21.2); no via is needed on this branch.
-  RUN_PULLUP: {
-    jsx: "[{ x: -2.31, y: 1.45 }, { x: -4.50985, y: 1.45 }]", width: 0.1,
-    waypoints: [{ x: -3.1999999999999997, y: 19.75 }, { x: -1.0001499999999997, y: 19.75 }],
+  // Join the same SD2 net at flash pin3 instead of duplicating the MCU leg.
+  // U_PSRAM's declared frame is (11.9,5.6), rotation zero.
+  PSRAM_SIO2: {
+    jsx: "[{ x: 0.249936, y: -2.45 }, { x: -6.650064, y: -2.45 }]", width: 0.1,
+    waypoints: [{ x: 12.149936, y: 3.1499999999999995 }, { x: 5.249936, y: 3.1499999999999995 }],
   },
 }
 
@@ -93,6 +106,7 @@ const localConnections: Array<{ name: string; field: "from" | "to"; original: st
   { name: "BAT_BUCKBOOST_INPUT", field: "from", original: "net.BAT_PROTECTED", selector: ".Q_BAT_REVERSE > .source" },
   { name: "BAT_BUCKBOOST_INPUT", field: "to", original: ".U_BAT_BUCKBOOST > .VIN", selector: ".C_BAT_IN_LOCAL > .pin1" },
   { name: "BATTERY_TO_SWITCH", field: "from", original: "net.BAT_PROTECTED", selector: ".Q_BAT_REVERSE > .source" },
+  { name: "PSRAM_SIO2", field: "to", original: ".U1 > .QSPI_SD2", selector: ".U2 > .pin3" },
 ]
 export const manualTraceNames = Object.keys(manualPaths)
 
@@ -108,6 +122,13 @@ export const expectedAutomaticPhaseNames = ["local-decoupling", "remaining-conne
 export function applyRoutingPlan(source: string): string {
   let result = source
   const replacements: Array<[string, string]> = []
+  // Manual pcbPath vias inherit these dimensions, not the minVia* fields.
+  // Match the existing board/autorouter dimensions exactly; do not relax DRC.
+  const boardMarker = "<board\n"
+  if (result.split(boardMarker).length !== 2) throw new Error("Expected one original board")
+  const styledBoard = `${boardMarker}    pcbStyle={{ viaPadDiameter: 0.45, viaHoleDiameter: 0.15 }}\n`
+  result = result.replace(boardMarker, styledBoard)
+  replacements.push([styledBoard, boardMarker])
   for (const [phaseIndex, phase] of routingPhases.entries()) {
     for (const name of phase.traces) {
       const marker = `<trace name="${name}"`

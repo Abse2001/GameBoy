@@ -3,6 +3,7 @@ import { appendFileSync, mkdirSync, readFileSync, writeFileSync } from "node:fs"
 import { dirname, resolve } from "node:path"
 import { chromium } from "@playwright/test"
 import { applyRoutingPlan, expectedAutomaticPhaseNames, manualPaths, manualTraceNames } from "./board-routing"
+import { assertLayeredManualCopper } from "./assert-layered-manual-copper"
 import { convertCircuitJsonToPcbSvg } from "circuit-to-svg"
 import { Resvg } from "@resvg/resvg-js"
 import type { AnyCircuitElement } from "circuit-json"
@@ -243,6 +244,11 @@ try {
     // every point, layer and width without accepting a changed manual path.
     const traces = circuit.filter((element) => element.type === "pcb_trace" && element.source_trace_id === sourceTrace.source_trace_id
       && expectedPorts.every((port) => element.route.some((point) => point.x === port.x && point.y === port.y)))
+    if (path.innerRoute) {
+      if (traces.length !== 1 || traces[0].type !== "pcb_trace") throw new Error(`Missing exact layered manual trace ${name}`)
+      assertLayeredManualCopper(circuit, traces[0], expectedPorts, path.width, path.innerRoute)
+      continue
+    }
     const expectedWaypointCount = path.waypoints?.length ?? 1
     if (traces.length !== 1 || traces[0].type !== "pcb_trace" || traces[0].route.length !== expectedWaypointCount + 2 || traces[0].route.some((point) => point.route_type !== "wire" || point.layer !== "top" || point.width !== path.width)) {
       throw new Error(`Manual path ${name} was not preserved`)
