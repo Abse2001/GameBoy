@@ -44,12 +44,16 @@ export const manualPaths: Record<string, {
       { route_type: "wire", x: -2.200046, y: 12.5, layer: "top" },
     ],
   },
-  // Enter the LCD ground pad horizontally so the shoulder return does not
-  // cross adjacent pin 10. SW_R's declared frame is (45, 36), unrotated.
+  // Keep the return outside the unrelated button bodies, then enter LCD
+  // ground horizontally without crossing pin 10. Frame (45, 36), unrotated.
   R_SHOULDER_GND: {
-    jsx: '[{"x":-9.5,"y":-13.3500272}]',
+    jsx: '[{"x":10.3,"y":-2.2499319999999994},{"x":10.3,"y":-13.3500272},{"x":-9.5,"y":-13.3500272}]',
     width: 0.1,
-    waypoints: [{ x: 35.5, y: 22.6499728 }],
+    waypoints: [
+      { x: 55.3, y: 33.750068 },
+      { x: 55.3, y: 22.6499728 },
+      { x: 35.5, y: 22.6499728 },
+    ],
   },
   // Join the MCU's two ground pads without crossing the neighboring VREG_LX
   // pad. Keep the authored branch width; the ground rail remains 0.80 mm.
