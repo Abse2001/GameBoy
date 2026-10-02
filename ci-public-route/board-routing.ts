@@ -318,6 +318,9 @@ const routingPhases = [
   { name: "clock", traces: ["XIN", "XOUT_DAMPING", "XOUT", "T_C_XIN", "T_C_XOUT"] },
   { name: "switching-power", traces: ["BAT_BUCKBOOST_L1", "BAT_BUCKBOOST_L2", "BUCK_SWITCH", "BUCK_BOOTSTRAP_BST"] },
   { name: "local-decoupling", traces: ["C_VREG_AVDD_P", "C_DVDD3_SUPPLY", "C_DVDD2_BULK_SUPPLY", "C_IOVDD1_SUPPLY", "SD_DECOUPLING", "BAT_OUTPUT_CAP_LOCAL", "BAT_INPUT_CAP_LOCAL"] },
+  // Route the existing two-port power branches before the 55-terminal net.
+  // This preserves their endpoints, authored widths and length constraints.
+  { name: "power-branches", traces: ["C_IOVDD2_SUPPLY", "C_IOVDD3_SUPPLY", "C_IOVDD4_SUPPLY", "C_IOVDD5_SUPPLY", "C_IOVDD6_SUPPLY", "PSRAM_DECOUPLING", "PSRAM_BULK", "SD_BULK", "BUCK_FEEDBACK", "BUCK_OUTPUT_CAP_A", "BUCK_OUTPUT_CAP_B", "LCD_VDDI_CAP", "LCD_VCI_CAP"] },
 ]
 
 // Keep the two largest multi-terminal nets out of the remaining signal pass.
@@ -328,7 +331,7 @@ const netRoutingPhases = [
 ]
 
 // Clock and switching-power are now fully covered by exact manual paths.
-export const expectedAutomaticPhaseNames = ["local-decoupling", "v3v3-net", "ground-net", "remaining-connections"]
+export const expectedAutomaticPhaseNames = ["local-decoupling", "power-branches", "v3v3-net", "ground-net", "remaining-connections"]
 
 export function applyRoutingPlan(source: string): string {
   let result = source
