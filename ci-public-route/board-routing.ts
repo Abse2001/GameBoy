@@ -11,6 +11,9 @@ export const manualPaths: Record<string, {
   waypoints?: Array<{ x: number; y: number }>
   innerRoute?: ManualRoutePoint[]
 }> = {
+  // Join the nearby decoupling grounds before routing the remaining ground net.
+  // Keep the branch's inherited 0.10 mm width and original 5.5 mm length limit.
+  C_IOVDD6_GND: { jsx: '[".C_DVDD3 > .pin2"]', width: 0.1 },
   // J_LCD's declared frame is (34.951428, 15.4), rotated 90 degrees.
   // Route SCL on bottom around existing memory copper, with its pull-up
   // on inner2 from R_TOUCH_SCL's unrotated frame (29.7, 5.2).
@@ -493,6 +496,7 @@ export const manualPaths: Record<string, {
 // BAT_REVERSE_SOURCE still attaches the whole tree to net.BAT_PROTECTED.
 // The rendered electrical-group fingerprint must remain exactly unchanged.
 const localConnections: Array<{ name: string; field: "from" | "to"; original: string; selector: string }> = [
+  { name: "C_IOVDD6_GND", field: "to", original: "net.GND", selector: ".C_DVDD3 > .pin2" },
   { name: "TOUCH_RESET", field: "to", original: ".U1 > .GPIO21", selector: ".J_LCD > .pin10" },
   { name: "QSPI_IOVDD", field: "to", original: "net.V3V3", selector: ".U1 > .USB_OTP_VDD" },
   { name: "ADC_AVDD", field: "to", original: "net.V3V3", selector: ".U1 > .IOVDD1" },
