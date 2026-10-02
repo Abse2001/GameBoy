@@ -320,8 +320,15 @@ const routingPhases = [
   { name: "local-decoupling", traces: ["C_VREG_AVDD_P", "C_DVDD3_SUPPLY", "C_DVDD2_BULK_SUPPLY", "C_IOVDD1_SUPPLY", "SD_DECOUPLING", "BAT_OUTPUT_CAP_LOCAL", "BAT_INPUT_CAP_LOCAL"] },
 ]
 
+// Keep the two largest multi-terminal nets out of the remaining signal pass.
+// Explicit local-decoupling trace phases still take precedence over net phases.
+const netRoutingPhases = [
+  { name: "ground-net", net: "GND" },
+  { name: "v3v3-net", net: "V3V3" },
+]
+
 // Clock and switching-power are now fully covered by exact manual paths.
-export const expectedAutomaticPhaseNames = ["local-decoupling", "remaining-connections"]
+export const expectedAutomaticPhaseNames = ["local-decoupling", "ground-net", "v3v3-net", "remaining-connections"]
 
 export function applyRoutingPlan(source: string): string {
   let result = source
@@ -341,6 +348,13 @@ export function applyRoutingPlan(source: string): string {
       result = result.replace(marker, replacement)
       replacements.push([replacement, marker])
     }
+  }
+  for (const [index, phase] of netRoutingPhases.entries()) {
+    const marker = `<net name="${phase.net}"`
+    if (result.split(marker).length !== 2) throw new Error(`Expected exactly one ${phase.net} net`)
+    const replacement = `${marker} routingPhaseIndex={${routingPhases.length + index}}`
+    result = result.replace(marker, replacement)
+    replacements.push([replacement, marker])
   }
   for (const connection of localConnections) {
     const { name } = connection
@@ -371,6 +385,9 @@ export function applyRoutingPlan(source: string): string {
   const phases = [
     ...routingPhases.map((phase, index) =>
       `    <autoroutingphase phaseIndex={${index}} name="${phase.name}" minTraceToPadEdgeClearance="0.16mm" />`,
+    ),
+    ...netRoutingPhases.map((phase, index) =>
+      `    <autoroutingphase phaseIndex={${routingPhases.length + index}} name="${phase.name}" minTraceToPadEdgeClearance="0.16mm" />`,
     ),
     '    <autoroutingphase name="remaining-connections" minTraceToPadEdgeClearance="0.16mm" />',
   ].join("\n")
