@@ -214,7 +214,8 @@ export const manualPaths: Record<string, {
     waypoints: [{ x: -0.6001000000000001, y: 10.062816000000002 }],
   },
   // Route the complete 1.1 V rail explicitly. C_CORE_P keeps the original
-  // net.V1V1 anchor; each explicit branch connects the same electrical group.
+  // net.V1V1 anchor. Distribution branches end at the regulator feedback
+  // port; its short capacitor connection retains the decoupling constraint.
   // Inner2 rail vias also occupy inner1 and retain exact native coordinates.
   C_DVDD1_SUPPLY: {
     jsx: "[{x:-2.88,y:-0.450077}]", width: 0.1,
@@ -241,7 +242,7 @@ export const manualPaths: Record<string, {
     waypoints: [{ x: -1.0001500000000005, y: 10.65 }],
   },
   DVDD1_V1V1: {
-    jsx: "[{x:2.6,y:0.399923},{x:2.6,y:0.399923,via:true,fromLayer:\"top\",toLayer:\"inner2\"},{x:2.6,y:0.399923},{x:0.4,y:5.85},{x:0.4,y:5.85,via:true,fromLayer:\"inner2\",toLayer:\"top\"},{x:0.4,y:5.85}]", width: 0.1,
+    jsx: '[{x:2.6,y:0.399923},{x:2.6,y:0.399923,via:true,fromLayer:"top",toLayer:"inner2"},{x:2.6,y:0.399923},{x:0.4,y:5.85},{x:0.4,y:5.85,via:true,fromLayer:"inner2",toLayer:"top"},{x:0.4,y:5.85},".C_CORE > .pin1",{x:1.20015,y:4.5}]', width: 0.1,
     innerRoute: [
       {route_type: "wire", x: -2.4, y: 14.750077000000001, layer: "top"},
       {route_type: "via", x: -2.4, y: 14.750077000000001, from_layer: "top", to_layer: "inner2"},
@@ -249,10 +250,12 @@ export const manualPaths: Record<string, {
       {route_type: "wire", x: -0.20000000000000073, y: 9.3, layer: "inner2"},
       {route_type: "via", x: -0.20000000000000073, y: 9.3, from_layer: "inner2", to_layer: "top"},
       {route_type: "wire", x: -0.20000000000000073, y: 9.3, layer: "top"},
+      { route_type: "wire", x: -1.579884, y: 10.1, layer: "top" },
+      { route_type: "wire", x: -1.0001500000000005, y: 10.65, layer: "top" },
     ],
   },
   DVDD2_V1V1: {
-    jsx: "[{x:0,y:-2.65},{x:0,y:-2.65,via:true,fromLayer:\"top\",toLayer:\"inner2\"},{x:0,y:-2.65},{x:1.1,y:5.85},{x:1.1,y:5.85,via:true,fromLayer:\"inner2\",toLayer:\"top\"},{x:1.1,y:5.85}]", width: 0.1,
+    jsx: '[{x:0,y:-2.65},{x:0,y:-2.65,via:true,fromLayer:"top",toLayer:"inner2"},{x:0,y:-2.65},{x:1.1,y:5.85},{x:1.1,y:5.85,via:true,fromLayer:"inner2",toLayer:"top"},{x:1.1,y:5.85},".C_CORE > .pin1",{x:1.20015,y:4.5}]', width: 0.1,
     innerRoute: [
       {route_type: "wire", x: 0.20000000000000034, y: 17.8, layer: "top"},
       {route_type: "via", x: 0.20000000000000034, y: 17.8, from_layer: "top", to_layer: "inner2"},
@@ -260,10 +263,12 @@ export const manualPaths: Record<string, {
       {route_type: "wire", x: -0.9000000000000008, y: 9.3, layer: "inner2"},
       {route_type: "via", x: -0.9000000000000008, y: 9.3, from_layer: "inner2", to_layer: "top"},
       {route_type: "wire", x: -0.9000000000000008, y: 9.3, layer: "top"},
+      { route_type: "wire", x: -1.579884, y: 10.1, layer: "top" },
+      { route_type: "wire", x: -1.0001500000000005, y: 10.65, layer: "top" },
     ],
   },
   DVDD3_V1V1: {
-    jsx: "[{x:-2.6,y:0.799973},{x:-2.6,y:0.799973,via:true,fromLayer:\"top\",toLayer:\"inner2\"},{x:-2.6,y:0.799973},{x:1.78,y:5.85},{x:1.78,y:5.85,via:true,fromLayer:\"inner2\",toLayer:\"top\"},{x:1.78,y:5.85}]", width: 0.1,
+    jsx: '[{x:-2.6,y:0.799973},{x:-2.6,y:0.799973,via:true,fromLayer:"top",toLayer:"inner2"},{x:-2.6,y:0.799973},{x:1.78,y:5.85},{x:1.78,y:5.85,via:true,fromLayer:"inner2",toLayer:"top"},{x:1.78,y:5.85},".C_CORE > .pin1",{x:1.20015,y:4.5}]', width: 0.1,
     innerRoute: [
       {route_type: "wire", x: 2.8000000000000003, y: 14.350027, layer: "top"},
       {route_type: "via", x: 2.8000000000000003, y: 14.350027, from_layer: "top", to_layer: "inner2"},
@@ -271,6 +276,8 @@ export const manualPaths: Record<string, {
       {route_type: "wire", x: -1.5800000000000007, y: 9.3, layer: "inner2"},
       {route_type: "via", x: -1.5800000000000007, y: 9.3, from_layer: "inner2", to_layer: "top"},
       {route_type: "wire", x: -1.5800000000000007, y: 9.3, layer: "top"},
+      { route_type: "wire", x: -1.579884, y: 10.1, layer: "top" },
+      { route_type: "wire", x: -1.0001500000000005, y: 10.65, layer: "top" },
     ],
   },
 }
@@ -289,9 +296,9 @@ const localConnections: Array<{ name: string; field: "from" | "to"; original: st
   { name: "PSRAM_SIO1", field: "to", original: ".U1 > .QSPI_SD1", selector: ".U2 > .pin2" },
   { name: "CORE_OUT", field: "to", original: "net.V1V1", selector: ".C_CORE > .pin1" },
   { name: "VREG_FB", field: "to", original: "net.V1V1", selector: ".C_CORE > .pin1" },
-  { name: "DVDD1_V1V1", field: "to", original: "net.V1V1", selector: ".C_CORE > .pin1" },
-  { name: "DVDD2_V1V1", field: "to", original: "net.V1V1", selector: ".C_CORE > .pin1" },
-  { name: "DVDD3_V1V1", field: "to", original: "net.V1V1", selector: ".C_CORE > .pin1" },
+  { name: "DVDD1_V1V1", field: "to", original: "net.V1V1", selector: ".U1 > .VREG_FB" },
+  { name: "DVDD2_V1V1", field: "to", original: "net.V1V1", selector: ".U1 > .VREG_FB" },
+  { name: "DVDD3_V1V1", field: "to", original: "net.V1V1", selector: ".U1 > .VREG_FB" },
 ]
 export const manualTraceNames = Object.keys(manualPaths)
 
