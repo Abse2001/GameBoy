@@ -11,6 +11,20 @@ export const manualPaths: Record<string, {
   waypoints?: Array<{ x: number; y: number }>
   innerRoute?: ManualRoutePoint[]
 }> = {
+  // Escape C_CORE ground on inner1 without crossing the VREG_LX switch trace.
+  // Both blind vias stay outside pads; the original 5.5 mm limit is retained.
+  C_CORE_G: {
+    jsx: '[{"x":0.42011599999999993,"y":0.6500000000000004},{"x":0.42011599999999993,"y":0.6500000000000004,"via":true,"fromLayer":"top","toLayer":"inner1"},{"x":0.42011599999999993,"y":0.6500000000000004},{"x":0.2000460000000004,"y":-2.4000000000000004},{"x":0.2000460000000004,"y":-2.4000000000000004,"via":true,"fromLayer":"inner1","toLayer":"top"},{"x":0.2000460000000004,"y":-2.4000000000000004}]',
+    width: 0.1,
+    innerRoute: [
+      { route_type: "wire", x: -2.420116, y: 9.45, layer: "top" },
+      { route_type: "via", x: -2.420116, y: 9.45, from_layer: "top", to_layer: "inner1" },
+      { route_type: "wire", x: -2.420116, y: 9.45, layer: "inner1" },
+      { route_type: "wire", x: -2.200046, y: 12.5, layer: "inner1" },
+      { route_type: "via", x: -2.200046, y: 12.5, from_layer: "inner1", to_layer: "top" },
+      { route_type: "wire", x: -2.200046, y: 12.5, layer: "top" },
+    ],
+  },
   // Enter the LCD ground pad horizontally so the shoulder return does not
   // cross adjacent pin 10. SW_R's declared frame is (45, 36), unrotated.
   R_SHOULDER_GND: {
@@ -555,6 +569,7 @@ export const manualPaths: Record<string, {
 // BAT_REVERSE_SOURCE still attaches the whole tree to net.BAT_PROTECTED.
 // The rendered electrical-group fingerprint must remain exactly unchanged.
 const localConnections: Array<{ name: string; field: "from" | "to"; original: string; selector: string }> = [
+  { name: "C_CORE_G", field: "to", original: "net.GND", selector: ".U1 > .VREG_PGND" },
   { name: "R_SHOULDER_GND", field: "to", original: "net.GND", selector: ".J_LCD > .pin11" },
   { name: "VREG_PGND", field: "to", original: "net.GND", selector: ".U1 > .GND" },
   { name: "USB_OTP_VDD", field: "to", original: "net.V3V3", selector: ".U1 > .IOVDD6" },
