@@ -11,6 +11,13 @@ export const manualPaths: Record<string, {
   waypoints?: Array<{ x: number; y: number }>
   innerRoute?: ManualRoutePoint[]
 }> = {
+  // Join adjacent decoupling grounds around C_IOVDD4's supply pad. Its frame
+  // is (5.6, 20.25), rotated 90 degrees; retain the original 5.5 mm limit.
+  C_IOVDD4_GND: {
+    jsx: '[{"x":0.42011600000000066,"y":-0.75},{"x":-3.5500000000000007,"y":-0.7500000000000002}]',
+    width: 0.1,
+    waypoints: [{ x: 6.35, y: 20.670116 }, { x: 6.35, y: 16.7 }],
+  },
   // Enter touch SDA from the right of the LCD pad row, avoiding the existing
   // SCL/reset copper. R_TOUCH_SDA's frame is (29.7, 3.4), rotated 180 degrees.
   TOUCH_SDA_PULLUP: {
@@ -581,6 +588,7 @@ export const manualPaths: Record<string, {
 // BAT_REVERSE_SOURCE still attaches the whole tree to net.BAT_PROTECTED.
 // The rendered electrical-group fingerprint must remain exactly unchanged.
 const localConnections: Array<{ name: string; field: "from" | "to"; original: string; selector: string }> = [
+  { name: "C_IOVDD4_GND", field: "to", original: "net.GND", selector: ".C_IOVDD5 > .pin2" },
   { name: "C_CORE_G", field: "to", original: "net.GND", selector: ".U1 > .VREG_PGND" },
   { name: "R_SHOULDER_GND", field: "to", original: "net.GND", selector: ".J_LCD > .pin11" },
   { name: "VREG_PGND", field: "to", original: "net.GND", selector: ".U1 > .GND" },
