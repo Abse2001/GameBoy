@@ -20,10 +20,11 @@ export const manualPaths: Record<string, {
   ...Object.fromEntries(lcdGroundRowBranches.map((branch): [string, { jsx: string; width: number }] => [
     branch.name, { jsx: `[".J_LCD > .pin${branch.toPin}"]`, width: 0.1 },
   ])),
-  // Keep this local return left of flash VCC instead of a wide automatic
-  // ground detour. Retain its inherited 0.10 mm width and 5.5 mm limit.
+  // Keep this local return left of flash VCC as additional same-net copper.
+  // Preserve the original capacitor-to-GND branch and its terminal order.
+  // The appended bridge also retains the 0.10 mm width and 5.5 mm limit.
   // C_QSPI_USB's declared frame is (4.1,10), rotated 180 degrees.
-  C_QSPI_USB_G: {
+  QSPI_USB_GND_EP_BRIDGE: {
     jsx: '[{"x":0.8000000000000003,"y":0},{"x":0.7999999999999998,"y":4}]',
     width: 0.1,
     waypoints: [{ x: 3.2999999999999994, y: 10 }, { x: 3.2999999999999994, y: 6 }],
@@ -628,7 +629,6 @@ const localConnections: Array<{ name: string; field: "from" | "to"; original: st
   ...lcdGroundRowBranches.map((branch): { name: string; field: "to"; original: string; selector: string } => ({
     name: branch.name, field: "to", original: "net.GND", selector: `.J_LCD > .pin${branch.toPin}`,
   })),
-  { name: "C_QSPI_USB_G", field: "to", original: "net.GND", selector: ".U2 > .EP" },
   { name: "C_IOVDD4_GND", field: "to", original: "net.GND", selector: ".C_IOVDD5 > .pin2" },
   { name: "C_CORE_G", field: "to", original: "net.GND", selector: ".U1 > .VREG_PGND" },
   { name: "R_SHOULDER_GND", field: "to", original: "net.GND", selector: ".J_LCD > .pin11" },
@@ -708,7 +708,8 @@ export function applyRoutingPlan(source: string): string {
   const closingBoard = "  </board>"
   if (result.split(closingBoard).length !== 2) throw new Error("Expected one board closing tag")
   const supplyBridge = '    <trace name="IOVDD6_IOVDD5_BRIDGE" from=".C_IOVDD6 > .pin1" to=".C_IOVDD5 > .pin1" thickness={0.6} />\n' +
-    '    <trace name="IOVDD4_IOVDD5_BRIDGE" from=".C_IOVDD4 > .pin1" to=".C_IOVDD5 > .pin1" thickness={0.6} />\n'
+    '    <trace name="IOVDD4_IOVDD5_BRIDGE" from=".C_IOVDD4 > .pin1" to=".C_IOVDD5 > .pin1" thickness={0.6} />\n' +
+    '    <trace name="QSPI_USB_GND_EP_BRIDGE" from=".C_QSPI_USB > .pin2" to=".U2 > .EP" thickness={0.1} maxLength={5.5} />\n'
   result = result.replace(closingBoard, `${supplyBridge}${closingBoard}`)
   replacements.push([`${supplyBridge}${closingBoard}`, closingBoard])
   for (const [phaseIndex, phase] of routingPhases.entries()) {
