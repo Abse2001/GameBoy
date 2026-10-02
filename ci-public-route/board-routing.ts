@@ -72,6 +72,18 @@ export const manualPaths: Record<string, {
     jsx: "[{ x: -0.9, y: 0 }, { x: -0.9, y: 3.54996 }]", width: 0.1,
     waypoints: [{ x: -18, y: -9.4 }, { x: -18, y: -12.94996 }],
   },
+  // Replace the short DVDD1 branch's two automatic vias with direct copper.
+  // C_DVDD1 is rotated 180 degrees about (-7.08, 14.3).
+  C_DVDD1_SUPPLY: {
+    jsx: "[{ x: -2.88, y: -0.450077 }]", width: 0.1,
+    waypoints: [{ x: -4.2, y: 14.750077000000001 }],
+  },
+  // Keep reset below C_DVDD2's pads and above U1's top pad row. R_RUN is
+  // rotated 180 degrees about (-5.51, 21.2); no via is needed on this branch.
+  RUN_PULLUP: {
+    jsx: "[{ x: -2.31, y: 1.45 }, { x: -4.50985, y: 1.45 }]", width: 0.1,
+    waypoints: [{ x: -3.1999999999999997, y: 19.75 }, { x: -1.0001499999999997, y: 19.75 }],
+  },
 }
 
 // Replace net-only branches with explicit same-net endpoints. The original
