@@ -78,6 +78,42 @@ export const manualPaths: Record<string, {
     jsx: "[{ x: -0.9, y: 0 }, { x: -0.9, y: 3.54996 }]", width: 0.1,
     waypoints: [{ x: -18, y: -9.4 }, { x: -18, y: -12.94996 }],
   },
+  // Join the complete flash chip-select tree at U2.CS. The MCU branch uses
+  // bottom copper, and the boot-switch branch uses inner2. Preserve exact
+  // inverse-rotated coordinates so the long native segments stay axis-aligned.
+  QSPI_SS: {
+    jsx: '[{"x":-2.85,"y":4.4},{"x":-2.85,"y":4.4,"via":true,"fromLayer":"top","toLayer":"bottom"},{"x":-2.85,"y":4.4},{"x":-2.85,"y":3.9500000000000006},{"x":-0.8000000000000005,"y":3.950000000000001},{"x":-0.8000000000000015,"y":12.15},{"x":-4.049938000000002,"y":12.15},{"x":-4.049938000000002,"y":12.15,"via":true,"fromLayer":"bottom","toLayer":"top"},{"x":-4.049938000000002,"y":12.15}]',
+    width: 0.1,
+    innerRoute: [
+      { route_type: "wire", x: 3.05, y: 10.75, layer: "top" },
+      { route_type: "via", x: 3.05, y: 10.75, from_layer: "top", to_layer: "bottom" },
+      { route_type: "wire", x: 3.05, y: 10.75, layer: "bottom" },
+      { route_type: "wire", x: 3.05, y: 11.2, layer: "bottom" },
+      { route_type: "wire", x: 1, y: 11.2, layer: "bottom" },
+      { route_type: "wire", x: 1, y: 3, layer: "bottom" },
+      { route_type: "wire", x: 4.249938, y: 3, layer: "bottom" },
+      { route_type: "via", x: 4.249938, y: 3, from_layer: "bottom", to_layer: "top" },
+      { route_type: "wire", x: 4.249938, y: 3, layer: "top" },
+    ],
+  },
+  BOOT_PULLUP: {
+    jsx: '[{"x":-2.249938,"y":-2.755379369979998e-16}]', width: 0.1,
+    waypoints: [{ x: 4.249938, y: 4.4 }],
+  },
+  BOOTSEL_SERIES: {
+    jsx: '[{"x":0.4328000000000004,"y":-0.6999999999999993},{"x":0.4328000000000004,"y":-0.6999999999999993,"via":true,"fromLayer":"top","toLayer":"inner2"},{"x":0.4328000000000004,"y":-0.6999999999999993},{"x":0.4327999999999997,"y":4.8},{"x":3.9999999999999996,"y":4.800000000000001},{"x":3.9999999999999996,"y":4.800000000000001,"via":true,"fromLayer":"inner2","toLayer":"top"},{"x":3.9999999999999996,"y":4.800000000000001},{"x":3.2500619999999993,"y":4.8}]',
+    width: 0.1,
+    innerRoute: [
+      { route_type: "wire", x: 7.0672, y: 9.7, layer: "top" },
+      { route_type: "via", x: 7.0672, y: 9.7, from_layer: "top", to_layer: "inner2" },
+      { route_type: "wire", x: 7.0672, y: 9.7, layer: "inner2" },
+      { route_type: "wire", x: 7.0672, y: 4.2, layer: "inner2" },
+      { route_type: "wire", x: 3.5, y: 4.2, layer: "inner2" },
+      { route_type: "via", x: 3.5, y: 4.2, from_layer: "inner2", to_layer: "top" },
+      { route_type: "wire", x: 3.5, y: 4.2, layer: "top" },
+      { route_type: "wire", x: 4.249938, y: 4.2, layer: "top" },
+    ],
+  },
   // Connect the complete SD2 net explicitly. U1's frame is (0.2,15.15),
   // rotated 180 degrees. Both vias sit outside the fine-pitch pad rows.
   // Internal elbows use inverse-transformed coordinates so the native
@@ -385,6 +421,8 @@ const localConnections: Array<{ name: string; field: "from" | "to"; original: st
   { name: "PSRAM_SCLK", field: "to", original: ".U1 > .QSPI_SCLK", selector: ".U2 > .pin6" },
   { name: "PSRAM_SIO0", field: "to", original: ".U1 > .QSPI_SD0", selector: ".U2 > .pin5" },
   { name: "PSRAM_SIO1", field: "to", original: ".U1 > .QSPI_SD1", selector: ".U2 > .pin2" },
+  { name: "BOOT_PULLUP", field: "to", original: ".U1 > .QSPI_SS", selector: ".U2 > .CS" },
+  { name: "BOOTSEL_SERIES", field: "to", original: ".U1 > .QSPI_SS", selector: ".U2 > .CS" },
   { name: "CORE_OUT", field: "to", original: "net.V1V1", selector: ".C_CORE > .pin1" },
   { name: "VREG_FB", field: "to", original: "net.V1V1", selector: ".C_CORE > .pin1" },
   { name: "DVDD1_V1V1", field: "to", original: "net.V1V1", selector: ".U1 > .VREG_FB" },
