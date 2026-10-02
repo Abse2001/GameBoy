@@ -33,6 +33,9 @@ export const manualPaths: Record<string, {
   SD_DAT0_PULLUP_V3V3: { jsx: '[".C_SD > .pin1"]', width: 0.1 },
   SD_CS_PULLUP_V3V3: { jsx: '[".R_SD_DAT2 > .pin2"]', width: 0.1 },
   C_QSPI_USB_P: { jsx: '[".U1 > .IOVDD6"]', width: 0.1 },
+  FLASH_VCC: { jsx: '[".C_QSPI_USB > .pin1"]', width: 0.1 },
+  C_VREG_IN_P: { jsx: '[".C_FLASH > .pin1"]', width: 0.1 },
+  SD_DAT1_PULLUP_V3V3: { jsx: '[".R_SD_DAT2 > .pin2"]', width: 0.1 },
   // U1's footprint frame is rotated 180 degrees about (0.2, 15.15).
   // This waypoint is board (0.49, 19.35), clearing the adjacent DVDD2 pad.
   // The two-segment route is 4.969193631 mm, below the unchanged 5 mm limit.
@@ -445,6 +448,9 @@ const localConnections: Array<{ name: string; field: "from" | "to"; original: st
   { name: "SD_DAT0_PULLUP_V3V3", field: "to", original: "net.V3V3", selector: ".C_SD > .pin1" },
   { name: "SD_CS_PULLUP_V3V3", field: "to", original: "net.V3V3", selector: ".R_SD_DAT2 > .pin2" },
   { name: "C_QSPI_USB_P", field: "to", original: "net.V3V3", selector: ".U1 > .IOVDD6" },
+  { name: "FLASH_VCC", field: "to", original: "net.V3V3", selector: ".C_QSPI_USB > .pin1" },
+  { name: "C_VREG_IN_P", field: "to", original: "net.V3V3", selector: ".C_FLASH > .pin1" },
+  { name: "SD_DAT1_PULLUP_V3V3", field: "to", original: "net.V3V3", selector: ".R_SD_DAT2 > .pin2" },
   { name: "BAT_BUCKBOOST_INPUT", field: "from", original: "net.BAT_PROTECTED", selector: ".Q_BAT_REVERSE > .source" },
   { name: "BAT_BUCKBOOST_INPUT", field: "to", original: ".U_BAT_BUCKBOOST > .VIN", selector: ".C_BAT_IN_LOCAL > .pin1" },
   { name: "BATTERY_TO_SWITCH", field: "from", original: "net.BAT_PROTECTED", selector: ".Q_BAT_REVERSE > .source" },
