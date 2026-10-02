@@ -1,6 +1,6 @@
 // Routing-only edits to the verified public abse/gameboy-advance 0.0.12 source.
 // Component placement, electrical connections, widths and DRC limits stay intact.
-type ManualLayer = "top" | "inner1" | "inner2"
+type ManualLayer = "top" | "inner1" | "inner2" | "bottom"
 export type ManualRoutePoint =
   | { route_type: "wire"; x: number; y: number; layer: ManualLayer }
   | { route_type: "via"; x: number; y: number; from_layer: ManualLayer; to_layer: ManualLayer }
@@ -101,12 +101,13 @@ export const manualPaths: Record<string, {
   // The complete SD3 net uses inner2, separate from SD2's inner1 segment.
   // Its top-to-inner2 drills still occupy inner1 and are checked on that layer.
   QSPI_SD3: {
-    jsx: '[{ x: -0.799846, y: 4.4 }, { x: -0.799846, y: 4.4, via: true, fromLayer: "top", toLayer: "inner2" }, { x: -0.799846, y: 4.4 }, { x: -4.550064, y: 6.75 }, { x: -4.550064, y: 6.75, via: true, fromLayer: "inner2", toLayer: "top" }, { x: -4.550064, y: 6.75 }]',
+    jsx: '[{ x: -0.799846, y: 4.4 }, { x: -0.799846, y: 4.4, via: true, fromLayer: "top", toLayer: "inner2" }, { x: -0.799846, y: 4.4 }, { x: -0.799846, y: 5.15 }, { x: -4.550064, y: 6.75 }, { x: -4.550064, y: 6.75, via: true, fromLayer: "inner2", toLayer: "top" }, { x: -4.550064, y: 6.75 }]',
     width: 0.1,
     innerRoute: [
       { route_type: "wire", x: 0.9998459999999993, y: 10.75, layer: "top" },
       { route_type: "via", x: 0.9998459999999993, y: 10.75, from_layer: "top", to_layer: "inner2" },
       { route_type: "wire", x: 0.9998459999999993, y: 10.75, layer: "inner2" },
+      { route_type: "wire", x: 0.9998459999999993, y: 10, layer: "inner2" },
       { route_type: "wire", x: 4.750063999999999, y: 8.399999999999999, layer: "inner2" },
       { route_type: "via", x: 4.750063999999999, y: 8.399999999999999, from_layer: "inner2", to_layer: "top" },
       { route_type: "wire", x: 4.750063999999999, y: 8.399999999999999, layer: "top" },
@@ -121,6 +122,31 @@ export const manualPaths: Record<string, {
     jsx: "[{ x: 1.999996, y: 4.4 }, { x: 3.399998, y: 4.4 }]", width: 0.1,
     waypoints: [{ x: -1.7999960000000006, y: 10.75 }, { x: -3.1999980000000003, y: 10.75 }],
   },
+  // Escape between the SD2/SD3 vias, then use bottom copper for the clock.
+  // SD3's inner2 shoulder above keeps clear of the clock's full-stack drill.
+  QSPI_SCLK: {
+    jsx: '[{ x: -1.199896, y: 4.2 }, { x: -1.4, y: 4.47 }, { x: -1.4, y: 4.47, via: true, fromLayer: "top", toLayer: "bottom" }, { x: -1.4, y: 4.47 }, { x: -5.049936, y: 8.45 }, { x: -5.049936, y: 8.45, via: true, fromLayer: "bottom", toLayer: "top" }, { x: -5.049936, y: 8.45 }]',
+    width: 0.1,
+    innerRoute: [
+      { route_type: "wire", x: 1.3998959999999996, y: 10.95, layer: "top" },
+      { route_type: "wire", x: 1.5999999999999994, y: 10.68, layer: "top" },
+      { route_type: "via", x: 1.5999999999999994, y: 10.68, from_layer: "top", to_layer: "bottom" },
+      { route_type: "wire", x: 1.5999999999999994, y: 10.68, layer: "bottom" },
+      { route_type: "wire", x: 5.249935999999999, y: 6.700000000000001, layer: "bottom" },
+      { route_type: "via", x: 5.249935999999999, y: 6.700000000000001, from_layer: "bottom", to_layer: "top" },
+      { route_type: "wire", x: 5.249935999999999, y: 6.700000000000001, layer: "top" },
+    ],
+  },
+  PSRAM_SCLK: {
+    jsx: "[{ x: 0.249936, y: 0.9 }, { x: -6.650064, y: 0.9 }]", width: 0.1,
+    waypoints: [{ x: 12.149936, y: 6.5 }, { x: 5.249936, y: 6.5 }],
+  },
+  // Preserve the authored 0.40 mm output-capacitor path explicitly, avoiding
+  // automatic power-trace expansion at the composite VOUT pad.
+  BAT_OUTPUT_CAP_LOCAL: {
+    jsx: "[{ x: 0.5, y: 1.2 }]", width: 0.4,
+    waypoints: [{ x: -30, y: -30.5 }],
+  },
 }
 
 // Replace net-only branches with explicit same-net endpoints. The original
@@ -132,6 +158,7 @@ const localConnections: Array<{ name: string; field: "from" | "to"; original: st
   { name: "BATTERY_TO_SWITCH", field: "from", original: "net.BAT_PROTECTED", selector: ".Q_BAT_REVERSE > .source" },
   { name: "PSRAM_SIO2", field: "to", original: ".U1 > .QSPI_SD2", selector: ".U2 > .pin3" },
   { name: "PSRAM_SIO3", field: "to", original: ".U1 > .QSPI_SD3", selector: ".U2 > .pin7" },
+  { name: "PSRAM_SCLK", field: "to", original: ".U1 > .QSPI_SCLK", selector: ".U2 > .pin6" },
 ]
 export const manualTraceNames = Object.keys(manualPaths)
 
