@@ -15,6 +15,14 @@ export const manualPaths: Record<string, {
   XOUT: { jsx: '[".U_XTAL > .pin3"]', width: 0.1 },
   T_C_XIN: { jsx: '[".U_XTAL > .pin1"]', width: 0.1 },
   T_C_XOUT: { jsx: '[".U_XTAL > .pin3"]', width: 0.1 },
+  // Join adjacent pads already on V3V3 before routing the full rail. Keep
+  // these branches' original 0.10 mm width; the main rail remains 0.60 mm.
+  QSPI_IOVDD: { jsx: '[".U1 > .USB_OTP_VDD"]', width: 0.1 },
+  ADC_AVDD: { jsx: '[".U1 > .IOVDD1"]', width: 0.1 },
+  LCD_MODE_IM0: { jsx: '[".J_LCD > .pin8"]', width: 0.1 },
+  LCD_MODE_IM1: { jsx: '[".J_LCD > .pin9"]', width: 0.1 },
+  LCD_VDDI_40: { jsx: '[".J_LCD > .pin41"]', width: 0.1 },
+  LCD_VDDI_41: { jsx: '[".J_LCD > .pin42"]', width: 0.1 },
   // U1's footprint frame is rotated 180 degrees about (0.2, 15.15).
   // This waypoint is board (0.49, 19.35), clearing the adjacent DVDD2 pad.
   // The two-segment route is 4.969193631 mm, below the unchanged 5 mm limit.
@@ -413,6 +421,12 @@ export const manualPaths: Record<string, {
 // BAT_REVERSE_SOURCE still attaches the whole tree to net.BAT_PROTECTED.
 // The rendered electrical-group fingerprint must remain exactly unchanged.
 const localConnections: Array<{ name: string; field: "from" | "to"; original: string; selector: string }> = [
+  { name: "QSPI_IOVDD", field: "to", original: "net.V3V3", selector: ".U1 > .USB_OTP_VDD" },
+  { name: "ADC_AVDD", field: "to", original: "net.V3V3", selector: ".U1 > .IOVDD1" },
+  { name: "LCD_MODE_IM0", field: "to", original: "net.V3V3", selector: ".J_LCD > .pin8" },
+  { name: "LCD_MODE_IM1", field: "to", original: "net.V3V3", selector: ".J_LCD > .pin9" },
+  { name: "LCD_VDDI_40", field: "to", original: "net.V3V3", selector: ".J_LCD > .pin41" },
+  { name: "LCD_VDDI_41", field: "to", original: "net.V3V3", selector: ".J_LCD > .pin42" },
   { name: "BAT_BUCKBOOST_INPUT", field: "from", original: "net.BAT_PROTECTED", selector: ".Q_BAT_REVERSE > .source" },
   { name: "BAT_BUCKBOOST_INPUT", field: "to", original: ".U_BAT_BUCKBOOST > .VIN", selector: ".C_BAT_IN_LOCAL > .pin1" },
   { name: "BATTERY_TO_SWITCH", field: "from", original: "net.BAT_PROTECTED", selector: ".Q_BAT_REVERSE > .source" },
