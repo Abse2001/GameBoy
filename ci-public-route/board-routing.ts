@@ -11,6 +11,37 @@ export const manualPaths: Record<string, {
   waypoints?: Array<{ x: number; y: number }>
   innerRoute?: ManualRoutePoint[]
 }> = {
+  // J_LCD's declared frame is (34.951428, 15.4), rotated 90 degrees.
+  // Route SCL on bottom around existing memory copper, with its pull-up
+  // on inner2 from R_TOUCH_SCL's unrotated frame (29.7, 5.2).
+  TOUCH_SCL: {
+    jsx: '[{"x":-9.5,"y":2.8514279999999985},{"x":-9.5,"y":2.8514279999999985,"via":true,"fromLayer":"top","toLayer":"bottom"},{"x":-9.5,"y":2.8514279999999985},{"x":-0.9000000000000004,"y":2.8514279999999985},{"x":-0.9000000000000021,"y":30.051428},{"x":-1.9500000000000028,"y":30.051428},{"x":-1.9500000000000028,"y":30.051428,"via":true,"fromLayer":"bottom","toLayer":"top"},{"x":-1.9500000000000028,"y":30.051428}]',
+    width: 0.1,
+    innerRoute: [
+      {"route_type":"wire","x":32.1,"y":5.9,"layer":"top"},
+      {"route_type":"via","x":32.1,"y":5.9,"from_layer":"top","to_layer":"bottom"},
+      {"route_type":"wire","x":32.1,"y":5.9,"layer":"bottom"},
+      {"route_type":"wire","x":32.1,"y":14.5,"layer":"bottom"},
+      {"route_type":"wire","x":4.899999999999999,"y":14.5,"layer":"bottom"},
+      {"route_type":"wire","x":4.899999999999999,"y":13.45,"layer":"bottom"},
+      {"route_type":"via","x":4.899999999999999,"y":13.45,"from_layer":"bottom","to_layer":"top"},
+      {"route_type":"wire","x":4.899999999999999,"y":13.45,"layer":"top"},
+    ],
+  },
+  TOUCH_SCL_PULLUP: {
+    jsx: '[{"x":-1.6999999999999993,"y":0},{"x":-1.6999999999999993,"y":0,"via":true,"fromLayer":"top","toLayer":"inner2"},{"x":-1.6999999999999993,"y":0},{"x":-1.6999999999999993,"y":1.2999999999999998},{"x":2.1000000000000014,"y":1.2999999999999998},{"x":2.1000000000000014,"y":1.2999999999999998,"via":true,"fromLayer":"inner2","toLayer":"top"},{"x":2.1000000000000014,"y":1.2999999999999998},{"x":2.400000000000002,"y":0.9500058000000005}]',
+    width: 0.1,
+    innerRoute: [
+      {"route_type":"wire","x":28,"y":5.2,"layer":"top"},
+      {"route_type":"via","x":28,"y":5.2,"from_layer":"top","to_layer":"inner2"},
+      {"route_type":"wire","x":28,"y":5.2,"layer":"inner2"},
+      {"route_type":"wire","x":28,"y":6.5,"layer":"inner2"},
+      {"route_type":"wire","x":31.8,"y":6.5,"layer":"inner2"},
+      {"route_type":"via","x":31.8,"y":6.5,"from_layer":"inner2","to_layer":"top"},
+      {"route_type":"wire","x":31.8,"y":6.5,"layer":"top"},
+      {"route_type":"wire","x":32.1,"y":6.150005800000001,"layer":"top"},
+    ],
+  },
   // Join the shared LCD/touch reset net explicitly. The connector frame is
   // (34.951428, 15.4), rotated 90 degrees. Preserve exact native coordinates;
   // the MCU trunk uses bottom copper, and the connector branch uses inner1.
