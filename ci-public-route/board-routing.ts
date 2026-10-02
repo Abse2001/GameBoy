@@ -11,6 +11,22 @@ export const manualPaths: Record<string, {
   waypoints?: Array<{ x: number; y: number }>
   innerRoute?: ManualRoutePoint[]
 }> = {
+  // Bridge the two existing 3.3 V islands at the full 0.60 mm rail width.
+  // C_IOVDD4's frame is (5.6, 20.25), rotated 90 degrees. Both drills stay
+  // outside pads and include inner1 on the way to inner2; no fifth layer.
+  IOVDD4_IOVDD5_BRIDGE: {
+    jsx: '[{"x":-1.0500000000000007,"y":0},{"x":-1.0500000000000007,"y":0,"via":true,"fromLayer":"top","toLayer":"inner2"},{"x":-1.0500000000000007,"y":0},{"x":-1.0500000000000007,"y":-0.20000000000000018},{"x":-2.9499999999999993,"y":-0.20000000000000018},{"x":-2.9499999999999993,"y":-0.20000000000000018,"via":true,"fromLayer":"inner2","toLayer":"top"},{"x":-2.9499999999999993,"y":-0.20000000000000018}]',
+    width: 0.6,
+    innerRoute: [
+      { route_type: "wire", x: 5.6, y: 19.2, layer: "top" },
+      { route_type: "via", x: 5.6, y: 19.2, from_layer: "top", to_layer: "inner2" },
+      { route_type: "wire", x: 5.6, y: 19.2, layer: "inner2" },
+      { route_type: "wire", x: 5.8, y: 19.2, layer: "inner2" },
+      { route_type: "wire", x: 5.8, y: 17.3, layer: "inner2" },
+      { route_type: "via", x: 5.8, y: 17.3, from_layer: "inner2", to_layer: "top" },
+      { route_type: "wire", x: 5.8, y: 17.3, layer: "top" },
+    ],
+  },
   // Join adjacent decoupling grounds around C_IOVDD4's supply pad. Its frame
   // is (5.6, 20.25), rotated 90 degrees; retain the original 5.5 mm limit.
   C_IOVDD4_GND: {
@@ -670,7 +686,8 @@ export function applyRoutingPlan(source: string): string {
   // both original rail attachments and every existing branch constraint.
   const closingBoard = "  </board>"
   if (result.split(closingBoard).length !== 2) throw new Error("Expected one board closing tag")
-  const supplyBridge = '    <trace name="IOVDD6_IOVDD5_BRIDGE" from=".C_IOVDD6 > .pin1" to=".C_IOVDD5 > .pin1" thickness={0.6} />\n'
+  const supplyBridge = '    <trace name="IOVDD6_IOVDD5_BRIDGE" from=".C_IOVDD6 > .pin1" to=".C_IOVDD5 > .pin1" thickness={0.6} />\n' +
+    '    <trace name="IOVDD4_IOVDD5_BRIDGE" from=".C_IOVDD4 > .pin1" to=".C_IOVDD5 > .pin1" thickness={0.6} />\n'
   result = result.replace(closingBoard, `${supplyBridge}${closingBoard}`)
   replacements.push([`${supplyBridge}${closingBoard}`, closingBoard])
   for (const [phaseIndex, phase] of routingPhases.entries()) {
