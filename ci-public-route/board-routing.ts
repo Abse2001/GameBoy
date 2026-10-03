@@ -1473,16 +1473,15 @@ const routingPhases = [
   // their fixed copper does not consume corridors before the wide rails.
 ]
 
-// Keep wide multi-terminal rails out of the remaining signal pass.
+// Batch wide multi-terminal rails before the remaining signal pass so their
+// topology/routing setup is not repeated in three separate automatic phases.
 // Explicit local-decoupling trace phases still take precedence over net phases.
 const netRoutingPhases = [
-  { name: "ground-net", nets: ["GND"], traces: [] },
-  { name: "v3v3-net", nets: ["V3V3"], traces: [] },
+  { name: "power-rails", nets: ["GND", "V3V3", "VBUS"], traces: [] },
   // Exact native copper joins every original VSYS terminal. Published pure
   // preprocessing removes all seven VSYS pairs, so no redundant pass remains.
-  // Separate the unchanged 0.80 mm six-terminal VBUS rail from signals
-  // after the other rails. No search budget, geometry or checker changes.
-  { name: "vbus-net", nets: ["VBUS"], traces: [] },
+  // The same rail pairs and authored widths remain in the batched phase;
+  // no geometry, search budget, physical gate or solver configuration changes.
   // Keep the six exact manual USB paths in their declared phase. Published
   // preprocessing confirms none need an automatic USB pass; widths,
   // clearance gates, four-layer policy and solver limits stay unchanged.
@@ -1505,7 +1504,7 @@ const netRoutingPhases = [
 ]
 
 // Clock, switching-power, power-branches, battery and USB paths are manual.
-export const expectedAutomaticPhaseNames = ["local-decoupling", "ground-net", "v3v3-net", "vbus-net", "lcd-touch-signals", "sd-psram-controls", "remaining-connections"]
+export const expectedAutomaticPhaseNames = ["local-decoupling", "power-rails", "lcd-touch-signals", "sd-psram-controls", "remaining-connections"]
 
 export function applyRoutingPlan(source: string): string {
   let result = source
