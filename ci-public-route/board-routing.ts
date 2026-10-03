@@ -18,6 +18,89 @@ export const manualPaths: Record<string, {
   waypoints?: Array<{ x: number; y: number }>
   innerRoute?: ManualRoutePoint[]
 }> = {
+  // Explicit remote VBUS branches retain the .80mm rail. Three local ground
+  // branches use .10mm copper, like the existing capacitor-ground links,
+  // with off-pad .45/.15 drills. Existing rail widths/terminals stay exact.
+  // All crossings stay within the original FOUR copper layers. Preserve
+  // each original 5.5mm length limit in the user-deferred length ledger.
+  VBUS_CAP_DIODE: {
+    jsx: "[{\"x\":-0.7000000000000001,\"y\":0.9999999999999999},{\"x\":-0.7000000000000001,\"y\":0.9999999999999999,\"via\":true,\"fromLayer\":\"top\",\"toLayer\":\"inner1\"},{\"x\":-0.7000000000000001,\"y\":0.9999999999999999},{\"x\":13.800106,\"y\":1.0000000000000018},{\"x\":13.800106,\"y\":-0.7999999999999955},{\"x\":13.800106,\"y\":-0.7999999999999955,\"via\":true,\"fromLayer\":\"inner1\",\"toLayer\":\"top\"},{\"x\":13.800106,\"y\":-0.7999999999999955}]",
+    width: 0.8,
+    deferredLengthReferenceMm: 5.5,
+    innerRoute: [
+      {"route_type":"wire","x":0.7,"y":28.6,"layer":"top"},
+      {"route_type":"via","x":0.7,"y":28.6,"from_layer":"top","to_layer":"inner1"},
+      {"route_type":"wire","x":0.7,"y":28.6,"layer":"inner1"},
+      {"route_type":"wire","x":-13.800106,"y":28.6,"layer":"inner1"},
+      {"route_type":"wire","x":-13.800106,"y":30.4,"layer":"inner1"},
+      {"route_type":"via","x":-13.800106,"y":30.4,"from_layer":"inner1","to_layer":"top"},
+      {"route_type":"wire","x":-13.800106,"y":30.4,"layer":"top"},
+    ],
+  },
+  VBUS_DIODE_VALID: {
+    jsx: "[{\"x\":4,\"y\":0},{\"x\":4,\"y\":0,\"via\":true,\"fromLayer\":\"top\",\"toLayer\":\"bottom\"},{\"x\":4,\"y\":0},{\"x\":4,\"y\":3.5},{\"x\":-9.8,\"y\":3.5},{\"x\":-9.8,\"y\":-13.399999999999999},{\"x\":-9.8,\"y\":-13.399999999999999,\"via\":true,\"fromLayer\":\"bottom\",\"toLayer\":\"inner2\"},{\"x\":-9.8,\"y\":-13.399999999999999},{\"x\":-9.8,\"y\":-20.3},{\"x\":-9.8,\"y\":-20.3,\"via\":true,\"fromLayer\":\"inner2\",\"toLayer\":\"bottom\"},{\"x\":-9.8,\"y\":-20.3},{\"x\":-9.8,\"y\":-58.4},{\"x\":-6.699999999999999,\"y\":-58.4},{\"x\":-6.699999999999999,\"y\":-58.4,\"via\":true,\"fromLayer\":\"bottom\",\"toLayer\":\"top\"},{\"x\":-6.699999999999999,\"y\":-58.4}]",
+    width: 0.8,
+    deferredLengthReferenceMm: 5.5,
+    innerRoute: [
+      {"route_type":"wire","x":-12,"y":32,"layer":"top"},
+      {"route_type":"via","x":-12,"y":32,"from_layer":"top","to_layer":"bottom"},
+      {"route_type":"wire","x":-12,"y":32,"layer":"bottom"},
+      {"route_type":"wire","x":-12,"y":35.5,"layer":"bottom"},
+      {"route_type":"wire","x":-25.8,"y":35.5,"layer":"bottom"},
+      {"route_type":"wire","x":-25.8,"y":18.6,"layer":"bottom"},
+      {"route_type":"via","x":-25.8,"y":18.6,"from_layer":"bottom","to_layer":"inner2"},
+      {"route_type":"wire","x":-25.8,"y":18.6,"layer":"inner2"},
+      {"route_type":"wire","x":-25.8,"y":11.7,"layer":"inner2"},
+      {"route_type":"via","x":-25.8,"y":11.7,"from_layer":"inner2","to_layer":"bottom"},
+      {"route_type":"wire","x":-25.8,"y":11.7,"layer":"bottom"},
+      {"route_type":"wire","x":-25.8,"y":-26.4,"layer":"bottom"},
+      {"route_type":"wire","x":-22.7,"y":-26.4,"layer":"bottom"},
+      {"route_type":"via","x":-22.7,"y":-26.4,"from_layer":"bottom","to_layer":"top"},
+      {"route_type":"wire","x":-22.7,"y":-26.4,"layer":"top"},
+    ],
+  },
+  ADC_VREG_OFFPAD_GND: {
+    jsx: "[{\"x\":0.4201160000000002,\"y\":-0.5999999999999996},{\"x\":1.0499999999999998,\"y\":-0.5999999999999995},{\"x\":1.0499999999999998,\"y\":-0.5999999999999995,\"via\":true,\"fromLayer\":\"top\",\"toLayer\":\"inner2\"},{\"x\":1.0499999999999998,\"y\":-0.5999999999999995},{\"x\":-0.9500000000000003,\"y\":1.0999999999999994},{\"x\":-0.9500000000000003,\"y\":1.0999999999999994,\"via\":true,\"fromLayer\":\"inner2\",\"toLayer\":\"top\"},{\"x\":-0.9500000000000003,\"y\":1.0999999999999994}]",
+    width: 0.1,
+    deferredLengthReferenceMm: 5.5,
+    innerRoute: [
+      {"route_type":"wire","x":-6.0701160000000005,"y":13.1,"layer":"top"},
+      {"route_type":"wire","x":-6.7,"y":13.1,"layer":"top"},
+      {"route_type":"via","x":-6.7,"y":13.1,"from_layer":"top","to_layer":"inner2"},
+      {"route_type":"wire","x":-6.7,"y":13.1,"layer":"inner2"},
+      {"route_type":"wire","x":-4.7,"y":11.4,"layer":"inner2"},
+      {"route_type":"via","x":-4.7,"y":11.4,"from_layer":"inner2","to_layer":"top"},
+      {"route_type":"wire","x":-4.7,"y":11.4,"layer":"top"},
+    ],
+  },
+  IOVDD1_DVDD1_GND: {
+    jsx: "[{\"x\":1.5,\"y\":1.8369701987210297e-16},{\"x\":1.5,\"y\":1.8369701987210297e-16,\"via\":true,\"fromLayer\":\"top\",\"toLayer\":\"inner2\"},{\"x\":1.5,\"y\":1.8369701987210297e-16},{\"x\":1.5000000000000002,\"y\":-1.9000000000000001},{\"x\":0.2500000000000002,\"y\":-1.9000000000000004},{\"x\":0.2500000000000002,\"y\":-1.9000000000000004,\"via\":true,\"fromLayer\":\"inner2\",\"toLayer\":\"top\"},{\"x\":0.2500000000000002,\"y\":-1.9000000000000004}]",
+    width: 0.1,
+    deferredLengthReferenceMm: 5.5,
+    innerRoute: [
+      {"route_type":"wire","x":-9.6,"y":12.4,"layer":"top"},
+      {"route_type":"via","x":-9.6,"y":12.4,"from_layer":"top","to_layer":"inner2"},
+      {"route_type":"wire","x":-9.6,"y":12.4,"layer":"inner2"},
+      {"route_type":"wire","x":-9.6,"y":14.3,"layer":"inner2"},
+      {"route_type":"wire","x":-8.35,"y":14.3,"layer":"inner2"},
+      {"route_type":"via","x":-8.35,"y":14.3,"from_layer":"inner2","to_layer":"top"},
+      {"route_type":"wire","x":-8.35,"y":14.3,"layer":"top"},
+    ],
+  },
+  PSRAM_BULK_LCD_VCI_GND: {
+    jsx: "[{\"x\":1.25,\"y\":7.654042494670958e-17},{\"x\":1.25,\"y\":7.654042494670958e-17,\"via\":true,\"fromLayer\":\"top\",\"toLayer\":\"inner2\"},{\"x\":1.25,\"y\":7.654042494670958e-17},{\"x\":1.2500000000000009,\"y\":-14.850000000000001},{\"x\":-1.7499999999999991,\"y\":-14.850000000000001},{\"x\":-1.7499999999999991,\"y\":-14.850000000000001,\"via\":true,\"fromLayer\":\"inner2\",\"toLayer\":\"top\"},{\"x\":-1.7499999999999991,\"y\":-14.850000000000001}]",
+    width: 0.1,
+    deferredLengthReferenceMm: 5.5,
+    innerRoute: [
+      {"route_type":"wire","x":12.75,"y":10,"layer":"top"},
+      {"route_type":"via","x":12.75,"y":10,"from_layer":"top","to_layer":"inner2"},
+      {"route_type":"wire","x":12.75,"y":10,"layer":"inner2"},
+      {"route_type":"wire","x":27.6,"y":10,"layer":"inner2"},
+      {"route_type":"wire","x":27.6,"y":7,"layer":"inner2"},
+      {"route_type":"via","x":27.6,"y":7,"from_layer":"inner2","to_layer":"top"},
+      {"route_type":"wire","x":27.6,"y":7,"layer":"top"},
+    ],
+  },
   // Explicitly join the existing eleven-terminal VSYS tree instead of the
   // stalled automatic wide-rail search. Original .8mm rail and .4mm local
   // amplifier branches remain; all drills stay within four existing layers.
@@ -1185,7 +1268,12 @@ export function applyRoutingPlan(source: string): string {
     '    <trace name="AMP_BULK_PVDD_MANUAL" from=".C_AMP_VDD_BULK > .pin1" to=".U_SPK_AMP > .PVDD2" thickness={0.4} maxLength={5.5} />\n' +
     '    <trace name="VSYS_AMP_INPUT_MANUAL" from=".C_AMP_VDD_BULK > .pin1" to=".C_3V3_IN > .pin1" thickness={0.8} maxLength={23.42482875908946} />\n' +
     '    <trace name="VSYS_BAT_INPUT_MANUAL" from=".D_BAT_POWER > .cathode" to=".D_USB_POWER > .cathode" thickness={0.8} maxLength={75.79285268711928} />\n' +
-    '    <trace name="VSYS_LCD_INPUT_MANUAL" from=".D_USB_POWER > .cathode" to=".R_LCD_LED > .pin1" thickness={0.8} maxLength={63.821318000000005} />\n'
+    '    <trace name="VSYS_LCD_INPUT_MANUAL" from=".D_USB_POWER > .cathode" to=".R_LCD_LED > .pin1" thickness={0.8} maxLength={63.821318000000005} />\n' +
+    '    <trace name="VBUS_CAP_DIODE" from=".C_VBUS > .pin1" to=".D_USB_POWER > .anode" thickness={0.8} maxLength={22.100105999999997} />\n' +
+    '    <trace name="VBUS_DIODE_VALID" from=".D_USB_POWER > .anode" to=".U_USB_VALID > .VDD" thickness={0.8} maxLength={91.70010799999999} />\n' +
+    '    <trace name="ADC_VREG_OFFPAD_GND" from=".C_ADC > .pin2" to=".C_VREG_AVDD > .pin2" thickness={0.1} maxLength={8.140447893019768} />\n' +
+    '    <trace name="IOVDD1_DVDD1_GND" from=".C_IOVDD1 > .pin2" to=".C_DVDD1 > .pin2" thickness={0.1} maxLength={8.279768} />\n' +
+    '    <trace name="PSRAM_BULK_LCD_VCI_GND" from=".C_PSRAM_BULK > .pin2" to=".C_LCD_VCI > .pin2" thickness={0.1} maxLength={23.254900000000003} />\n'
   result = result.replace(closingBoard, `${supplyBridge}${closingBoard}`)
   replacements.push([`${supplyBridge}${closingBoard}`, closingBoard])
   for (const [phaseIndex, phase] of routingPhases.entries()) {
