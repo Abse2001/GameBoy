@@ -14,6 +14,7 @@ const lcdGroundRowBranches = Array.from({ length: 21 }, (_, index): { name: stri
 export const manualPaths: Record<string, {
   jsx: string
   width: number
+  deferredLengthReferenceMm?: number
   waypoints?: Array<{ x: number; y: number }>
   innerRoute?: ManualRoutePoint[]
 }> = {
@@ -85,11 +86,15 @@ export const manualPaths: Record<string, {
   // The last phase rejected the earlier LCD50-to-SD-cap ground route.
   // Add the same connection on inner2 at the capacitor's 0.10 mm branch
   // width; leave the original ground attachments and 0.80 mm rail intact.
+  // Core inherits a capacitor's length limit even without maxLength. This
+  // added board-spanning return has an explicit measured-length allowance;
+  // preserve original limits and report its local-limit excess separately.
   // C_SD_BULK's frame is (28.3,-22), rotated 90 degrees. Both .45/.15
   // drills span top/inner1/inner2, staying within the four-layer stack.
   SD_LCD_GND_BRIDGE: {
     jsx: '[{"x":1.3000000000000007,"y":0},{"x":1.3000000000000007,"y":0,"via":true,"fromLayer":"top","toLayer":"inner2"},{"x":1.3000000000000007,"y":0},{"x":1.3000000000000007,"y":-3.900000000000002},{"x":25.150011799999998,"y":-3.900000000000002},{"x":25.150011799999998,"y":-3.900000000000002,"via":true,"fromLayer":"inner2","toLayer":"top"},{"x":25.150011799999998,"y":-3.900000000000002}]',
     width: 0.1,
+    deferredLengthReferenceMm: 5.5,
     innerRoute: [
       { route_type: "wire", x: 28.3, y: -20.7, layer: "top" },
       { route_type: "via", x: 28.3, y: -20.7, from_layer: "top", to_layer: "inner2" },
@@ -788,7 +793,7 @@ export function applyRoutingPlan(source: string): string {
     '    <trace name="PSRAM_CAP_GND_BRIDGE" from=".C_PSRAM_BULK > .pin2" to=".C_PSRAM > .pin2" thickness={0.1} maxLength={5.5} />\n' +
     '    <trace name="VREG_AVDD_CORE_GND_BRIDGE" from=".C_VREG_AVDD > .pin2" to=".C_CORE > .pin2" thickness={0.1} maxLength={5.5} />\n' +
     '    <trace name="PSRAM_VSS_GND_BRIDGE" from=".C_PSRAM > .pin2" to=".U_PSRAM > .VSS" thickness={0.1} maxLength={5.5} />\n' +
-    '    <trace name="SD_LCD_GND_BRIDGE" from=".C_SD_BULK > .pin2" to=".J_LCD > .pin50" thickness={0.1} maxLength={5.5} />\n'
+    '    <trace name="SD_LCD_GND_BRIDGE" from=".C_SD_BULK > .pin2" to=".J_LCD > .pin50" thickness={0.1} maxLength={33.029939549999995} />\n'
   result = result.replace(closingBoard, `${supplyBridge}${closingBoard}`)
   replacements.push([`${supplyBridge}${closingBoard}`, closingBoard])
   for (const [phaseIndex, phase] of routingPhases.entries()) {

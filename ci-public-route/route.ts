@@ -24,6 +24,12 @@ type RoutingEvent = {
   simpleRouteJson?: { connections: unknown[]; obstacles: unknown[]; traces?: unknown[] }
   [key: string]: unknown
 }
+type DeferredManualLength = {
+  name: string
+  measuredLengthMm: number
+  deferredReferenceMm: number
+  exceedsDeferredReference: boolean
+}
 
 function sha256(content: string | Uint8Array): string {
   return createHash("sha256").update(content).digest("hex")
@@ -179,6 +185,28 @@ try {
   const deferredLengthErrors = errors.filter((element) => element.type === "pcb_trace_too_long_error")
   const blockingErrors = errors.filter((element) => element.type !== "pcb_trace_too_long_error")
   saveJson("deferred-length-errors.json", deferredLengthErrors)
+  // Board-spanning manual returns are not local decoupling branches. Keep
+  // their excess over the deferred local reference visible, even when an
+  // explicit manual-path allowance lets Core start the remaining phases.
+  const deferredManualLengths = Object.entries(manualPaths).flatMap(([name, path]): DeferredManualLength[] => {
+    if (path.deferredLengthReferenceMm === undefined) return []
+    const owner = circuit.find((element) => element.type === "source_trace" && element.name === name)
+    if (!owner || owner.type !== "source_trace") throw new Error(`Missing deferred manual trace ${name}`)
+    const endpoints = owner.connected_source_port_ids.map((id) => {
+      const port = circuit.find((element) => element.type === "pcb_port" && element.source_port_id === id)
+      if (!port || port.type !== "pcb_port") throw new Error(`Missing deferred manual endpoint for ${name}`)
+      return port
+    })
+    const candidates = circuit.filter((element) => element.type === "pcb_trace" && element.source_trace_id === owner.source_trace_id
+      && endpoints.every((port) => element.route.some((point) => point.x === port.x && point.y === port.y)))
+    if (candidates.length !== 1 || candidates[0].type !== "pcb_trace" || !Number.isFinite(candidates[0].trace_length)) {
+      throw new Error(`Missing exact measured manual trace ${name}`)
+    }
+    const measuredLengthMm = candidates[0].trace_length!
+    return [{ name, measuredLengthMm, deferredReferenceMm: path.deferredLengthReferenceMm,
+      exceedsDeferredReference: measuredLengthMm > path.deferredLengthReferenceMm }]
+  })
+  saveJson("deferred-manual-route-lengths.json", deferredManualLengths)
   const warnings = circuit.filter((element) => element.type.includes("warning"))
   saveJson("core-warnings.json", warnings)
   const board = circuit.find((element) => element.type === "pcb_board")
@@ -203,6 +231,7 @@ try {
     coreErrorCount: errors.length, errorsByType,
     blockingCoreErrorCount: blockingErrors.length,
     deferredLengthErrorCount: deferredLengthErrors.length,
+    deferredManualLengthCount: deferredManualLengths.filter((item) => item.exceedsDeferredReference).length,
     coreWarningCount: warnings.length, belowMinimumWidthPointCount: undersizedWirePoints.length,
     routeStarts, routeEnds, routeErrors,
     circuitSha256: sha256(JSON.stringify(circuit)),
