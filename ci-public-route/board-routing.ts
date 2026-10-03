@@ -105,6 +105,22 @@ export const manualPaths: Record<string, {
       { route_type: "wire", x: 32.2, y: 3.150011799999998, layer: "top" },
     ],
   },
+  // The actual failed fixed route joins C_XIN and C_IOVDD4 grounds. The
+  // direct top path crosses prior 3.3 V copper; use inner1 with off-pad
+  // .45/.15 drills. Original GND attachments and .80 mm rail remain.
+  // C_XIN's frame is (2.7,20.3), rotation 0; no fifth copper layer.
+  XIN_IOVDD4_GND_BRIDGE: {
+    jsx: '[{"x":0.6999999999999997,"y":1},{"x":0.6999999999999997,"y":1,"via":true,"fromLayer":"top","toLayer":"inner1"},{"x":0.6999999999999997,"y":1},{"x":2.8999999999999995,"y":1},{"x":2.8999999999999995,"y":1,"via":true,"fromLayer":"inner1","toLayer":"top"},{"x":2.8999999999999995,"y":1}]',
+    width: 0.1,
+    innerRoute: [
+      { route_type: "wire", x: 3.4, y: 21.3, layer: "top" },
+      { route_type: "via", x: 3.4, y: 21.3, from_layer: "top", to_layer: "inner1" },
+      { route_type: "wire", x: 3.4, y: 21.3, layer: "inner1" },
+      { route_type: "wire", x: 5.6, y: 21.3, layer: "inner1" },
+      { route_type: "via", x: 5.6, y: 21.3, from_layer: "inner1", to_layer: "top" },
+      { route_type: "wire", x: 5.6, y: 21.3, layer: "top" },
+    ],
+  },
   // Bridge the two existing 3.3 V islands at the full 0.60 mm rail width.
   // C_IOVDD4's frame is (5.6, 20.25), rotated 90 degrees. Both drills stay
   // outside pads and include inner1 on the way to inner2; no fifth layer.
@@ -793,7 +809,8 @@ export function applyRoutingPlan(source: string): string {
     '    <trace name="PSRAM_CAP_GND_BRIDGE" from=".C_PSRAM_BULK > .pin2" to=".C_PSRAM > .pin2" thickness={0.1} maxLength={5.5} />\n' +
     '    <trace name="VREG_AVDD_CORE_GND_BRIDGE" from=".C_VREG_AVDD > .pin2" to=".C_CORE > .pin2" thickness={0.1} maxLength={5.5} />\n' +
     '    <trace name="PSRAM_VSS_GND_BRIDGE" from=".C_PSRAM > .pin2" to=".U_PSRAM > .VSS" thickness={0.1} maxLength={5.5} />\n' +
-    '    <trace name="SD_LCD_GND_BRIDGE" from=".C_SD_BULK > .pin2" to=".J_LCD > .pin50" thickness={0.1} maxLength={33.029939549999995} />\n'
+    '    <trace name="SD_LCD_GND_BRIDGE" from=".C_SD_BULK > .pin2" to=".J_LCD > .pin50" thickness={0.1} maxLength={33.029939549999995} />\n' +
+    '    <trace name="XIN_IOVDD4_GND_BRIDGE" from=".C_XIN > .pin2" to=".C_IOVDD4 > .pin2" thickness={0.1} maxLength={5.5} />\n'
   result = result.replace(closingBoard, `${supplyBridge}${closingBoard}`)
   replacements.push([`${supplyBridge}${closingBoard}`, closingBoard])
   for (const [phaseIndex, phase] of routingPhases.entries()) {
