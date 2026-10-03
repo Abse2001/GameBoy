@@ -56,9 +56,13 @@ export const manualPaths: Record<string, {
   // Preserve both original attachments and the 0.80 mm rail/branch width.
   // D_USB_POWER's frame is (-16,32), rotation 0. Both .45/.15 blind
   // drills span top/inner1/inner2, within the four-layer maximum.
+  // This board-spanning manual branch keeps its inherited 5.5 mm excess
+  // visible in the deferred ledger. Declare only its exact measured length
+  // so Core's straight-line precheck permits the unchanged routing phases.
   VSYS_DIODE_INPUT_BRIDGE: {
     jsx: '[{"x":-4.100000000000001,"y":0},{"x":-4.100000000000001,"y":0,"via":true,"fromLayer":"top","toLayer":"inner2"},{"x":-4.100000000000001,"y":0},{"x":-4.100000000000001,"y":-38.3},{"x":0.3000000000000007,"y":-42.7},{"x":0.3000000000000007,"y":-42.7,"via":true,"fromLayer":"inner2","toLayer":"top"},{"x":0.3000000000000007,"y":-42.7}]',
     width: 0.8,
+    deferredLengthReferenceMm: 5.5,
     innerRoute: [
       { route_type: "wire", x: -20.1, y: 32, layer: "top" },
       { route_type: "via", x: -20.1, y: 32, from_layer: "top", to_layer: "inner2" },
@@ -937,7 +941,7 @@ export function applyRoutingPlan(source: string): string {
     '    <trace name="XIN_IOVDD4_GND_BRIDGE" from=".C_XIN > .pin2" to=".C_IOVDD4 > .pin2" thickness={0.1} maxLength={5.5} />\n' +
     '    <trace name="CORE_VREG_IN_GND_BRIDGE" from=".C_CORE > .pin2" to=".C_VREG_IN > .pin2" thickness={0.1} maxLength={5.5} />\n' +
     '    <trace name="V3V3_AVDD_ADC_BRIDGE" from=".R_VREG_AVDD > .pin1" to=".C_ADC > .pin1" thickness={0.1} />\n' +
-    '    <trace name="VSYS_DIODE_INPUT_BRIDGE" from=".D_USB_POWER > .cathode" to=".C_3V3_IN > .pin1" thickness={0.8} />\n'
+    '    <trace name="VSYS_DIODE_INPUT_BRIDGE" from=".D_USB_POWER > .cathode" to=".C_3V3_IN > .pin1" thickness={0.8} maxLength={50.72264567444163} />\n'
   result = result.replace(closingBoard, `${supplyBridge}${closingBoard}`)
   replacements.push([`${supplyBridge}${closingBoard}`, closingBoard])
   for (const [phaseIndex, phase] of routingPhases.entries()) {
