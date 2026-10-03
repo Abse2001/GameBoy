@@ -18,6 +18,107 @@ export const manualPaths: Record<string, {
   waypoints?: Array<{ x: number; y: number }>
   innerRoute?: ManualRoutePoint[]
 }> = {
+  // Exact native USB escapes remove the six failed automatic USB pairs.
+  // Both connector D+/D- contacts remain in their original electrical group;
+  // local B-to-A bridges join the same net before each long resistor trunk.
+  // Widths, four-layer spans and .45/.15 drills are unchanged.
+  CC1: {
+    jsx: "[{\"x\":-1.249934,\"y\":0.7099990000000033},{\"x\":-1.249934,\"y\":0.7099990000000033,\"via\":true,\"fromLayer\":\"top\",\"toLayer\":\"inner1\"},{\"x\":-1.249934,\"y\":0.7099990000000033},{\"x\":-6.7,\"y\":0.7099990000000026},{\"x\":-6.700000000000001,\"y\":5.7099990000000025},{\"x\":-6.700000000000001,\"y\":5.7099990000000025,\"via\":true,\"fromLayer\":\"inner1\",\"toLayer\":\"top\"},{\"x\":-6.700000000000001,\"y\":5.7099990000000025}]",
+    width: 0.1,
+    innerRoute: [
+      {"route_type":"wire","x":1.249934,"y":35.4,"layer":"top"},
+      {"route_type":"via","x":1.249934,"y":35.4,"from_layer":"top","to_layer":"inner1"},
+      {"route_type":"wire","x":1.249934,"y":35.4,"layer":"inner1"},
+      {"route_type":"wire","x":6.7,"y":35.4,"layer":"inner1"},
+      {"route_type":"wire","x":6.7,"y":30.4,"layer":"inner1"},
+      {"route_type":"via","x":6.7,"y":30.4,"from_layer":"inner1","to_layer":"top"},
+      {"route_type":"wire","x":6.7,"y":30.4,"layer":"top"},
+    ],
+  },
+  CC2: {
+    jsx: "[{\"x\":1.75006,\"y\":0.7099990000000036},{\"x\":1.75006,\"y\":0.7099990000000036,\"via\":true,\"fromLayer\":\"top\",\"toLayer\":\"inner1\"},{\"x\":1.75006,\"y\":0.7099990000000036},{\"x\":4.4,\"y\":0.7099990000000039},{\"x\":4.3999999999999995,\"y\":5.709999000000004},{\"x\":4.3999999999999995,\"y\":5.709999000000004,\"via\":true,\"fromLayer\":\"inner1\",\"toLayer\":\"top\"},{\"x\":4.3999999999999995,\"y\":5.709999000000004}]",
+    width: 0.1,
+    innerRoute: [
+      {"route_type":"wire","x":-1.75006,"y":35.4,"layer":"top"},
+      {"route_type":"via","x":-1.75006,"y":35.4,"from_layer":"top","to_layer":"inner1"},
+      {"route_type":"wire","x":-1.75006,"y":35.4,"layer":"inner1"},
+      {"route_type":"wire","x":-4.4,"y":35.4,"layer":"inner1"},
+      {"route_type":"wire","x":-4.4,"y":30.4,"layer":"inner1"},
+      {"route_type":"via","x":-4.4,"y":30.4,"from_layer":"inner1","to_layer":"top"},
+      {"route_type":"wire","x":-4.4,"y":30.4,"layer":"top"},
+    ],
+  },
+  USB_DM_A: {
+    jsx: "[{\"x\":0.24993599999999982,\"y\":1.3099990000000048},{\"x\":0.24993599999999982,\"y\":1.3099990000000048,\"via\":true,\"fromLayer\":\"top\",\"toLayer\":\"bottom\"},{\"x\":0.24993599999999982,\"y\":1.3099990000000048},{\"x\":0.24993599999999855,\"y\":11.809999000000001},{\"x\":0.24993599999999855,\"y\":11.809999000000001,\"via\":true,\"fromLayer\":\"bottom\",\"toLayer\":\"inner1\"},{\"x\":0.24993599999999855,\"y\":11.809999000000001},{\"x\":0.24993599999999697,\"y\":24.609999000000002},{\"x\":0.699999999999997,\"y\":24.609999000000002},{\"x\":0.699999999999997,\"y\":24.609999000000002,\"via\":true,\"fromLayer\":\"inner1\",\"toLayer\":\"bottom\"},{\"x\":0.699999999999997,\"y\":24.609999000000002},{\"x\":0.6999999999999966,\"y\":27.559999},{\"x\":0.22999999999999662,\"y\":27.559999},{\"x\":0.22999999999999662,\"y\":27.559999,\"via\":true,\"fromLayer\":\"bottom\",\"toLayer\":\"top\"},{\"x\":0.22999999999999662,\"y\":27.559999}]",
+    width: 0.1,
+    innerRoute: [
+      {"route_type":"wire","x":-0.249936,"y":34.8,"layer":"top"},
+      {"route_type":"via","x":-0.249936,"y":34.8,"from_layer":"top","to_layer":"bottom"},
+      {"route_type":"wire","x":-0.249936,"y":34.8,"layer":"bottom"},
+      {"route_type":"wire","x":-0.249936,"y":24.3,"layer":"bottom"},
+      {"route_type":"via","x":-0.249936,"y":24.3,"from_layer":"bottom","to_layer":"inner1"},
+      {"route_type":"wire","x":-0.249936,"y":24.3,"layer":"inner1"},
+      {"route_type":"wire","x":-0.249936,"y":11.5,"layer":"inner1"},
+      {"route_type":"wire","x":-0.7,"y":11.5,"layer":"inner1"},
+      {"route_type":"via","x":-0.7,"y":11.5,"from_layer":"inner1","to_layer":"bottom"},
+      {"route_type":"wire","x":-0.7,"y":11.5,"layer":"bottom"},
+      {"route_type":"wire","x":-0.7,"y":8.55,"layer":"bottom"},
+      {"route_type":"wire","x":-0.23,"y":8.55,"layer":"bottom"},
+      {"route_type":"via","x":-0.23,"y":8.55,"from_layer":"bottom","to_layer":"top"},
+      {"route_type":"wire","x":-0.23,"y":8.55,"layer":"top"},
+    ],
+  },
+  USB_DM_B: {
+    jsx: "[{\"x\":-0.7500620000000001,\"y\":1.3099990000000048},{\"x\":-0.7500620000000001,\"y\":1.3099990000000048,\"via\":true,\"fromLayer\":\"top\",\"toLayer\":\"inner2\"},{\"x\":-0.7500620000000001,\"y\":1.3099990000000048},{\"x\":0.24993600000000002,\"y\":-0.29000099999999657},{\"x\":0.24993600000000002,\"y\":-0.29000099999999657,\"via\":true,\"fromLayer\":\"inner2\",\"toLayer\":\"top\"},{\"x\":0.24993600000000002,\"y\":-0.29000099999999657}]",
+    width: 0.1,
+    innerRoute: [
+      {"route_type":"wire","x":0.750062,"y":34.8,"layer":"top"},
+      {"route_type":"via","x":0.750062,"y":34.8,"from_layer":"top","to_layer":"inner2"},
+      {"route_type":"wire","x":0.750062,"y":34.8,"layer":"inner2"},
+      {"route_type":"wire","x":-0.249936,"y":36.4,"layer":"inner2"},
+      {"route_type":"via","x":-0.249936,"y":36.4,"from_layer":"inner2","to_layer":"top"},
+      {"route_type":"wire","x":-0.249936,"y":36.4,"layer":"top"},
+    ],
+  },
+  USB_DP_A: {
+    jsx: "[{\"x\":-0.2499359999999999,\"y\":-0.6900009999999952},{\"x\":-0.2499359999999999,\"y\":-0.6900009999999952,\"via\":true,\"fromLayer\":\"top\",\"toLayer\":\"bottom\"},{\"x\":-0.2499359999999999,\"y\":-0.6900009999999952},{\"x\":-0.5000000000000014,\"y\":11.809999000000001},{\"x\":-0.5000000000000014,\"y\":11.809999000000001,\"via\":true,\"fromLayer\":\"bottom\",\"toLayer\":\"inner1\"},{\"x\":-0.5000000000000014,\"y\":11.809999000000001},{\"x\":-0.5000000000000021,\"y\":17.609999000000002},{\"x\":-1.2000000000000022,\"y\":17.609999000000002},{\"x\":-1.2000000000000028,\"y\":24.309999},{\"x\":-1.2000000000000028,\"y\":24.309999,\"via\":true,\"fromLayer\":\"inner1\",\"toLayer\":\"inner2\"},{\"x\":-1.2000000000000028,\"y\":24.309999},{\"x\":-0.570000000000003,\"y\":24.309999},{\"x\":-0.5700000000000032,\"y\":25.909999000000003},{\"x\":-0.6500000000000032,\"y\":26.209999000000003},{\"x\":-0.6500000000000034,\"y\":27.109999000000002},{\"x\":-0.5500000000000034,\"y\":27.309999},{\"x\":-0.5500000000000034,\"y\":27.309999,\"via\":true,\"fromLayer\":\"inner2\",\"toLayer\":\"inner1\"},{\"x\":-0.5500000000000034,\"y\":27.309999},{\"x\":-1.4200000000000033,\"y\":26.912815000000002},{\"x\":-1.4200000000000033,\"y\":26.912815000000002,\"via\":true,\"fromLayer\":\"inner1\",\"toLayer\":\"top\"},{\"x\":-1.4200000000000033,\"y\":26.912815000000002}]",
+    width: 0.1,
+    innerRoute: [
+      {"route_type":"wire","x":0.249936,"y":36.8,"layer":"top"},
+      {"route_type":"via","x":0.249936,"y":36.8,"from_layer":"top","to_layer":"bottom"},
+      {"route_type":"wire","x":0.249936,"y":36.8,"layer":"bottom"},
+      {"route_type":"wire","x":0.5,"y":24.3,"layer":"bottom"},
+      {"route_type":"via","x":0.5,"y":24.3,"from_layer":"bottom","to_layer":"inner1"},
+      {"route_type":"wire","x":0.5,"y":24.3,"layer":"inner1"},
+      {"route_type":"wire","x":0.49999999999999994,"y":18.5,"layer":"inner1"},
+      {"route_type":"wire","x":1.2,"y":18.5,"layer":"inner1"},
+      {"route_type":"wire","x":1.2,"y":11.8,"layer":"inner1"},
+      {"route_type":"via","x":1.2,"y":11.8,"from_layer":"inner1","to_layer":"inner2"},
+      {"route_type":"wire","x":1.2,"y":11.8,"layer":"inner2"},
+      {"route_type":"wire","x":0.57,"y":11.8,"layer":"inner2"},
+      {"route_type":"wire","x":0.57,"y":10.2,"layer":"inner2"},
+      {"route_type":"wire","x":0.65,"y":9.899999999999999,"layer":"inner2"},
+      {"route_type":"wire","x":0.65,"y":9,"layer":"inner2"},
+      {"route_type":"wire","x":0.55,"y":8.8,"layer":"inner2"},
+      {"route_type":"via","x":0.55,"y":8.8,"from_layer":"inner2","to_layer":"inner1"},
+      {"route_type":"wire","x":0.55,"y":8.8,"layer":"inner1"},
+      {"route_type":"wire","x":1.42,"y":9.197184,"layer":"inner1"},
+      {"route_type":"via","x":1.42,"y":9.197184,"from_layer":"inner1","to_layer":"top"},
+      {"route_type":"wire","x":1.42,"y":9.197184,"layer":"top"},
+    ],
+  },
+  USB_DP_B: {
+    jsx: "[{\"x\":0.7500619999999999,\"y\":0.6099990000000021},{\"x\":0.7500619999999999,\"y\":0.6099990000000021,\"via\":true,\"fromLayer\":\"top\",\"toLayer\":\"inner1\"},{\"x\":0.7500619999999999,\"y\":0.6099990000000021},{\"x\":-0.24993600000000007,\"y\":0.609999000000002},{\"x\":-0.24993600000000007,\"y\":0.609999000000002,\"via\":true,\"fromLayer\":\"inner1\",\"toLayer\":\"top\"},{\"x\":-0.24993600000000007,\"y\":0.609999000000002}]",
+    width: 0.1,
+    innerRoute: [
+      {"route_type":"wire","x":-0.750062,"y":35.5,"layer":"top"},
+      {"route_type":"via","x":-0.750062,"y":35.5,"from_layer":"top","to_layer":"inner1"},
+      {"route_type":"wire","x":-0.750062,"y":35.5,"layer":"inner1"},
+      {"route_type":"wire","x":0.249936,"y":35.5,"layer":"inner1"},
+      {"route_type":"via","x":0.249936,"y":35.5,"from_layer":"inner1","to_layer":"top"},
+      {"route_type":"wire","x":0.249936,"y":35.5,"layer":"top"},
+    ],
+  },
   // Six measured local ground branches replace the failed automatic USB,
   // LCD, decoupler and amplifier returns. Keep every original rail terminal
   // and nominal width; these .10mm branches use the existing four-layer
@@ -1231,6 +1332,8 @@ export const manualPaths: Record<string, {
 // BAT_REVERSE_SOURCE still attaches the whole tree to net.BAT_PROTECTED.
 // The rendered electrical-group fingerprint must remain exactly unchanged.
 const localConnections: Array<{ name: string; field: "from" | "to"; original: string; selector: string }> = [
+  { name: "USB_DM_B", field: "to", original: ".R_USB_DM > .pin1", selector: ".J_USB > .A7" },
+  { name: "USB_DP_B", field: "to", original: ".R_USB_DP > .pin1", selector: ".J_USB > .A6" },
   ...lcdGroundRowBranches.map((branch): { name: string; field: "to"; original: string; selector: string } => ({
     name: branch.name, field: "to", original: "net.GND", selector: `.J_LCD > .pin${branch.toPin}`,
   })),
@@ -1297,16 +1400,16 @@ const netRoutingPhases = [
   // Separate the unchanged 0.80 mm six-terminal VBUS rail from signals
   // after the other rails. No search budget, geometry or checker changes.
   { name: "vbus-net", nets: ["VBUS"], traces: [] },
-  // The last remaining pass exhausted port-point pathing. Isolate the six
-  // dense USB signal pairs after the rails, without rerouting completed nets
-  // or changing their widths, geometry, clearances or solver limits.
+  // Keep the six exact manual USB paths in their declared phase. Published
+  // preprocessing confirms none need an automatic USB pass; widths,
+  // clearance gates, four-layer policy and solver limits stay unchanged.
   { name: "usb-signals", nets: [], traces: ["USB_DM_A", "USB_DM_B", "USB_DP_A", "USB_DP_B", "CC1", "CC2"] },
   // Battery rails and input leads now have exact same-net manual copper.
   // No battery search pairs remain, so do not schedule a redundant net pass.
 ]
 
-// Clock, switching-power, power-branches and battery paths are manual.
-export const expectedAutomaticPhaseNames = ["local-decoupling", "ground-net", "v3v3-net", "vbus-net", "usb-signals", "remaining-connections"]
+// Clock, switching-power, power-branches, battery and USB paths are manual.
+export const expectedAutomaticPhaseNames = ["local-decoupling", "ground-net", "v3v3-net", "vbus-net", "remaining-connections"]
 
 export function applyRoutingPlan(source: string): string {
   let result = source
