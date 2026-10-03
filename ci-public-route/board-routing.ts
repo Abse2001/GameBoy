@@ -18,6 +18,21 @@ export const manualPaths: Record<string, {
   waypoints?: Array<{ x: number; y: number }>
   innerRoute?: ManualRoutePoint[]
 }> = {
+  // Escape the flash GND pad to bottom copper, then return to its exposed
+  // ground pad without crossing the signal row. Both full drill spans remain
+  // inside the existing four-layer stack; the original ground rail stays .8mm.
+  FLASH_GND_EP_MANUAL_BRIDGE: {
+    jsx: '[{"x":1.7000000000000002,"y":-2.4},{"x":1.7000000000000002,"y":-2.4,"via":true,"fromLayer":"top","toLayer":"bottom"},{"x":1.7000000000000002,"y":-2.4},{"x":-0.34999999999999964,"y":-0.2999999999999998},{"x":-0.34999999999999964,"y":-0.2999999999999998,"via":true,"fromLayer":"bottom","toLayer":"top"},{"x":-0.34999999999999964,"y":-0.2999999999999998}]',
+    width: 0.1,
+    innerRoute: [
+      { route_type: "wire", x: 6.7, y: 3.6, layer: "top" },
+      { route_type: "via", x: 6.7, y: 3.6, from_layer: "top", to_layer: "bottom" },
+      { route_type: "wire", x: 6.7, y: 3.6, layer: "bottom" },
+      { route_type: "wire", x: 4.65, y: 5.7, layer: "bottom" },
+      { route_type: "via", x: 4.65, y: 5.7, from_layer: "bottom", to_layer: "top" },
+      { route_type: "wire", x: 4.65, y: 5.7, layer: "top" },
+    ],
+  },
   // Author the six measured .80 mm battery edges instead of repeating their
   // automatic wide-route search. Preserve both original rails and endpoints.
   // Four .45/.15 blind drills span top/inner1/inner2 only; max four layers.
@@ -1080,7 +1095,8 @@ export function applyRoutingPlan(source: string): string {
     '    <trace name="BAT_OUTPUT_BULK_C_LINK" from=".C_BAT_OUT_LOCAL > .pin1" to=".C_BAT_OUT_BULK_C > .pin1" thickness={0.8} />\n' +
     '    <trace name="BAT_OUTPUT_BULK_AB_LINK" from=".C_BAT_OUT_BULK_A > .pin1" to=".C_BAT_OUT_BULK_B > .pin1" thickness={0.8} />\n' +
     '    <trace name="BAT_OUTPUT_FEEDBACK_LINK" from=".C_BAT_OUT_BULK_C > .pin1" to=".R_BAT_FB_TOP > .pin1" thickness={0.8} />\n' +
-    '    <trace name="BAT_OUTPUT_DIODE_LINK" from=".C_BAT_OUT_BULK_C > .pin1" to=".D_BAT_POWER > .anode" thickness={0.8} maxLength={11.936897768508878} />\n'
+    '    <trace name="BAT_OUTPUT_DIODE_LINK" from=".C_BAT_OUT_BULK_C > .pin1" to=".D_BAT_POWER > .anode" thickness={0.8} maxLength={11.936897768508878} />\n' +
+    '      <trace name="FLASH_GND_EP_MANUAL_BRIDGE" from=".U2 > .GND" to=".U2 > .EP" thickness={0.1} maxLength={5.5} />\n'
   result = result.replace(closingBoard, `${supplyBridge}${closingBoard}`)
   replacements.push([`${supplyBridge}${closingBoard}`, closingBoard])
   for (const [phaseIndex, phase] of routingPhases.entries()) {
