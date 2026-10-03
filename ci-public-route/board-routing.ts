@@ -36,6 +36,22 @@ export const manualPaths: Record<string, {
       { x: -0.19999999999999996, y: 7.6 },
     ],
   },
+  // The latest 3.3 V pass failed this already-connected AVDD/ADC pair.
+  // Preserve both original rail attachments and the 0.60 mm V3V3 rail.
+  // R_VREG_AVDD's frame is (-5.4,7.5), rotation 90 degrees. The .45/.15
+  // through drills span top/inner1/inner2/bottom, never an extra layer.
+  V3V3_AVDD_ADC_BRIDGE: {
+    jsx: '[{"x":-0.4328159999999998,"y":-1},{"x":-0.4328159999999998,"y":-1,"via":true,"fromLayer":"top","toLayer":"bottom"},{"x":-0.4328159999999998,"y":-1},{"x":5,"y":-0.9999999999999997},{"x":5,"y":-0.9999999999999997,"via":true,"fromLayer":"bottom","toLayer":"top"},{"x":5,"y":-0.9999999999999997}]',
+    width: 0.1,
+    innerRoute: [
+      { route_type: "wire", x: -4.4, y: 7.067184, layer: "top" },
+      { route_type: "via", x: -4.4, y: 7.067184, from_layer: "top", to_layer: "bottom" },
+      { route_type: "wire", x: -4.4, y: 7.067184, layer: "bottom" },
+      { route_type: "wire", x: -4.4, y: 12.5, layer: "bottom" },
+      { route_type: "via", x: -4.4, y: 12.5, from_layer: "bottom", to_layer: "top" },
+      { route_type: "wire", x: -4.4, y: 12.5, layer: "top" },
+    ],
+  },
   // The latest remaining pass failed the existing UP-button signal.
   // Preserve its owner, endpoints and 0.10 mm width. SW_UP is declared
   // at (-58,9), rotation 0. Route bottom, then cross on inner2.
@@ -902,7 +918,8 @@ export function applyRoutingPlan(source: string): string {
     '    <trace name="PSRAM_VSS_GND_BRIDGE" from=".C_PSRAM > .pin2" to=".U_PSRAM > .VSS" thickness={0.1} maxLength={5.5} />\n' +
     '    <trace name="SD_LCD_GND_BRIDGE" from=".C_SD_BULK > .pin2" to=".J_LCD > .pin50" thickness={0.1} maxLength={33.029939549999995} />\n' +
     '    <trace name="XIN_IOVDD4_GND_BRIDGE" from=".C_XIN > .pin2" to=".C_IOVDD4 > .pin2" thickness={0.1} maxLength={5.5} />\n' +
-    '    <trace name="CORE_VREG_IN_GND_BRIDGE" from=".C_CORE > .pin2" to=".C_VREG_IN > .pin2" thickness={0.1} maxLength={5.5} />\n'
+    '    <trace name="CORE_VREG_IN_GND_BRIDGE" from=".C_CORE > .pin2" to=".C_VREG_IN > .pin2" thickness={0.1} maxLength={5.5} />\n' +
+    '    <trace name="V3V3_AVDD_ADC_BRIDGE" from=".R_VREG_AVDD > .pin1" to=".C_ADC > .pin1" thickness={0.1} />\n'
   result = result.replace(closingBoard, `${supplyBridge}${closingBoard}`)
   replacements.push([`${supplyBridge}${closingBoard}`, closingBoard])
   for (const [phaseIndex, phase] of routingPhases.entries()) {
