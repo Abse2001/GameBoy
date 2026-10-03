@@ -52,6 +52,23 @@ export const manualPaths: Record<string, {
       { route_type: "wire", x: -4.4, y: 12.5, layer: "top" },
     ],
   },
+  // The VSYS pass failed this already-connected diode/input-capacitor pair.
+  // Preserve both original attachments and the 0.80 mm rail/branch width.
+  // D_USB_POWER's frame is (-16,32), rotation 0. Both .45/.15 blind
+  // drills span top/inner1/inner2, within the four-layer maximum.
+  VSYS_DIODE_INPUT_BRIDGE: {
+    jsx: '[{"x":-4.100000000000001,"y":0},{"x":-4.100000000000001,"y":0,"via":true,"fromLayer":"top","toLayer":"inner2"},{"x":-4.100000000000001,"y":0},{"x":-4.100000000000001,"y":-38.3},{"x":0.3000000000000007,"y":-42.7},{"x":0.3000000000000007,"y":-42.7,"via":true,"fromLayer":"inner2","toLayer":"top"},{"x":0.3000000000000007,"y":-42.7}]',
+    width: 0.8,
+    innerRoute: [
+      { route_type: "wire", x: -20.1, y: 32, layer: "top" },
+      { route_type: "via", x: -20.1, y: 32, from_layer: "top", to_layer: "inner2" },
+      { route_type: "wire", x: -20.1, y: 32, layer: "inner2" },
+      { route_type: "wire", x: -20.1, y: -6.299999999999997, layer: "inner2" },
+      { route_type: "wire", x: -15.7, y: -10.700000000000003, layer: "inner2" },
+      { route_type: "via", x: -15.7, y: -10.700000000000003, from_layer: "inner2", to_layer: "top" },
+      { route_type: "wire", x: -15.7, y: -10.700000000000003, layer: "top" },
+    ],
+  },
   // The latest remaining pass failed the existing UP-button signal.
   // Preserve its owner, endpoints and 0.10 mm width. SW_UP is declared
   // at (-58,9), rotation 0. Route bottom, then cross on inner2.
@@ -919,7 +936,8 @@ export function applyRoutingPlan(source: string): string {
     '    <trace name="SD_LCD_GND_BRIDGE" from=".C_SD_BULK > .pin2" to=".J_LCD > .pin50" thickness={0.1} maxLength={33.029939549999995} />\n' +
     '    <trace name="XIN_IOVDD4_GND_BRIDGE" from=".C_XIN > .pin2" to=".C_IOVDD4 > .pin2" thickness={0.1} maxLength={5.5} />\n' +
     '    <trace name="CORE_VREG_IN_GND_BRIDGE" from=".C_CORE > .pin2" to=".C_VREG_IN > .pin2" thickness={0.1} maxLength={5.5} />\n' +
-    '    <trace name="V3V3_AVDD_ADC_BRIDGE" from=".R_VREG_AVDD > .pin1" to=".C_ADC > .pin1" thickness={0.1} />\n'
+    '    <trace name="V3V3_AVDD_ADC_BRIDGE" from=".R_VREG_AVDD > .pin1" to=".C_ADC > .pin1" thickness={0.1} />\n' +
+    '    <trace name="VSYS_DIODE_INPUT_BRIDGE" from=".D_USB_POWER > .cathode" to=".C_3V3_IN > .pin1" thickness={0.8} />\n'
   result = result.replace(closingBoard, `${supplyBridge}${closingBoard}`)
   replacements.push([`${supplyBridge}${closingBoard}`, closingBoard])
   for (const [phaseIndex, phase] of routingPhases.entries()) {
