@@ -36,6 +36,23 @@ export const manualPaths: Record<string, {
       { x: -0.19999999999999996, y: 7.6 },
     ],
   },
+  // The latest remaining pass failed this original X-button signal.
+  // Preserve owner/endpoints/0.10 mm width and use exact bottom copper.
+  // SW_X's frame is (49,0), rotation 0. Both .45/.15 through-drills
+  // span exactly top/inner1/inner2/bottom: no additional copper layer.
+  X: {
+    jsx: '[{"x":-3.5999419999999986,"y":3.5},{"x":-3.5999419999999986,"y":3.5,"via":true,"fromLayer":"top","toLayer":"bottom"},{"x":-3.5999419999999986,"y":3.5},{"x":-3.5999419999999986,"y":19.4},{"x":-46.000158,"y":19.4},{"x":-46.000158,"y":19.4,"via":true,"fromLayer":"bottom","toLayer":"top"},{"x":-46.000158,"y":19.4}]',
+    width: 0.1,
+    innerRoute: [
+      { route_type: "wire", x: 45.400058, y: 3.5, layer: "top" },
+      { route_type: "via", x: 45.400058, y: 3.5, from_layer: "top", to_layer: "bottom" },
+      { route_type: "wire", x: 45.400058, y: 3.5, layer: "bottom" },
+      { route_type: "wire", x: 45.400058, y: 19.4, layer: "bottom" },
+      { route_type: "wire", x: 2.999842000000001, y: 19.4, layer: "bottom" },
+      { route_type: "via", x: 2.999842000000001, y: 19.4, from_layer: "bottom", to_layer: "top" },
+      { route_type: "wire", x: 2.999842000000001, y: 19.4, layer: "top" },
+    ],
+  },
   // The last Pipeline 9 attempt could not route the existing left-button
   // signal. Keep its original owner/endpoints/width and escape on bottom.
   // SW_LEFT's declared frame is (-67,0), rotation 0. Both .45/.15 through
