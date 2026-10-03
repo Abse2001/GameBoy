@@ -21,6 +21,17 @@ export const manualPaths: Record<string, {
   ...Object.fromEntries(lcdGroundRowBranches.map((branch): [string, { jsx: string; width: number }] => [
     branch.name, { jsx: `[".J_LCD > .pin${branch.toPin}"]`, width: 0.1 },
   ])),
+  // The saved ground pass missed the amplifier supply bridge by .107 mm.
+  // Exact native top-only copper clears that bridge; no vias or layer change.
+  // The inherited 5.5 mm length limit stays visible as a deferred finding.
+  AMP_CAP_GROUND_BRIDGE: {
+    jsx: '[{"x":0.42009999999999964,"y":0.6000000000000014},{"x":-2.879900000000001,"y":0.6000000000000012}]',
+    width: 0.1,
+    waypoints: [
+      { x: -44.4, y: -11.1799 },
+      { x: -44.4, y: -14.4799 },
+    ],
+  },
   // Replace measured LCD/QSPI ground detours with exact same-net manual
   // links. Original rail attachments/widths remain; the .45/.15 blind
   // drills span top/inner1 only, and the adjacent LCD49/50 link has none.
@@ -956,19 +967,23 @@ const routingPhases = [
 // Keep wide multi-terminal rails out of the remaining signal pass.
 // Explicit local-decoupling trace phases still take precedence over net phases.
 const netRoutingPhases = [
-  { name: "ground-net", net: "GND" },
-  { name: "v3v3-net", net: "V3V3" },
+  { name: "ground-net", nets: ["GND"], traces: [] },
+  { name: "v3v3-net", nets: ["V3V3"], traces: [] },
   // The remaining pass stalled in port-point pathing with this 0.80 mm,
   // 11-terminal rail mixed with 75 other connections. Keep its exact net
   // and width, but route it after the completed ground and 3.3 V prefix.
-  { name: "vsys-net", net: "VSYS" },
+  { name: "vsys-net", nets: ["VSYS"], traces: [] },
   // Separate the unchanged 0.80 mm six-terminal VBUS rail from signals
   // after the other rails. No search budget, geometry or checker changes.
-  { name: "vbus-net", net: "VBUS" },
+  { name: "vbus-net", nets: ["VBUS"], traces: [] },
+  // Two .80 mm seven-terminal battery rails and their .80 mm input leads
+  // remain mixed with the stalled signal pass. Group them in one phase,
+  // keeping every terminal, width, existing path and search limit intact.
+  { name: "battery-power", nets: ["BAT_PROTECTED", "BAT_5V"], traces: ["BAT_CONNECTOR_FUSE", "BAT_FUSE_REVERSE_DRAIN"] },
 ]
 
 // Clock, switching-power and all power-branches now have exact manual paths.
-export const expectedAutomaticPhaseNames = ["local-decoupling", "ground-net", "v3v3-net", "vsys-net", "vbus-net", "remaining-connections"]
+export const expectedAutomaticPhaseNames = ["local-decoupling", "ground-net", "v3v3-net", "vsys-net", "vbus-net", "battery-power", "remaining-connections"]
 
 export function applyRoutingPlan(source: string): string {
   let result = source
@@ -999,7 +1014,8 @@ export function applyRoutingPlan(source: string): string {
     '    <trace name="USB_GROUND_BRIDGE" from=".J_USB > .B1A12" to=".J_USB > .A1B12" thickness={0.1} />\n' +
     '    <trace name="LCD_GND_43_48_BRIDGE" from=".J_LCD > .pin43" to=".J_LCD > .pin48" thickness={0.1} />\n' +
     '    <trace name="QSPI_IOVDD6_GND_BRIDGE" from=".C_QSPI_USB > .pin2" to=".C_IOVDD6 > .pin2" thickness={0.1} maxLength={5.5} />\n' +
-    '    <trace name="LCD_GND_49_50_BRIDGE" from=".J_LCD > .pin49" to=".J_LCD > .pin50" thickness={0.1} />\n'
+    '    <trace name="LCD_GND_49_50_BRIDGE" from=".J_LCD > .pin49" to=".J_LCD > .pin50" thickness={0.1} />\n' +
+    '    <trace name="AMP_CAP_GROUND_BRIDGE" from=".C_SPK_EMI_NEG > .pin2" to=".C_AMP_VDD > .pin2" thickness={0.1} />\n'
   result = result.replace(closingBoard, `${supplyBridge}${closingBoard}`)
   replacements.push([`${supplyBridge}${closingBoard}`, closingBoard])
   for (const [phaseIndex, phase] of routingPhases.entries()) {
@@ -1012,11 +1028,20 @@ export function applyRoutingPlan(source: string): string {
     }
   }
   for (const [index, phase] of netRoutingPhases.entries()) {
-    const marker = `<net name="${phase.net}"`
-    if (result.split(marker).length !== 2) throw new Error(`Expected exactly one ${phase.net} net`)
-    const replacement = `${marker} routingPhaseIndex={${routingPhases.length + index}}`
-    result = result.replace(marker, replacement)
-    replacements.push([replacement, marker])
+    for (const name of phase.nets) {
+      const marker = `<net name="${name}"`
+      if (result.split(marker).length !== 2) throw new Error(`Expected exactly one ${name} net`)
+      const replacement = `${marker} routingPhaseIndex={${routingPhases.length + index}}`
+      result = result.replace(marker, replacement)
+      replacements.push([replacement, marker])
+    }
+    for (const name of phase.traces) {
+      const marker = `<trace name="${name}"`
+      if (result.split(marker).length !== 2) throw new Error(`Expected exactly one ${name} trace`)
+      const replacement = `${marker} routingPhaseIndex={${routingPhases.length + index}}`
+      result = result.replace(marker, replacement)
+      replacements.push([replacement, marker])
+    }
   }
   for (const connection of localConnections) {
     const { name } = connection
