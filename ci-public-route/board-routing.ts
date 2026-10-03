@@ -36,6 +36,24 @@ export const manualPaths: Record<string, {
       { x: -0.19999999999999996, y: 7.6 },
     ],
   },
+  // The latest remaining pass failed the existing LCD_MOSI signal.
+  // Preserve its owner, endpoints and 0.10 mm width; escape on inner2.
+  // J_LCD's frame is (34.951428,15.4), rotation 90 degrees. Both .45/.15
+  // blind drills span top/inner1/inner2 only, within the four-layer stack.
+  LCD_MOSI: {
+    jsx: '[{"x":-4.250004200000001,"y":3.051428000000001},{"x":-4.250004200000001,"y":3.051428000000001,"via":true,"fromLayer":"top","toLayer":"inner2"},{"x":-4.250004200000001,"y":3.051428000000001},{"x":4.6,"y":3.051428000000002},{"x":4.599999999999997,"y":39.451428},{"x":2.549968999999997,"y":39.451428},{"x":2.549968999999997,"y":39.451428,"via":true,"fromLayer":"inner2","toLayer":"top"},{"x":2.549968999999997,"y":39.451428}]',
+    width: 0.1,
+    innerRoute: [
+      {"route_type":"wire","x":31.9,"y":11.1499958,"layer":"top"},
+      {"route_type":"via","x":31.9,"y":11.1499958,"from_layer":"top","to_layer":"inner2"},
+      {"route_type":"wire","x":31.9,"y":11.1499958,"layer":"inner2"},
+      {"route_type":"wire","x":31.9,"y":20,"layer":"inner2"},
+      {"route_type":"wire","x":-4.5,"y":20,"layer":"inner2"},
+      {"route_type":"wire","x":-4.5,"y":17.949969,"layer":"inner2"},
+      {"route_type":"via","x":-4.5,"y":17.949969,"from_layer":"inner2","to_layer":"top"},
+      {"route_type":"wire","x":-4.5,"y":17.949969,"layer":"top"},
+    ],
+  },
   // The latest remaining pass failed this original X-button signal.
   // Preserve owner/endpoints/0.10 mm width and use exact bottom copper.
   // SW_X's frame is (49,0), rotation 0. Both .45/.15 through-drills
