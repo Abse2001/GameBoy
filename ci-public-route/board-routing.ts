@@ -45,6 +45,43 @@ export const manualPaths: Record<string, {
       { route_type: "wire", x: -33.3, y: -12.65, layer: "top" },
     ],
   },
+  // Existing PSRAM capacitor grounds, routed below the positive pads.
+  // Original ground attachments, 0.80 mm rail and length limits remain.
+  PSRAM_CAP_GND_BRIDGE: {
+    jsx: '[{"x":0.5500000000000007,"y":0},{"x":0.5500000000000007,"y":2.129884}]',
+    width: 0.1,
+    waypoints: [{ x: 12.75, y: 9.3 }, { x: 10.620116, y: 9.3 }],
+  },
+  // Off-pad inner2 return avoids the switching copper and the actual nearby
+  // inner1 supply route. Both drills span top/inner1/inner2, not bottom.
+  VREG_AVDD_CORE_GND_BRIDGE: {
+    jsx: '[{"x":0.15000000000000036,"y":0.5999999999999996},{"x":0.15000000000000036,"y":0.5999999999999996,"via":true,"fromLayer":"top","toLayer":"inner2"},{"x":0.15000000000000036,"y":0.5999999999999996},{"x":-1.3499999999999996,"y":-3.1500000000000004},{"x":-1.3499999999999996,"y":-3.1500000000000004,"via":true,"fromLayer":"inner2","toLayer":"top"},{"x":-1.3499999999999996,"y":-3.1500000000000004}]',
+    width: 0.1,
+    innerRoute: [
+      { route_type: "wire", x: -6, y: 10.3, layer: "top" },
+      { route_type: "via", x: -6, y: 10.3, from_layer: "top", to_layer: "inner2" },
+      { route_type: "wire", x: -6, y: 10.3, layer: "inner2" },
+      { route_type: "wire", x: -2.25, y: 8.8, layer: "inner2" },
+      { route_type: "via", x: -2.25, y: 8.8, from_layer: "inner2", to_layer: "top" },
+      { route_type: "wire", x: -2.25, y: 8.8, layer: "top" },
+    ],
+  },
+  // Escape PSRAM VSS on bottom, keeping the memory signal layers clear.
+  // The two through-drills include all FOUR physical layers, with .45/.15
+  // pad/hole dimensions inherited from the unchanged board style.
+  PSRAM_VSS_GND_BRIDGE: {
+    jsx: '[{"x":0.42011600000000066,"y":1.1000000000000014},{"x":0.42011600000000066,"y":1.1000000000000014,"via":true,"fromLayer":"top","toLayer":"bottom"},{"x":0.42011600000000066,"y":1.1000000000000014},{"x":3.5500000000000007,"y":1.1000000000000014},{"x":3.5500000000000007,"y":-4.607489999999999},{"x":3.5500000000000007,"y":-4.607489999999999,"via":true,"fromLayer":"bottom","toLayer":"top"},{"x":3.5500000000000007,"y":-4.607489999999999}]',
+    width: 0.1,
+    innerRoute: [
+      { route_type: "wire", x: 10.620116, y: 9.8, layer: "top" },
+      { route_type: "via", x: 10.620116, y: 9.8, from_layer: "top", to_layer: "bottom" },
+      { route_type: "wire", x: 10.620116, y: 9.8, layer: "bottom" },
+      { route_type: "wire", x: 13.75, y: 9.8, layer: "bottom" },
+      { route_type: "wire", x: 13.75, y: 4.09251, layer: "bottom" },
+      { route_type: "via", x: 13.75, y: 4.09251, from_layer: "bottom", to_layer: "top" },
+      { route_type: "wire", x: 13.75, y: 4.09251, layer: "top" },
+    ],
+  },
   // Bridge the two existing 3.3 V islands at the full 0.60 mm rail width.
   // C_IOVDD4's frame is (5.6, 20.25), rotated 90 degrees. Both drills stay
   // outside pads and include inner1 on the way to inner2; no fifth layer.
@@ -729,7 +766,10 @@ export function applyRoutingPlan(source: string): string {
   const supplyBridge = '    <trace name="IOVDD6_IOVDD5_BRIDGE" from=".C_IOVDD6 > .pin1" to=".C_IOVDD5 > .pin1" thickness={0.6} />\n' +
     '    <trace name="IOVDD4_IOVDD5_BRIDGE" from=".C_IOVDD4 > .pin1" to=".C_IOVDD5 > .pin1" thickness={0.6} />\n' +
     '    <trace name="QSPI_USB_GND_EP_BRIDGE" from=".C_QSPI_USB > .pin2" to=".U2 > .EP" thickness={0.1} maxLength={5.5} />\n' +
-    '    <trace name="AMP_PVDD_BRIDGE" from=".U_SPK_AMP > .PVDD1" to=".U_SPK_AMP > .PVDD2" thickness={0.4} />\n'
+    '    <trace name="AMP_PVDD_BRIDGE" from=".U_SPK_AMP > .PVDD1" to=".U_SPK_AMP > .PVDD2" thickness={0.4} />\n' +
+    '    <trace name="PSRAM_CAP_GND_BRIDGE" from=".C_PSRAM_BULK > .pin2" to=".C_PSRAM > .pin2" thickness={0.1} maxLength={5.5} />\n' +
+    '    <trace name="VREG_AVDD_CORE_GND_BRIDGE" from=".C_VREG_AVDD > .pin2" to=".C_CORE > .pin2" thickness={0.1} maxLength={5.5} />\n' +
+    '    <trace name="PSRAM_VSS_GND_BRIDGE" from=".C_PSRAM > .pin2" to=".U_PSRAM > .VSS" thickness={0.1} maxLength={5.5} />\n'
   result = result.replace(closingBoard, `${supplyBridge}${closingBoard}`)
   replacements.push([`${supplyBridge}${closingBoard}`, closingBoard])
   for (const [phaseIndex, phase] of routingPhases.entries()) {
