@@ -21,6 +21,24 @@ export const manualPaths: Record<string, {
   ...Object.fromEntries(lcdGroundRowBranches.map((branch): [string, { jsx: string; width: number }] => [
     branch.name, { jsx: `[".J_LCD > .pin${branch.toPin}"]`, width: 0.1 },
   ])),
+  // The last Pipeline 9 attempt could not route the existing left-button
+  // signal. Keep its original owner/endpoints/width and escape on bottom.
+  // SW_LEFT's declared frame is (-67,0), rotation 0. Both .45/.15 through
+  // drills span exactly top/inner1/inner2/bottom, with no additional layer.
+  LFT: {
+    jsx: '[{"x":-3.5999419999999986,"y":3.5},{"x":-3.5999419999999986,"y":3.5,"via":true,"fromLayer":"top","toLayer":"bottom"},{"x":-3.5999419999999986,"y":3.5},{"x":-3.5999419999999986,"y":15.35},{"x":71.7,"y":15.35},{"x":71.7,"y":15.35,"via":true,"fromLayer":"bottom","toLayer":"top"},{"x":71.7,"y":15.35},{"x":71.7,"y":14.750077}]',
+    width: 0.1,
+    innerRoute: [
+      { route_type: "wire", x: -70.599942, y: 3.5, layer: "top" },
+      { route_type: "via", x: -70.599942, y: 3.5, from_layer: "top", to_layer: "bottom" },
+      { route_type: "wire", x: -70.599942, y: 3.5, layer: "bottom" },
+      { route_type: "wire", x: -70.599942, y: 15.35, layer: "bottom" },
+      { route_type: "wire", x: 4.700000000000003, y: 15.35, layer: "bottom" },
+      { route_type: "via", x: 4.700000000000003, y: 15.35, from_layer: "bottom", to_layer: "top" },
+      { route_type: "wire", x: 4.700000000000003, y: 15.35, layer: "top" },
+      { route_type: "wire", x: 4.700000000000003, y: 14.750077, layer: "top" },
+    ],
+  },
   // Keep this local return left of flash VCC as additional same-net copper.
   // Preserve the original capacitor-to-GND branch and its terminal order.
   // The appended bridge also retains the 0.10 mm width and 5.5 mm limit.
