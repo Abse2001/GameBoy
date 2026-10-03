@@ -82,6 +82,24 @@ export const manualPaths: Record<string, {
       { route_type: "wire", x: 13.75, y: 4.09251, layer: "top" },
     ],
   },
+  // The last phase rejected the earlier LCD50-to-SD-cap ground route.
+  // Add the same connection on inner2 at the capacitor's 0.10 mm branch
+  // width; leave the original ground attachments and 0.80 mm rail intact.
+  // C_SD_BULK's frame is (28.3,-22), rotated 90 degrees. Both .45/.15
+  // drills span top/inner1/inner2, staying within the four-layer stack.
+  SD_LCD_GND_BRIDGE: {
+    jsx: '[{"x":1.3000000000000007,"y":0},{"x":1.3000000000000007,"y":0,"via":true,"fromLayer":"top","toLayer":"inner2"},{"x":1.3000000000000007,"y":0},{"x":1.3000000000000007,"y":-3.900000000000002},{"x":25.150011799999998,"y":-3.900000000000002},{"x":25.150011799999998,"y":-3.900000000000002,"via":true,"fromLayer":"inner2","toLayer":"top"},{"x":25.150011799999998,"y":-3.900000000000002}]',
+    width: 0.1,
+    innerRoute: [
+      { route_type: "wire", x: 28.3, y: -20.7, layer: "top" },
+      { route_type: "via", x: 28.3, y: -20.7, from_layer: "top", to_layer: "inner2" },
+      { route_type: "wire", x: 28.3, y: -20.7, layer: "inner2" },
+      { route_type: "wire", x: 32.2, y: -20.7, layer: "inner2" },
+      { route_type: "wire", x: 32.2, y: 3.150011799999998, layer: "inner2" },
+      { route_type: "via", x: 32.2, y: 3.150011799999998, from_layer: "inner2", to_layer: "top" },
+      { route_type: "wire", x: 32.2, y: 3.150011799999998, layer: "top" },
+    ],
+  },
   // Bridge the two existing 3.3 V islands at the full 0.60 mm rail width.
   // C_IOVDD4's frame is (5.6, 20.25), rotated 90 degrees. Both drills stay
   // outside pads and include inner1 on the way to inner2; no fifth layer.
@@ -769,7 +787,8 @@ export function applyRoutingPlan(source: string): string {
     '    <trace name="AMP_PVDD_BRIDGE" from=".U_SPK_AMP > .PVDD1" to=".U_SPK_AMP > .PVDD2" thickness={0.4} />\n' +
     '    <trace name="PSRAM_CAP_GND_BRIDGE" from=".C_PSRAM_BULK > .pin2" to=".C_PSRAM > .pin2" thickness={0.1} maxLength={5.5} />\n' +
     '    <trace name="VREG_AVDD_CORE_GND_BRIDGE" from=".C_VREG_AVDD > .pin2" to=".C_CORE > .pin2" thickness={0.1} maxLength={5.5} />\n' +
-    '    <trace name="PSRAM_VSS_GND_BRIDGE" from=".C_PSRAM > .pin2" to=".U_PSRAM > .VSS" thickness={0.1} maxLength={5.5} />\n'
+    '    <trace name="PSRAM_VSS_GND_BRIDGE" from=".C_PSRAM > .pin2" to=".U_PSRAM > .VSS" thickness={0.1} maxLength={5.5} />\n' +
+    '    <trace name="SD_LCD_GND_BRIDGE" from=".C_SD_BULK > .pin2" to=".J_LCD > .pin50" thickness={0.1} maxLength={5.5} />\n'
   result = result.replace(closingBoard, `${supplyBridge}${closingBoard}`)
   replacements.push([`${supplyBridge}${closingBoard}`, closingBoard])
   for (const [phaseIndex, phase] of routingPhases.entries()) {
