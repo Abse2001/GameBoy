@@ -18,6 +18,69 @@ export const manualPaths: Record<string, {
   waypoints?: Array<{ x: number; y: number }>
   innerRoute?: ManualRoutePoint[]
 }> = {
+  // Author the six measured .80 mm battery edges instead of repeating their
+  // automatic wide-route search. Preserve both original rails and endpoints.
+  // Four .45/.15 blind drills span top/inner1/inner2 only; max four layers.
+  BAT_CONNECTOR_FUSE: {
+    jsx: '[{"x":2.8000000000000003,"y":2.350000000000002},{"x":8.2,"y":2.3500000000000023},{"x":9.853438,"y":0.6965620000000013}]',
+    width: 0.8,
+    innerRoute: [
+      {"route_type":"wire","x":12.2,"y":-27.6,"layer":"top"},
+      {"route_type":"wire","x":6.800000000000001,"y":-27.6,"layer":"top"},
+      {"route_type":"wire","x":5.146561999999999,"y":-25.946562,"layer":"top"},
+    ],
+  },
+  BAT_FUSE_REVERSE_DRAIN: {
+    jsx: '[{"x":3.1999999999999993,"y":0},{"x":3.1999999999999993,"y":0,"via":true,"fromLayer":"top","toLayer":"inner2"},{"x":3.1999999999999993,"y":0},{"x":3.1999999999999993,"y":-15.200000000000003},{"x":-49.1,"y":-15.200000000000003},{"x":-49.1,"y":-10},{"x":-49.1,"y":-10,"via":true,"fromLayer":"inner2","toLayer":"top"},{"x":-49.1,"y":-10}]',
+    width: 0.8,
+    innerRoute: [
+      {"route_type":"wire","x":10.2,"y":-24,"layer":"top"},
+      {"route_type":"via","x":10.2,"y":-24,"from_layer":"top","to_layer":"inner2"},
+      {"route_type":"wire","x":10.2,"y":-24,"layer":"inner2"},
+      {"route_type":"wire","x":10.2,"y":-39.2,"layer":"inner2"},
+      {"route_type":"wire","x":-42.1,"y":-39.2,"layer":"inner2"},
+      {"route_type":"wire","x":-42.1,"y":-34,"layer":"inner2"},
+      {"route_type":"via","x":-42.1,"y":-34,"from_layer":"inner2","to_layer":"top"},
+      {"route_type":"wire","x":-42.1,"y":-34,"layer":"top"},
+    ],
+  },
+  BAT_OUTPUT_BULK_C_LINK: {
+    jsx: '[{"x":-1.1000259999999997,"y":-0.4000020000000007}]',
+    width: 0.8,
+    innerRoute: [
+      {"route_type":"wire","x":-28.399998,"y":-32.100026,"layer":"top"},
+    ],
+  },
+  BAT_OUTPUT_BULK_AB_LINK: {
+    jsx: '[{"x":-0.9999980000000015,"y":-0.9499999999999993}]',
+    width: 0.8,
+    innerRoute: [
+      {"route_type":"wire","x":-28.149998,"y":-26.75,"layer":"top"},
+    ],
+  },
+  BAT_OUTPUT_FEEDBACK_LINK: {
+    jsx: '[{"x":-2.1000000000000014,"y":0},{"x":-2.1000000000000014,"y":0,"via":true,"fromLayer":"top","toLayer":"inner2"},{"x":-2.1000000000000014,"y":0},{"x":-2.1000000000000014,"y":-2.700000000000003},{"x":-6.153363999999996,"y":-2.700000000000003},{"x":-6.153363999999996,"y":-2},{"x":-6.153363999999996,"y":-2,"via":true,"fromLayer":"inner2","toLayer":"top"},{"x":-6.153363999999996,"y":-2}]',
+    width: 0.8,
+    innerRoute: [
+      {"route_type":"wire","x":-29.5,"y":-34.5,"layer":"top"},
+      {"route_type":"via","x":-29.5,"y":-34.5,"from_layer":"top","to_layer":"inner2"},
+      {"route_type":"wire","x":-29.5,"y":-34.5,"layer":"inner2"},
+      {"route_type":"wire","x":-29.5,"y":-37.2,"layer":"inner2"},
+      {"route_type":"wire","x":-33.553363999999995,"y":-37.2,"layer":"inner2"},
+      {"route_type":"wire","x":-33.553363999999995,"y":-36.5,"layer":"inner2"},
+      {"route_type":"via","x":-33.553363999999995,"y":-36.5,"from_layer":"inner2","to_layer":"top"},
+      {"route_type":"wire","x":-33.553363999999995,"y":-36.5,"layer":"top"},
+    ],
+  },
+  BAT_OUTPUT_DIODE_LINK: {
+    jsx: '[{"x":-0.9999980000000015,"y":-1.8999999999999986},{"x":6.349893999999999,"y":-1.8999999999999986}]',
+    width: 0.8,
+    deferredLengthReferenceMm: 5.5,
+    innerRoute: [
+      {"route_type":"wire","x":-28.399998,"y":-36.4,"layer":"top"},
+      {"route_type":"wire","x":-21.050106,"y":-36.4,"layer":"top"},
+    ],
+  },
   ...Object.fromEntries(lcdGroundRowBranches.map((branch): [string, { jsx: string; width: number }] => [
     branch.name, { jsx: `[".J_LCD > .pin${branch.toPin}"]`, width: 0.1 },
   ])),
@@ -976,14 +1039,12 @@ const netRoutingPhases = [
   // Separate the unchanged 0.80 mm six-terminal VBUS rail from signals
   // after the other rails. No search budget, geometry or checker changes.
   { name: "vbus-net", nets: ["VBUS"], traces: [] },
-  // Two .80 mm seven-terminal battery rails and their .80 mm input leads
-  // remain mixed with the stalled signal pass. Group them in one phase,
-  // keeping every terminal, width, existing path and search limit intact.
-  { name: "battery-power", nets: ["BAT_PROTECTED", "BAT_5V"], traces: ["BAT_CONNECTOR_FUSE", "BAT_FUSE_REVERSE_DRAIN"] },
+  // Battery rails and input leads now have exact same-net manual copper.
+  // No battery search pairs remain, so do not schedule a redundant net pass.
 ]
 
-// Clock, switching-power and all power-branches now have exact manual paths.
-export const expectedAutomaticPhaseNames = ["local-decoupling", "ground-net", "v3v3-net", "vsys-net", "vbus-net", "battery-power", "remaining-connections"]
+// Clock, switching-power, power-branches and battery paths are manual.
+export const expectedAutomaticPhaseNames = ["local-decoupling", "ground-net", "v3v3-net", "vsys-net", "vbus-net", "remaining-connections"]
 
 export function applyRoutingPlan(source: string): string {
   let result = source
@@ -1015,7 +1076,11 @@ export function applyRoutingPlan(source: string): string {
     '    <trace name="LCD_GND_43_48_BRIDGE" from=".J_LCD > .pin43" to=".J_LCD > .pin48" thickness={0.1} />\n' +
     '    <trace name="QSPI_IOVDD6_GND_BRIDGE" from=".C_QSPI_USB > .pin2" to=".C_IOVDD6 > .pin2" thickness={0.1} maxLength={5.5} />\n' +
     '    <trace name="LCD_GND_49_50_BRIDGE" from=".J_LCD > .pin49" to=".J_LCD > .pin50" thickness={0.1} />\n' +
-    '    <trace name="AMP_CAP_GROUND_BRIDGE" from=".C_SPK_EMI_NEG > .pin2" to=".C_AMP_VDD > .pin2" thickness={0.1} />\n'
+    '    <trace name="AMP_CAP_GROUND_BRIDGE" from=".C_SPK_EMI_NEG > .pin2" to=".C_AMP_VDD > .pin2" thickness={0.1} />\n' +
+    '    <trace name="BAT_OUTPUT_BULK_C_LINK" from=".C_BAT_OUT_LOCAL > .pin1" to=".C_BAT_OUT_BULK_C > .pin1" thickness={0.8} />\n' +
+    '    <trace name="BAT_OUTPUT_BULK_AB_LINK" from=".C_BAT_OUT_BULK_A > .pin1" to=".C_BAT_OUT_BULK_B > .pin1" thickness={0.8} />\n' +
+    '    <trace name="BAT_OUTPUT_FEEDBACK_LINK" from=".C_BAT_OUT_BULK_C > .pin1" to=".R_BAT_FB_TOP > .pin1" thickness={0.8} />\n' +
+    '    <trace name="BAT_OUTPUT_DIODE_LINK" from=".C_BAT_OUT_BULK_C > .pin1" to=".D_BAT_POWER > .anode" thickness={0.8} maxLength={11.936897768508878} />\n'
   result = result.replace(closingBoard, `${supplyBridge}${closingBoard}`)
   replacements.push([`${supplyBridge}${closingBoard}`, closingBoard])
   for (const [phaseIndex, phase] of routingPhases.entries()) {
