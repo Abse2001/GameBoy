@@ -1297,12 +1297,16 @@ const netRoutingPhases = [
   // Separate the unchanged 0.80 mm six-terminal VBUS rail from signals
   // after the other rails. No search budget, geometry or checker changes.
   { name: "vbus-net", nets: ["VBUS"], traces: [] },
+  // The last remaining pass exhausted port-point pathing. Isolate the six
+  // dense USB signal pairs after the rails, without rerouting completed nets
+  // or changing their widths, geometry, clearances or solver limits.
+  { name: "usb-signals", nets: [], traces: ["USB_DM_A", "USB_DM_B", "USB_DP_A", "USB_DP_B", "CC1", "CC2"] },
   // Battery rails and input leads now have exact same-net manual copper.
   // No battery search pairs remain, so do not schedule a redundant net pass.
 ]
 
 // Clock, switching-power, power-branches and battery paths are manual.
-export const expectedAutomaticPhaseNames = ["local-decoupling", "ground-net", "v3v3-net", "vbus-net", "remaining-connections"]
+export const expectedAutomaticPhaseNames = ["local-decoupling", "ground-net", "v3v3-net", "vbus-net", "usb-signals", "remaining-connections"]
 
 export function applyRoutingPlan(source: string): string {
   let result = source
