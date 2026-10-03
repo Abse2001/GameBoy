@@ -21,6 +21,21 @@ export const manualPaths: Record<string, {
   ...Object.fromEntries(lcdGroundRowBranches.map((branch): [string, { jsx: string; width: number }] => [
     branch.name, { jsx: `[".J_LCD > .pin${branch.toPin}"]`, width: 0.1 },
   ])),
+  // The latest final pass rejected this already-grounded capacitor pair's
+  // promoted fixed route. Add exact top-only copper; the original 0.80 mm
+  // GND rail, attachments and 5.5 mm length constraint remain unchanged.
+  // C_CORE's declared frame is (-2,10.1), rotation 180 degrees. No vias.
+  CORE_VREG_IN_GND_BRIDGE: {
+    jsx: '[{"x":0.42011600000000004,"y":1.0999999999999996},{"x":0.24999999999999956,"y":3.5999999999999996},{"x":-1.5000000000000004,"y":3.5999999999999996},{"x":-1.8000000000000005,"y":3.3},{"x":-1.8000000000000003,"y":2.5}]',
+    width: 0.1,
+    waypoints: [
+      { x: -2.420116, y: 9 },
+      { x: -2.25, y: 6.5 },
+      { x: -0.5, y: 6.5 },
+      { x: -0.19999999999999996, y: 6.8 },
+      { x: -0.19999999999999996, y: 7.6 },
+    ],
+  },
   // The last Pipeline 9 attempt could not route the existing left-button
   // signal. Keep its original owner/endpoints/width and escape on bottom.
   // SW_LEFT's declared frame is (-67,0), rotation 0. Both .45/.15 through
@@ -828,7 +843,8 @@ export function applyRoutingPlan(source: string): string {
     '    <trace name="VREG_AVDD_CORE_GND_BRIDGE" from=".C_VREG_AVDD > .pin2" to=".C_CORE > .pin2" thickness={0.1} maxLength={5.5} />\n' +
     '    <trace name="PSRAM_VSS_GND_BRIDGE" from=".C_PSRAM > .pin2" to=".U_PSRAM > .VSS" thickness={0.1} maxLength={5.5} />\n' +
     '    <trace name="SD_LCD_GND_BRIDGE" from=".C_SD_BULK > .pin2" to=".J_LCD > .pin50" thickness={0.1} maxLength={33.029939549999995} />\n' +
-    '    <trace name="XIN_IOVDD4_GND_BRIDGE" from=".C_XIN > .pin2" to=".C_IOVDD4 > .pin2" thickness={0.1} maxLength={5.5} />\n'
+    '    <trace name="XIN_IOVDD4_GND_BRIDGE" from=".C_XIN > .pin2" to=".C_IOVDD4 > .pin2" thickness={0.1} maxLength={5.5} />\n' +
+    '    <trace name="CORE_VREG_IN_GND_BRIDGE" from=".C_CORE > .pin2" to=".C_VREG_IN > .pin2" thickness={0.1} maxLength={5.5} />\n'
   result = result.replace(closingBoard, `${supplyBridge}${closingBoard}`)
   replacements.push([`${supplyBridge}${closingBoard}`, closingBoard])
   for (const [phaseIndex, phase] of routingPhases.entries()) {
