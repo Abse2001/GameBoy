@@ -36,6 +36,29 @@ export const manualPaths: Record<string, {
       { x: -0.19999999999999996, y: 7.6 },
     ],
   },
+  // The latest remaining pass failed the existing UP-button signal.
+  // Preserve its owner, endpoints and 0.10 mm width. SW_UP is declared
+  // at (-58,9), rotation 0. Route bottom, then cross on inner2.
+  // The .45/.15 drills span top/inner1/inner2/bottom, bottom/inner2,
+  // and inner2/inner1/top: one through and two blind, never a fifth layer.
+  UP: {
+    jsx: '[{"x":-3.5999419999999986,"y":4.800000000000001},{"x":-3.5999419999999986,"y":4.800000000000001,"via":true,"fromLayer":"top","toLayer":"bottom"},{"x":-3.5999419999999986,"y":4.800000000000001},{"x":62,"y":4.800000000000001},{"x":62,"y":4.800000000000001,"via":true,"fromLayer":"bottom","toLayer":"inner2"},{"x":62,"y":4.800000000000001},{"x":62,"y":5},{"x":64.5,"y":5},{"x":64.5,"y":5,"via":true,"fromLayer":"inner2","toLayer":"top"},{"x":64.5,"y":5},{"x":62.9,"y":5},{"x":62.4,"y":4.699999999999999}]',
+    width: 0.1,
+    innerRoute: [
+      {"route_type":"wire","x":-61.599942,"y":13.8,"layer":"top"},
+      {"route_type":"via","x":-61.599942,"y":13.8,"from_layer":"top","to_layer":"bottom"},
+      {"route_type":"wire","x":-61.599942,"y":13.8,"layer":"bottom"},
+      {"route_type":"wire","x":4,"y":13.8,"layer":"bottom"},
+      {"route_type":"via","x":4,"y":13.8,"from_layer":"bottom","to_layer":"inner2"},
+      {"route_type":"wire","x":4,"y":13.8,"layer":"inner2"},
+      {"route_type":"wire","x":4,"y":14,"layer":"inner2"},
+      {"route_type":"wire","x":6.5,"y":14,"layer":"inner2"},
+      {"route_type":"via","x":6.5,"y":14,"from_layer":"inner2","to_layer":"top"},
+      {"route_type":"wire","x":6.5,"y":14,"layer":"top"},
+      {"route_type":"wire","x":4.899999999999999,"y":14,"layer":"top"},
+      {"route_type":"wire","x":4.399999999999999,"y":13.7,"layer":"top"},
+    ],
+  },
   // The latest remaining pass failed the existing LCD_MOSI signal.
   // Preserve its owner, endpoints and 0.10 mm width; escape on inner2.
   // J_LCD's frame is (34.951428,15.4), rotation 90 degrees. Both .45/.15
