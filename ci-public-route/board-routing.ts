@@ -18,6 +18,101 @@ export const manualPaths: Record<string, {
   waypoints?: Array<{ x: number; y: number }>
   innerRoute?: ManualRoutePoint[]
 }> = {
+  // Native-checked repairs replace four failed automatic supply branches and
+  // three local SD/PSRAM pullups. All existing physical rules remain blocking.
+  VREG_VIN: {
+    jsx: "[{\"x\":1.6199999999999997,\"y\":4.299999999999999},{\"x\":1.6199999999999997,\"y\":4.299999999999999,\"via\":true,\"fromLayer\":\"top\",\"toLayer\":\"inner1\"},{\"x\":1.6199999999999997,\"y\":4.299999999999999},{\"x\":1.3399999999999994,\"y\":4.849999999999998},{\"x\":1.3399999999999994,\"y\":4.849999999999998,\"via\":true,\"fromLayer\":\"inner1\",\"toLayer\":\"bottom\"},{\"x\":1.3399999999999994,\"y\":4.849999999999998},{\"x\":6.199999999999999,\"y\":4.849999999999999},{\"x\":6.199999999999999,\"y\":6.349999999999999},{\"x\":6.199999999999999,\"y\":6.349999999999999,\"via\":true,\"fromLayer\":\"bottom\",\"toLayer\":\"top\"},{\"x\":6.199999999999999,\"y\":6.349999999999999},{\"x\":6.199999999999999,\"y\":8.082815999999998}]",
+    width: 0.1,
+    innerRoute: [
+      {"route_type":"wire","x":-1.4200000000000002,"y":10.850000000000001,"layer":"top"},
+      {"route_type":"via","x":-1.4200000000000002,"y":10.850000000000001,"from_layer":"top","to_layer":"inner1"},
+      {"route_type":"wire","x":-1.4200000000000002,"y":10.850000000000001,"layer":"inner1"},
+      {"route_type":"wire","x":-1.1400000000000001,"y":10.300000000000002,"layer":"inner1"},
+      {"route_type":"via","x":-1.1400000000000001,"y":10.300000000000002,"from_layer":"inner1","to_layer":"bottom"},
+      {"route_type":"wire","x":-1.1400000000000001,"y":10.300000000000002,"layer":"bottom"},
+      {"route_type":"wire","x":-6,"y":10.300000000000002,"layer":"bottom"},
+      {"route_type":"wire","x":-6,"y":8.800000000000002,"layer":"bottom"},
+      {"route_type":"via","x":-6,"y":8.800000000000002,"from_layer":"bottom","to_layer":"top"},
+      {"route_type":"wire","x":-6,"y":8.800000000000002,"layer":"top"},
+      {"route_type":"wire","x":-6,"y":7.067184000000003,"layer":"top"},
+    ],
+  },
+  LCD_UNUSED_RD_HIGH: {
+    jsx: "[{\"x\":-4.7500032,\"y\":0.3014280000000011},{\"x\":-4.7500032,\"y\":0.3014280000000011,\"via\":true,\"fromLayer\":\"top\",\"toLayer\":\"inner1\"},{\"x\":-4.7500032,\"y\":0.3014280000000011},{\"x\":-6.700000000000001,\"y\":3.151427999999999},{\"x\":-6.700000000000001,\"y\":3.151427999999999,\"via\":true,\"fromLayer\":\"inner1\",\"toLayer\":\"top\"},{\"x\":-6.700000000000001,\"y\":3.151427999999999}]",
+    width: 0.1,
+    innerRoute: [
+      {"route_type":"wire","x":34.65,"y":10.6499968,"layer":"top"},
+      {"route_type":"via","x":34.65,"y":10.6499968,"from_layer":"top","to_layer":"inner1"},
+      {"route_type":"wire","x":34.65,"y":10.6499968,"layer":"inner1"},
+      {"route_type":"wire","x":31.8,"y":8.7,"layer":"inner1"},
+      {"route_type":"via","x":31.8,"y":8.7,"from_layer":"inner1","to_layer":"top"},
+      {"route_type":"wire","x":31.8,"y":8.7,"layer":"top"},
+    ],
+  },
+  LCD_MODE_IM2: {
+    jsx: "[{\"x\":8.249970799999998,\"y\":4.151428},{\"x\":8.249970799999998,\"y\":4.151428,\"via\":true,\"fromLayer\":\"top\",\"toLayer\":\"inner1\"},{\"x\":8.249970799999998,\"y\":4.151428},{\"x\":-6,\"y\":4.151427999999999},{\"x\":-6,\"y\":4.151427999999999,\"via\":true,\"fromLayer\":\"inner1\",\"toLayer\":\"top\"},{\"x\":-6,\"y\":4.151427999999999}]",
+    width: 0.1,
+    innerRoute: [
+      {"route_type":"wire","x":30.8,"y":23.6499708,"layer":"top"},
+      {"route_type":"via","x":30.8,"y":23.6499708,"from_layer":"top","to_layer":"inner1"},
+      {"route_type":"wire","x":30.8,"y":23.6499708,"layer":"inner1"},
+      {"route_type":"wire","x":30.8,"y":9.4,"layer":"inner1"},
+      {"route_type":"via","x":30.8,"y":9.4,"from_layer":"inner1","to_layer":"top"},
+      {"route_type":"wire","x":30.8,"y":9.4,"layer":"top"},
+    ],
+  },
+  TOUCH_IRQ_PULLUP_V3V3: {
+    jsx: "[{\"x\":0.8249999999999994,\"y\":-0.6999999999999996},{\"x\":0.8249999999999994,\"y\":-0.6999999999999996,\"via\":true,\"fromLayer\":\"top\",\"toLayer\":\"bottom\"},{\"x\":0.8249999999999994,\"y\":-0.6999999999999996},{\"x\":0.8249999999999998,\"y\":-4.4},{\"x\":-0.9250000000000002,\"y\":-4.4},{\"x\":-0.9250000000000002,\"y\":-4.4,\"via\":true,\"fromLayer\":\"bottom\",\"toLayer\":\"top\"},{\"x\":-0.9250000000000002,\"y\":-4.4}]",
+    width: 0.1,
+    innerRoute: [
+      {"route_type":"wire","x":28.875,"y":2.3,"layer":"top"},
+      {"route_type":"via","x":28.875,"y":2.3,"from_layer":"top","to_layer":"bottom"},
+      {"route_type":"wire","x":28.875,"y":2.3,"layer":"bottom"},
+      {"route_type":"wire","x":28.875,"y":6,"layer":"bottom"},
+      {"route_type":"wire","x":30.625,"y":6,"layer":"bottom"},
+      {"route_type":"via","x":30.625,"y":6,"from_layer":"bottom","to_layer":"top"},
+      {"route_type":"wire","x":30.625,"y":6,"layer":"top"},
+    ],
+  },
+  PSRAM_CE_PULLUP: {
+    jsx: "[{\"x\":-1,\"y\":0},{\"x\":-1,\"y\":0,\"via\":true,\"fromLayer\":\"top\",\"toLayer\":\"inner1\"},{\"x\":-1,\"y\":0},{\"x\":-5,\"y\":0},{\"x\":-5,\"y\":-1.9499999999999997},{\"x\":-5,\"y\":-1.9499999999999997,\"via\":true,\"fromLayer\":\"inner1\",\"toLayer\":\"top\"},{\"x\":-5,\"y\":-1.9499999999999997},{\"x\":-4.350061999999999,\"y\":-1.9499999999999997}]",
+    width: 0.1,
+    innerRoute: [
+      {"route_type":"wire","x":14.5,"y":5.6,"layer":"top"},
+      {"route_type":"via","x":14.5,"y":5.6,"from_layer":"top","to_layer":"inner1"},
+      {"route_type":"wire","x":14.5,"y":5.6,"layer":"inner1"},
+      {"route_type":"wire","x":10.5,"y":5.6,"layer":"inner1"},
+      {"route_type":"wire","x":10.5,"y":3.65,"layer":"inner1"},
+      {"route_type":"via","x":10.5,"y":3.65,"from_layer":"inner1","to_layer":"top"},
+      {"route_type":"wire","x":10.5,"y":3.65,"layer":"top"},
+      {"route_type":"wire","x":11.149938,"y":3.65,"layer":"top"},
+    ],
+  },
+  SD_CS_PULLUP: {
+    jsx: "[{\"x\":-1.1000000000000014,\"y\":-0.6999999999999993},{\"x\":-1.1000000000000014,\"y\":-0.6999999999999993,\"via\":true,\"fromLayer\":\"top\",\"toLayer\":\"bottom\"},{\"x\":-1.1000000000000014,\"y\":-0.6999999999999993},{\"x\":-2.8600353,\"y\":-1.6000000000000014},{\"x\":-2.8600353,\"y\":-1.6000000000000014,\"via\":true,\"fromLayer\":\"bottom\",\"toLayer\":\"top\"},{\"x\":-2.8600353,\"y\":-1.6000000000000014}]",
+    width: 0.1,
+    innerRoute: [
+      {"route_type":"wire","x":32.9,"y":-23.9,"layer":"top"},
+      {"route_type":"via","x":32.9,"y":-23.9,"from_layer":"top","to_layer":"bottom"},
+      {"route_type":"wire","x":32.9,"y":-23.9,"layer":"bottom"},
+      {"route_type":"wire","x":31.1399647,"y":-24.8,"layer":"bottom"},
+      {"route_type":"via","x":31.1399647,"y":-24.8,"from_layer":"bottom","to_layer":"top"},
+      {"route_type":"wire","x":31.1399647,"y":-24.8,"layer":"top"},
+    ],
+  },
+  SD_DAT1_PULLUP: {
+    jsx: "[{\"x\":-0.8999999999999986,\"y\":0},{\"x\":-0.8999999999999986,\"y\":0,\"via\":true,\"fromLayer\":\"top\",\"toLayer\":\"bottom\"},{\"x\":-0.8999999999999986,\"y\":0},{\"x\":-7.459869699999999,\"y\":0},{\"x\":-7.459869699999999,\"y\":-5.800000000000001},{\"x\":-7.459869699999999,\"y\":-5.800000000000001,\"via\":true,\"fromLayer\":\"bottom\",\"toLayer\":\"top\"},{\"x\":-7.459869699999999,\"y\":-5.800000000000001}]",
+    width: 0.1,
+    innerRoute: [
+      {"route_type":"wire","x":31.1,"y":-19,"layer":"top"},
+      {"route_type":"via","x":31.1,"y":-19,"from_layer":"top","to_layer":"bottom"},
+      {"route_type":"wire","x":31.1,"y":-19,"layer":"bottom"},
+      {"route_type":"wire","x":24.5401303,"y":-19,"layer":"bottom"},
+      {"route_type":"wire","x":24.5401303,"y":-24.8,"layer":"bottom"},
+      {"route_type":"via","x":24.5401303,"y":-24.8,"from_layer":"bottom","to_layer":"top"},
+      {"route_type":"wire","x":24.5401303,"y":-24.8,"layer":"top"},
+    ],
+  },
   // Measured physical-prefix repairs and the failed LCD_DC escape. Preserve
   // original rail widths, .45/.15 drills, four layers and physical checks.
   // The new long TP ground link keeps its deferred 5.5mm reference visible.
@@ -965,17 +1060,17 @@ export const manualPaths: Record<string, {
   // (34.951428, 15.4), rotated 90 degrees. Preserve exact native coordinates;
   // the MCU trunk uses bottom copper, and the connector branch uses inner1.
   LCD_RESET: {
-    jsx: "[{\"x\":7.749971800000003,\"y\":2.851427999999999},{\"x\":7.749971800000003,\"y\":2.851427999999999,\"via\":true,\"fromLayer\":\"top\",\"toLayer\":\"bottom\"},{\"x\":7.749971800000003,\"y\":2.851427999999999},{\"x\":7.7499718,\"y\":39.501428},{\"x\":1.399999999999998,\"y\":39.501428},{\"x\":1.399999999999998,\"y\":39.201428},{\"x\":1.399999999999998,\"y\":39.201428,\"via\":true,\"fromLayer\":\"bottom\",\"toLayer\":\"top\"},{\"x\":1.399999999999998,\"y\":39.201428},{\"x\":1.6999999999999986,\"y\":39.201428},{\"x\":1.6999999999999986,\"y\":38.901428}]",
+    jsx: "[{\"x\":7.749971800000003,\"y\":2.851427999999999},{\"x\":7.749971800000003,\"y\":2.851427999999999,\"via\":true,\"fromLayer\":\"top\",\"toLayer\":\"bottom\"},{\"x\":7.749971800000003,\"y\":2.851427999999999},{\"x\":7.7499718,\"y\":39.501428},{\"x\":1.5999999999999972,\"y\":39.501428},{\"x\":1.5999999999999972,\"y\":39.201428},{\"x\":1.5999999999999972,\"y\":39.201428,\"via\":true,\"fromLayer\":\"bottom\",\"toLayer\":\"top\"},{\"x\":1.5999999999999972,\"y\":39.201428},{\"x\":1.6999999999999986,\"y\":39.201428},{\"x\":1.6999999999999986,\"y\":38.901428}]",
     width: 0.1,
     innerRoute: [
       {"route_type":"wire","x":32.1,"y":23.149971800000003,"layer":"top"},
       {"route_type":"via","x":32.1,"y":23.149971800000003,"from_layer":"top","to_layer":"bottom"},
       {"route_type":"wire","x":32.1,"y":23.149971800000003,"layer":"bottom"},
       {"route_type":"wire","x":-4.549999999999997,"y":23.149971800000003,"layer":"bottom"},
-      {"route_type":"wire","x":-4.549999999999997,"y":16.8,"layer":"bottom"},
-      {"route_type":"wire","x":-4.25,"y":16.8,"layer":"bottom"},
-      {"route_type":"via","x":-4.25,"y":16.8,"from_layer":"bottom","to_layer":"top"},
-      {"route_type":"wire","x":-4.25,"y":16.8,"layer":"top"},
+      {"route_type":"wire","x":-4.549999999999997,"y":17,"layer":"bottom"},
+      {"route_type":"wire","x":-4.25,"y":17,"layer":"bottom"},
+      {"route_type":"via","x":-4.25,"y":17,"from_layer":"bottom","to_layer":"top"},
+      {"route_type":"wire","x":-4.25,"y":17,"layer":"top"},
       {"route_type":"wire","x":-4.25,"y":17.1,"layer":"top"},
       {"route_type":"wire","x":-3.950000000000003,"y":17.1,"layer":"top"},
     ],
@@ -1162,8 +1257,14 @@ export const manualPaths: Record<string, {
   },
   // Keep the short regulator switch-node path outside both C_CORE pads.
   VREG_LX: {
-    jsx: "[{ x: 1.999996, y: 4.4 }, { x: 3.399998, y: 4.4 }]", width: 0.1,
-    waypoints: [{ x: -1.7999960000000006, y: 10.75 }, { x: -3.1999980000000003, y: 10.75 }],
+    jsx: "[{\"x\":1.9999960000000003,\"y\":4.099999999999998},{\"x\":2.05,\"y\":4.099999999999998},{\"x\":2.05,\"y\":4.399999999999999},{\"x\":3.399998,\"y\":4.399999999999999}]",
+    width: 0.1,
+    innerRoute: [
+      {"route_type":"wire","x":-1.7999960000000008,"y":11.050000000000002,"layer":"top"},
+      {"route_type":"wire","x":-1.8500000000000003,"y":11.050000000000002,"layer":"top"},
+      {"route_type":"wire","x":-1.8500000000000003,"y":10.750000000000002,"layer":"top"},
+      {"route_type":"wire","x":-3.1999980000000003,"y":10.750000000000002,"layer":"top"},
+    ],
   },
   // Escape between the SD2/SD3 vias, then use bottom copper for the clock.
   // SD3's inner2 shoulder above keeps clear of the clock's full-stack drill.
@@ -1415,6 +1516,10 @@ export const manualPaths: Record<string, {
 // BAT_REVERSE_SOURCE still attaches the whole tree to net.BAT_PROTECTED.
 // The rendered electrical-group fingerprint must remain exactly unchanged.
 const localConnections: Array<{ name: string; field: "from" | "to"; original: string; selector: string }> = [
+  { name: "VREG_VIN", field: "to", original: "net.V3V3", selector: ".R_VREG_AVDD > .pin1" },
+  { name: "LCD_UNUSED_RD_HIGH", field: "to", original: "net.V3V3", selector: ".C_LCD_VDDI > .pin1" },
+  { name: "LCD_MODE_IM2", field: "to", original: "net.V3V3", selector: ".C_LCD_VDDI > .pin1" },
+  { name: "TOUCH_IRQ_PULLUP_V3V3", field: "to", original: "net.V3V3", selector: ".C_LCD_VCI > .pin1" },
   { name: "USB_DM_B", field: "to", original: ".R_USB_DM > .pin1", selector: ".J_USB > .A7" },
   { name: "USB_DP_B", field: "to", original: ".R_USB_DP > .pin1", selector: ".J_USB > .A6" },
   ...lcdGroundRowBranches.map((branch): { name: string; field: "to"; original: string; selector: string } => ({
