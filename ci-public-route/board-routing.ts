@@ -238,6 +238,23 @@ export const manualPaths: Record<string, {
       {"route_type":"wire","x":-22.7,"y":-26.4,"layer":"top"},
     ],
   },
+  // Explicit off-pad ADC/DVDD1 ground link removes the via-in-pad pair.
+  // Retain both original ground attachments and the .80mm net rail.
+  // Core's via-depth length remains reported against the original 5.5mm limit.
+  ADC_DVDD1_OFFPAD_GND: {
+    jsx: "[{\"x\":0.4201160000000002,\"y\":-0.5399999999999991},{\"x\":0.4201160000000002,\"y\":-0.5399999999999991,\"via\":true,\"fromLayer\":\"top\",\"toLayer\":\"inner2\"},{\"x\":0.4201160000000002,\"y\":-0.5399999999999991},{\"x\":2.6999999999999997,\"y\":-2.4},{\"x\":2.6999999999999997,\"y\":-2.4,\"via\":true,\"fromLayer\":\"inner2\",\"toLayer\":\"top\"},{\"x\":2.6999999999999997,\"y\":-2.4},{\"x\":2.6999999999999993,\"y\":-1.8000000000000005}]",
+    width: 0.1,
+    deferredLengthReferenceMm: 5.5,
+    innerRoute: [
+      {"route_type":"wire","x":-6.0701160000000005,"y":13.04,"layer":"top"},
+      {"route_type":"via","x":-6.0701160000000005,"y":13.04,"from_layer":"top","to_layer":"inner2"},
+      {"route_type":"wire","x":-6.0701160000000005,"y":13.04,"layer":"inner2"},
+      {"route_type":"wire","x":-8.35,"y":14.9,"layer":"inner2"},
+      {"route_type":"via","x":-8.35,"y":14.9,"from_layer":"inner2","to_layer":"top"},
+      {"route_type":"wire","x":-8.35,"y":14.9,"layer":"top"},
+      {"route_type":"wire","x":-8.35,"y":14.3,"layer":"top"},
+    ],
+  },
   ADC_VREG_OFFPAD_GND: {
     jsx: "[{\"x\":0.4201160000000002,\"y\":-0.5999999999999996},{\"x\":1.0499999999999998,\"y\":-0.5999999999999995},{\"x\":1.0499999999999998,\"y\":-0.5999999999999995,\"via\":true,\"fromLayer\":\"top\",\"toLayer\":\"inner2\"},{\"x\":1.0499999999999998,\"y\":-0.5999999999999995},{\"x\":-0.9500000000000003,\"y\":1.0999999999999994},{\"x\":-0.9500000000000003,\"y\":1.0999999999999994,\"via\":true,\"fromLayer\":\"inner2\",\"toLayer\":\"top\"},{\"x\":-0.9500000000000003,\"y\":1.0999999999999994}]",
     width: 0.1,
@@ -1464,7 +1481,8 @@ export function applyRoutingPlan(source: string): string {
     '    <trace name="DVDD1_IOVDD2_GROUND_BRIDGE" from=".C_DVDD1 > .pin2" to=".C_IOVDD2 > .pin2" thickness={0.1} maxLength={5.5} />\n' +
     '    <trace name="LCD_VDDI_GND43_BRIDGE" from=".C_LCD_VDDI > .pin2" to=".J_LCD > .pin43" thickness={0.1} maxLength={14.76662896627327} />\n' +
     '    <trace name="LCD_VDDI_GND32_BRIDGE" from=".C_LCD_VDDI > .pin2" to=".J_LCD > .pin32" thickness={0.1} maxLength={12.125021550000003} />\n' +
-    '    <trace name="AMP_BULK_OFFPAD_GROUND_BRIDGE" from=".C_AMP_VDD_BULK > .pin2" to=".U_SPK_AMP > .PGND2" thickness={0.1} maxLength={13.924999999999995} />\n'
+    '    <trace name="AMP_BULK_OFFPAD_GROUND_BRIDGE" from=".C_AMP_VDD_BULK > .pin2" to=".U_SPK_AMP > .PGND2" thickness={0.1} maxLength={13.924999999999995} />\n' +
+    '    <trace name="ADC_DVDD1_OFFPAD_GND" from=".C_ADC > .pin2" to=".C_DVDD1 > .pin2" thickness={0.1} maxLength={5.5} />\n'
   result = result.replace(closingBoard, `${supplyBridge}${closingBoard}`)
   replacements.push([`${supplyBridge}${closingBoard}`, closingBoard])
   for (const [phaseIndex, phase] of routingPhases.entries()) {
