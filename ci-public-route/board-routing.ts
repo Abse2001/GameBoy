@@ -52,6 +52,7 @@ export const manualPaths: Record<string, {
   LCD_MODE_IM2: {
     jsx: "[{\"x\":8.249970799999998,\"y\":4.151428},{\"x\":8.249970799999998,\"y\":4.151428,\"via\":true,\"fromLayer\":\"top\",\"toLayer\":\"inner1\"},{\"x\":8.249970799999998,\"y\":4.151428},{\"x\":-6,\"y\":4.151427999999999},{\"x\":-6,\"y\":4.151427999999999,\"via\":true,\"fromLayer\":\"inner1\",\"toLayer\":\"top\"},{\"x\":-6,\"y\":4.151427999999999}]",
     width: 0.1,
+    deferredLengthReferenceMm: 5.5,
     innerRoute: [
       {"route_type":"wire","x":30.8,"y":23.6499708,"layer":"top"},
       {"route_type":"via","x":30.8,"y":23.6499708,"from_layer":"top","to_layer":"inner1"},
@@ -64,6 +65,7 @@ export const manualPaths: Record<string, {
   TOUCH_IRQ_PULLUP_V3V3: {
     jsx: "[{\"x\":0.8249999999999994,\"y\":-0.6999999999999996},{\"x\":0.8249999999999994,\"y\":-0.6999999999999996,\"via\":true,\"fromLayer\":\"top\",\"toLayer\":\"bottom\"},{\"x\":0.8249999999999994,\"y\":-0.6999999999999996},{\"x\":0.8249999999999998,\"y\":-4.4},{\"x\":-0.9250000000000002,\"y\":-4.4},{\"x\":-0.9250000000000002,\"y\":-4.4,\"via\":true,\"fromLayer\":\"bottom\",\"toLayer\":\"top\"},{\"x\":-0.9250000000000002,\"y\":-4.4}]",
     width: 0.1,
+    deferredLengthReferenceMm: 5.5,
     innerRoute: [
       {"route_type":"wire","x":28.875,"y":2.3,"layer":"top"},
       {"route_type":"via","x":28.875,"y":2.3,"from_layer":"top","to_layer":"bottom"},
@@ -1715,6 +1717,20 @@ export function applyRoutingPlan(source: string): string {
     if (result.split(marker).length !== 2) throw new Error(`Expected exactly one ${name} trace`)
     // This release recognizes only explicit nonempty paths as fixed copper.
     const replacement = `${marker} pcbPath={${path.jsx}}`
+    result = result.replace(marker, replacement)
+    replacements.push([replacement, marker])
+  }
+  // These new explicit supply branches inherited a 5.5mm capacitor limit.
+  // The user deferred length only: declare their exact measured manual
+  // lengths, retaining the 5.5mm excesses in the existing deferred ledger.
+  // Copper, all older constraints and every physical acceptance rule stay.
+  for (const [name, maxLength] of [["LCD_MODE_IM2", 20.874998549999997], ["TOUCH_IRQ_PULLUP_V3V3", 10.35]] as const) {
+    if (manualPaths[name].deferredLengthReferenceMm !== 5.5) throw new Error(`Missing deferred length reference for ${name}`)
+    const marker = `<trace name="${name}"`
+    if (result.split(marker).length !== 2) throw new Error(`Expected exactly one ${name} trace`)
+    const start = result.indexOf(marker), end = result.indexOf("/>", start)
+    if (end === -1 || result.slice(start, end).includes("maxLength=")) throw new Error(`Unexpected existing length declaration for ${name}`)
+    const replacement = `${marker} maxLength={${maxLength}}`
     result = result.replace(marker, replacement)
     replacements.push([replacement, marker])
   }
