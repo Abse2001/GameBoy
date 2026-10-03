@@ -21,6 +21,42 @@ export const manualPaths: Record<string, {
   ...Object.fromEntries(lcdGroundRowBranches.map((branch): [string, { jsx: string; width: number }] => [
     branch.name, { jsx: `[".J_LCD > .pin${branch.toPin}"]`, width: 0.1 },
   ])),
+  // Replace measured LCD/QSPI ground detours with exact same-net manual
+  // links. Original rail attachments/widths remain; the .45/.15 blind
+  // drills span top/inner1 only, and the adjacent LCD49/50 link has none.
+  LCD_GND_43_48_BRIDGE: {
+    jsx: '[{"x":-8.7499952,"y":-0.5485720000000006},{"x":-8.7499952,"y":-0.5485720000000006,"via":true,"fromLayer":"top","toLayer":"inner1"},{"x":-8.7499952,"y":-0.5485720000000006},{"x":-11.2499902,"y":-0.5485720000000007},{"x":-11.2499902,"y":3.0514280000000005},{"x":-11.2499902,"y":3.0514280000000005,"via":true,"fromLayer":"inner1","toLayer":"top"},{"x":-11.2499902,"y":3.0514280000000005}]',
+    width: 0.1,
+    innerRoute: [
+      {"route_type":"wire","x":35.5,"y":6.6500048,"layer":"top"},
+      {"route_type":"via","x":35.5,"y":6.6500048,"from_layer":"top","to_layer":"inner1"},
+      {"route_type":"wire","x":35.5,"y":6.6500048,"layer":"inner1"},
+      {"route_type":"wire","x":35.5,"y":4.150009800000001,"layer":"inner1"},
+      {"route_type":"wire","x":31.9,"y":4.150009800000001,"layer":"inner1"},
+      {"route_type":"via","x":31.9,"y":4.150009800000001,"from_layer":"inner1","to_layer":"top"},
+      {"route_type":"wire","x":31.9,"y":4.150009800000001,"layer":"top"},
+    ],
+  },
+  QSPI_IOVDD6_GND_BRIDGE: {
+    jsx: '[{"x":0.7999999999999998,"y":9.797174393178824e-17},{"x":0.7999999999999997,"y":0.5999999999999998},{"x":0.7999999999999997,"y":0.5999999999999998,"via":true,"fromLayer":"top","toLayer":"inner1"},{"x":0.7999999999999997,"y":0.5999999999999998},{"x":-2.9999999999999996,"y":-2.900000000000001},{"x":-2.9999999999999996,"y":-2.900000000000001,"via":true,"fromLayer":"inner1","toLayer":"top"},{"x":-2.9999999999999996,"y":-2.900000000000001}]',
+    width: 0.1,
+    innerRoute: [
+      {"route_type":"wire","x":3.3,"y":10,"layer":"top"},
+      {"route_type":"wire","x":3.3,"y":9.4,"layer":"top"},
+      {"route_type":"via","x":3.3,"y":9.4,"from_layer":"top","to_layer":"inner1"},
+      {"route_type":"wire","x":3.3,"y":9.4,"layer":"inner1"},
+      {"route_type":"wire","x":7.1,"y":12.9,"layer":"inner1"},
+      {"route_type":"via","x":7.1,"y":12.9,"from_layer":"inner1","to_layer":"top"},
+      {"route_type":"wire","x":7.1,"y":12.9,"layer":"top"},
+    ],
+  },
+  LCD_GND_49_50_BRIDGE: {
+    jsx: '[{"x":-12.2499882,"y":1.5514002500000004}]',
+    width: 0.1,
+    innerRoute: [
+      {"route_type":"wire","x":33.40002775,"y":3.1500117999999997,"layer":"top"},
+    ],
+  },
   // The saved ground pass crossed both USB mounting holes with this pair.
   // Join the already-grounded pins on inner1; retain the 0.80 mm GND rail.
   // Both .45/.15 blind drills span only top/inner1, within four layers.
@@ -926,10 +962,13 @@ const netRoutingPhases = [
   // 11-terminal rail mixed with 75 other connections. Keep its exact net
   // and width, but route it after the completed ground and 3.3 V prefix.
   { name: "vsys-net", net: "VSYS" },
+  // Separate the unchanged 0.80 mm six-terminal VBUS rail from signals
+  // after the other rails. No search budget, geometry or checker changes.
+  { name: "vbus-net", net: "VBUS" },
 ]
 
 // Clock, switching-power and all power-branches now have exact manual paths.
-export const expectedAutomaticPhaseNames = ["local-decoupling", "ground-net", "v3v3-net", "vsys-net", "remaining-connections"]
+export const expectedAutomaticPhaseNames = ["local-decoupling", "ground-net", "v3v3-net", "vsys-net", "vbus-net", "remaining-connections"]
 
 export function applyRoutingPlan(source: string): string {
   let result = source
@@ -957,7 +996,10 @@ export function applyRoutingPlan(source: string): string {
     '    <trace name="CORE_VREG_IN_GND_BRIDGE" from=".C_CORE > .pin2" to=".C_VREG_IN > .pin2" thickness={0.1} maxLength={5.5} />\n' +
     '    <trace name="V3V3_AVDD_ADC_BRIDGE" from=".R_VREG_AVDD > .pin1" to=".C_ADC > .pin1" thickness={0.1} />\n' +
     '    <trace name="VSYS_DIODE_INPUT_BRIDGE" from=".D_USB_POWER > .cathode" to=".C_3V3_IN > .pin1" thickness={0.8} maxLength={50.72264567444163} />\n' +
-    '    <trace name="USB_GROUND_BRIDGE" from=".J_USB > .B1A12" to=".J_USB > .A1B12" thickness={0.1} />\n'
+    '    <trace name="USB_GROUND_BRIDGE" from=".J_USB > .B1A12" to=".J_USB > .A1B12" thickness={0.1} />\n' +
+    '    <trace name="LCD_GND_43_48_BRIDGE" from=".J_LCD > .pin43" to=".J_LCD > .pin48" thickness={0.1} />\n' +
+    '    <trace name="QSPI_IOVDD6_GND_BRIDGE" from=".C_QSPI_USB > .pin2" to=".C_IOVDD6 > .pin2" thickness={0.1} maxLength={5.5} />\n' +
+    '    <trace name="LCD_GND_49_50_BRIDGE" from=".J_LCD > .pin49" to=".J_LCD > .pin50" thickness={0.1} />\n'
   result = result.replace(closingBoard, `${supplyBridge}${closingBoard}`)
   replacements.push([`${supplyBridge}${closingBoard}`, closingBoard])
   for (const [phaseIndex, phase] of routingPhases.entries()) {
