@@ -29,6 +29,22 @@ export const manualPaths: Record<string, {
     width: 0.1,
     waypoints: [{ x: 3.2999999999999994, y: 10 }, { x: 3.2999999999999994, y: 6 }],
   },
+  // The failed VSYS pair joins the amplifier's two existing power pins.
+  // Match their original 0.40 mm branch width; the main rail stays 0.80 mm.
+  // U_SPK_AMP's declared frame is (-37,-13), rotated 270 degrees. Drills
+  // span top/inner1/inner2, and do not cross the nearby top-layer 3.3 V trace.
+  AMP_PVDD_BRIDGE: {
+    jsx: '[{"x":-0.6350000000000016,"y":-1.2999999999999972},{"x":-0.6350000000000016,"y":-1.2999999999999972,"via":true,"fromLayer":"top","toLayer":"inner2"},{"x":-0.6350000000000016,"y":-1.2999999999999972},{"x":-0.34999999999999964,"y":3.700000000000003},{"x":-0.34999999999999964,"y":3.700000000000003,"via":true,"fromLayer":"inner2","toLayer":"top"},{"x":-0.34999999999999964,"y":3.700000000000003}]',
+    width: 0.4,
+    innerRoute: [
+      { route_type: "wire", x: -38.3, y: -12.364999999999998, layer: "top" },
+      { route_type: "via", x: -38.3, y: -12.364999999999998, from_layer: "top", to_layer: "inner2" },
+      { route_type: "wire", x: -38.3, y: -12.364999999999998, layer: "inner2" },
+      { route_type: "wire", x: -33.3, y: -12.65, layer: "inner2" },
+      { route_type: "via", x: -33.3, y: -12.65, from_layer: "inner2", to_layer: "top" },
+      { route_type: "wire", x: -33.3, y: -12.65, layer: "top" },
+    ],
+  },
   // Bridge the two existing 3.3 V islands at the full 0.60 mm rail width.
   // C_IOVDD4's frame is (5.6, 20.25), rotated 90 degrees. Both drills stay
   // outside pads and include inner1 on the way to inner2; no fifth layer.
@@ -712,7 +728,8 @@ export function applyRoutingPlan(source: string): string {
   if (result.split(closingBoard).length !== 2) throw new Error("Expected one board closing tag")
   const supplyBridge = '    <trace name="IOVDD6_IOVDD5_BRIDGE" from=".C_IOVDD6 > .pin1" to=".C_IOVDD5 > .pin1" thickness={0.6} />\n' +
     '    <trace name="IOVDD4_IOVDD5_BRIDGE" from=".C_IOVDD4 > .pin1" to=".C_IOVDD5 > .pin1" thickness={0.6} />\n' +
-    '    <trace name="QSPI_USB_GND_EP_BRIDGE" from=".C_QSPI_USB > .pin2" to=".U2 > .EP" thickness={0.1} maxLength={5.5} />\n'
+    '    <trace name="QSPI_USB_GND_EP_BRIDGE" from=".C_QSPI_USB > .pin2" to=".U2 > .EP" thickness={0.1} maxLength={5.5} />\n' +
+    '    <trace name="AMP_PVDD_BRIDGE" from=".U_SPK_AMP > .PVDD1" to=".U_SPK_AMP > .PVDD2" thickness={0.4} />\n'
   result = result.replace(closingBoard, `${supplyBridge}${closingBoard}`)
   replacements.push([`${supplyBridge}${closingBoard}`, closingBoard])
   for (const [phaseIndex, phase] of routingPhases.entries()) {
