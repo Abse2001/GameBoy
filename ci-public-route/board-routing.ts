@@ -1421,12 +1421,25 @@ const netRoutingPhases = [
   // preprocessing confirms none need an automatic USB pass; widths,
   // clearance gates, four-layer policy and solver limits stay unchanged.
   { name: "usb-signals", nets: [], traces: ["USB_DM_A", "USB_DM_B", "USB_DP_A", "USB_DP_B", "CC1", "CC2"] },
+  // Partition the stalled 63-connection signal pass into explicit interfaces.
+  // Keep complete multi-trace nets together; retain all copper, endpoints,
+  // original widths, length reporting and the unchanged routing limits.
+  { name: "lcd-touch-signals", nets: [], traces: [
+    "LCD_CS", "LCD_DC", "LCD_SCK", "LCD_MISO", "TOUCH_SDA",
+    "TOUCH_IRQ", "TOUCH_IRQ_PULLUP", "LCD_BACKLIGHT_LIMIT",
+    "LCD_BACKLIGHT_CATHODE_2", "LCD_BACKLIGHT_CATHODE_3",
+    "LCD_BACKLIGHT_PWM", "LCD_BACKLIGHT_GATE_PULLDOWN",
+  ] },
+  { name: "sd-psram-controls", nets: [], traces: [
+    "SD_CLK", "SD_CMD", "SD_MISO", "SD_CS", "SD_CS_PULLUP",
+    "SD_DAT1_PULLUP", "PSRAM_CE", "PSRAM_CE_PULLUP",
+  ] },
   // Battery rails and input leads now have exact same-net manual copper.
   // No battery search pairs remain, so do not schedule a redundant net pass.
 ]
 
 // Clock, switching-power, power-branches, battery and USB paths are manual.
-export const expectedAutomaticPhaseNames = ["local-decoupling", "ground-net", "v3v3-net", "vbus-net", "remaining-connections"]
+export const expectedAutomaticPhaseNames = ["local-decoupling", "ground-net", "v3v3-net", "vbus-net", "lcd-touch-signals", "sd-psram-controls", "remaining-connections"]
 
 export function applyRoutingPlan(source: string): string {
   let result = source
