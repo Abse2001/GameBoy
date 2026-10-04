@@ -2230,13 +2230,32 @@ const netRoutingPhases = [
     "SD_CLK", "SD_CMD", "SD_MISO", "SD_CS", "SD_CS_PULLUP",
     "SD_DAT1_PULLUP", "PSRAM_CE", "PSRAM_CE_PULLUP",
   ] },
-  // Battery rails and input leads now have exact same-net manual copper.
-  // No battery search pairs remain, so do not schedule a redundant net pass.
+  // Split the crashed remaining pass into coherent control groups. Keep
+  // each multi-terminal net together, including its inherited attachments.
+  // Native/static preflight retains all 43 raw connections and 37 pending
+  // pairs exactly; no copper, widths, endpoints or search limits change.
+  { name: "local-board-controls", nets: ["VSYS", "V1V1", "BAT_PROTECTED", "BAT_5V", "BAT_ENABLE"], traces: [
+    "VREG_AVDD", "BOOTSEL", "RUN_PULLUP", "RUN_SWITCH", "SWDIO", "SWCLK",
+    "BAT_OUTPUT_CAP_B", "BAT_OUTPUT_CAP_C", "BAT_FEEDBACK_OUTPUT",
+    "BAT_FEEDBACK_UPPER", "BAT_FEEDBACK_LOWER", "BAT_MODE_POWERSAVE",
+    "USB_VALID_BASE", "USB_VALID_DISABLE_BATTERY", "BUCK_BOOTSTRAP_SW",
+  ] },
+  { name: "left-board-controls", nets: ["AUDIO_PWM"], traces: [
+    "L_SHOULDER", "SEL", "DN", "RGT",
+  ] },
+  { name: "right-board-controls", nets: ["BAT_SWITCHED"], traces: [
+    "R_SHOULDER", "A", "B", "Y", "STA",
+  ] },
+  // Battery supply rails and input leads retain exact same-net manual copper.
+  // Outstanding enable/switch control pairs remain in the groups above.
 ]
 
 // Clock, switching-power, power-branches, battery, USB, LCD/touch and SD paths are manual.
 // All eight SD/PSRAM controls have fixed copper; their declared phase is empty.
-export const expectedAutomaticPhaseNames = ["power-rails", "remaining-connections"]
+export const expectedAutomaticPhaseNames = [
+  "power-rails", "local-board-controls", "left-board-controls",
+  "right-board-controls", "remaining-connections",
+]
 
 export function applyRoutingPlan(source: string): string {
   let result = source
