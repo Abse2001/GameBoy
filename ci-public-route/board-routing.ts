@@ -18,6 +18,35 @@ export const manualPaths: Record<string, {
   waypoints?: Array<{ x: number; y: number }>
   innerRoute?: ManualRoutePoint[]
 }> = {
+  // Clearance-adjusted pcbPaths for two completed decoupling connections.
+  // Native/static checked at the original widths; no automatic preloads.
+  SD_DECOUPLING: {
+    jsx: "[{\"x\":-0.42011600000000054,\"y\":2.1998675}]",
+    width: 0.1,
+    innerRoute: [
+      {"route_type":"wire","x":28.9398675,"y":-23.479884,"layer":"top"},
+    ],
+  },
+  C_IOVDD1_SUPPLY: {
+    jsx: "[{\"x\":-1.3099999999999996,\"y\":0.8899999999999987},{\"x\":-1.3099999999999998,\"y\":1.2000000000000008},{\"x\":-1.3099999999999998,\"y\":1.2000000000000008,\"via\":true,\"fromLayer\":\"top\",\"toLayer\":\"bottom\"},{\"x\":-1.3099999999999998,\"y\":1.2000000000000008},{\"x\":-1.4425718774024514,\"y\":1.8775718774024523},{\"x\":-1.4425718774024514,\"y\":1.8938838222740004},{\"x\":-2.749455699676452,\"y\":0.5869999999999994},{\"x\":-4.129,\"y\":0.5869999999999992},{\"x\":-4.129,\"y\":0.5869999999999992,\"via\":true,\"fromLayer\":\"bottom\",\"toLayer\":\"top\"},{\"x\":-4.129,\"y\":0.5869999999999992},{\"x\":-4.175408660339988,\"y\":0.5405913396600107},{\"x\":-4.175408660339988,\"y\":0.5336786488985753},{\"x\":-4.659118309238565,\"y\":0.04996899999999847}]",
+    width: 0.1,
+    deferredLengthReferenceMm: 5.5,
+    innerRoute: [
+      {"route_type":"wire","x":-6.79,"y":11.510000000000002,"layer":"top"},
+      {"route_type":"wire","x":-6.79,"y":11.2,"layer":"top"},
+      {"route_type":"via","x":-6.79,"y":11.2,"from_layer":"top","to_layer":"bottom"},
+      {"route_type":"wire","x":-6.79,"y":11.2,"layer":"bottom"},
+      {"route_type":"wire","x":-6.6574281225975485,"y":10.522428122597548,"layer":"bottom"},
+      {"route_type":"wire","x":-6.6574281225975485,"y":10.506116177726,"layer":"bottom"},
+      {"route_type":"wire","x":-5.3505443003235476,"y":11.813,"layer":"bottom"},
+      {"route_type":"wire","x":-3.971,"y":11.813,"layer":"bottom"},
+      {"route_type":"via","x":-3.971,"y":11.813,"from_layer":"bottom","to_layer":"top"},
+      {"route_type":"wire","x":-3.971,"y":11.813,"layer":"top"},
+      {"route_type":"wire","x":-3.9245913396600116,"y":11.859408660339989,"layer":"top"},
+      {"route_type":"wire","x":-3.9245913396600116,"y":11.866321351101424,"layer":"top"},
+      {"route_type":"wire","x":-3.440881690761435,"y":12.350031000000001,"layer":"top"},
+    ],
+  },
   // Native-checked repairs replace four failed automatic supply branches and
   // three local SD/PSRAM pullups. All existing physical rules remain blocking.
   // Explicit native-checked LCD/touch paths and the PSRAM CE escape.
@@ -2103,7 +2132,7 @@ const netRoutingPhases = [
 ]
 
 // Clock, switching-power, power-branches, battery, USB and LCD/touch paths are manual.
-export const expectedAutomaticPhaseNames = ["local-decoupling", "power-rails", "sd-psram-controls", "remaining-connections"]
+export const expectedAutomaticPhaseNames = ["power-rails", "sd-psram-controls", "remaining-connections"]
 
 export function applyRoutingPlan(source: string): string {
   let result = source
@@ -2226,6 +2255,18 @@ export function applyRoutingPlan(source: string): string {
     result = result.replace(marker, replacement)
     replacements.push([replacement, marker])
   }
+  // The user deferred length, not physical rules. Keep the original 5.5 mm
+  // decoupling reference in the ledger while declaring this exact native
+  // manual length (including Core's existing 1.6 mm per via accounting).
+  const localSupplyMarker = '<trace name="C_IOVDD1_SUPPLY"'
+  if (result.split(localSupplyMarker).length !== 2) throw new Error("Expected one C_IOVDD1_SUPPLY trace")
+  const localSupplyStart = result.indexOf(localSupplyMarker), localSupplyEnd = result.indexOf("/>", localSupplyStart)
+  if (localSupplyEnd === -1) throw new Error("Missing C_IOVDD1_SUPPLY trace end")
+  const localSupplyOriginal = result.slice(localSupplyStart, localSupplyEnd + 2)
+  if (localSupplyOriginal.split('maxLength="5.5mm"').length !== 2) throw new Error("Unexpected original local-decoupling length limit")
+  const localSupplyReplacement = localSupplyOriginal.replace('maxLength="5.5mm"', 'maxLength={9.525501406782109}')
+  result = result.replace(localSupplyOriginal, localSupplyReplacement)
+  replacements.push([localSupplyReplacement, localSupplyOriginal])
   const marker = "    <bus"
   if (!result.includes(marker)) throw new Error("Missing original bus section")
   // Route with extra clearance; the board's original 0.13 mm acceptance
