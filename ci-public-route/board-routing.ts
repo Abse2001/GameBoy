@@ -18,6 +18,101 @@ export const manualPaths: Record<string, {
   waypoints?: Array<{ x: number; y: number }>
   innerRoute?: ManualRoutePoint[]
 }> = {
+  // Explicit four-layer SD routes replace the stalled automatic SD pass.
+  // Native/static checks retain endpoints, 0.10 mm widths and drill spans.
+  SD_CLK: {
+    jsx: "[{\"x\":-2.1599524999999993,\"y\":3.9090042499999953},{\"x\":-2.1599524999999993,\"y\":3.9090042499999953,\"via\":true,\"fromLayer\":\"top\",\"toLayer\":\"bottom\"},{\"x\":-2.1599524999999993,\"y\":3.9090042499999953},{\"x\":-2.1599524999999993,\"y\":1.0090042499999967},{\"x\":-42,\"y\":1.0090042499999967},{\"x\":-42,\"y\":44.88900425},{\"x\":-31.99,\"y\":44.88900425},{\"x\":-31.99,\"y\":44.88900425,\"via\":true,\"fromLayer\":\"bottom\",\"toLayer\":\"top\"},{\"x\":-31.99,\"y\":44.88900425},{\"x\":-31.99,\"y\":45.83900425},{\"x\":-32.45,\"y\":45.83900425},{\"x\":-32.75,\"y\":45.85903125}]",
+    width: 0.1,
+    innerRoute: [
+      {"route_type":"wire","x":27.8400475,"y":-27.600000000000005,"layer":"top"},
+      {"route_type":"via","x":27.8400475,"y":-27.600000000000005,"from_layer":"top","to_layer":"bottom"},
+      {"route_type":"wire","x":27.8400475,"y":-27.600000000000005,"layer":"bottom"},
+      {"route_type":"wire","x":27.8400475,"y":-30.500000000000004,"layer":"bottom"},
+      {"route_type":"wire","x":-12,"y":-30.500000000000004,"layer":"bottom"},
+      {"route_type":"wire","x":-12,"y":13.379999999999999,"layer":"bottom"},
+      {"route_type":"wire","x":-1.9899999999999984,"y":13.379999999999999,"layer":"bottom"},
+      {"route_type":"via","x":-1.9899999999999984,"y":13.379999999999999,"from_layer":"bottom","to_layer":"top"},
+      {"route_type":"wire","x":-1.9899999999999984,"y":13.379999999999999,"layer":"top"},
+      {"route_type":"wire","x":-1.9899999999999984,"y":14.330000000000002,"layer":"top"},
+      {"route_type":"wire","x":-2.450000000000003,"y":14.330000000000002,"layer":"top"},
+      {"route_type":"wire","x":-2.75,"y":14.350027,"layer":"top"},
+    ],
+  },
+  SD_CMD: {
+    jsx: "[{\"x\":0.03991609999999923,\"y\":3.9090042499999953},{\"x\":0.03991609999999923,\"y\":3.9090042499999953,\"via\":true,\"fromLayer\":\"top\",\"toLayer\":\"inner1\"},{\"x\":0.03991609999999923,\"y\":3.9090042499999953},{\"x\":0.03991609999999923,\"y\":1.6090042499999981},{\"x\":-41.55,\"y\":1.6090042499999981},{\"x\":-41.55,\"y\":1.6090042499999981,\"via\":true,\"fromLayer\":\"inner1\",\"toLayer\":\"bottom\"},{\"x\":-41.55,\"y\":1.6090042499999981},{\"x\":-41.55,\"y\":44.479004249999996},{\"x\":-32.83,\"y\":44.479004249999996},{\"x\":-32.83,\"y\":44.479004249999996,\"via\":true,\"fromLayer\":\"bottom\",\"toLayer\":\"inner1\"},{\"x\":-32.83,\"y\":44.479004249999996},{\"x\":-32.45,\"y\":45.40900425},{\"x\":-32.45,\"y\":45.40900425,\"via\":true,\"fromLayer\":\"inner1\",\"toLayer\":\"top\"},{\"x\":-32.45,\"y\":45.40900425}]",
+    width: 0.1,
+    innerRoute: [
+      {"route_type":"wire","x":30.0399161,"y":-27.600000000000005,"layer":"top"},
+      {"route_type":"via","x":30.0399161,"y":-27.600000000000005,"from_layer":"top","to_layer":"inner1"},
+      {"route_type":"wire","x":30.0399161,"y":-27.600000000000005,"layer":"inner1"},
+      {"route_type":"wire","x":30.0399161,"y":-29.900000000000002,"layer":"inner1"},
+      {"route_type":"wire","x":-11.549999999999997,"y":-29.900000000000002,"layer":"inner1"},
+      {"route_type":"via","x":-11.549999999999997,"y":-29.900000000000002,"from_layer":"inner1","to_layer":"bottom"},
+      {"route_type":"wire","x":-11.549999999999997,"y":-29.900000000000002,"layer":"bottom"},
+      {"route_type":"wire","x":-11.549999999999997,"y":12.969999999999995,"layer":"bottom"},
+      {"route_type":"wire","x":-2.8299999999999983,"y":12.969999999999995,"layer":"bottom"},
+      {"route_type":"via","x":-2.8299999999999983,"y":12.969999999999995,"from_layer":"bottom","to_layer":"inner1"},
+      {"route_type":"wire","x":-2.8299999999999983,"y":12.969999999999995,"layer":"inner1"},
+      {"route_type":"wire","x":-2.450000000000003,"y":13.900000000000002,"layer":"inner1"},
+      {"route_type":"via","x":-2.450000000000003,"y":13.900000000000002,"from_layer":"inner1","to_layer":"top"},
+      {"route_type":"wire","x":-2.450000000000003,"y":13.900000000000002,"layer":"top"},
+    ],
+  },
+  SD_MISO: {
+    jsx: "[{\"x\":-4.360049700000001,\"y\":6.709004249999996},{\"x\":-4.360049700000001,\"y\":6.709004249999996,\"via\":true,\"fromLayer\":\"top\",\"toLayer\":\"inner1\"},{\"x\":-4.360049700000001,\"y\":6.709004249999996},{\"x\":-4.360049700000001,\"y\":2.209004249999996},{\"x\":-41,\"y\":2.209004249999996},{\"x\":-41,\"y\":2.209004249999996,\"via\":true,\"fromLayer\":\"inner1\",\"toLayer\":\"bottom\"},{\"x\":-41,\"y\":2.209004249999996},{\"x\":-41,\"y\":43.409004249999995},{\"x\":-41,\"y\":43.409004249999995,\"via\":true,\"fromLayer\":\"bottom\",\"toLayer\":\"inner2\"},{\"x\":-41,\"y\":43.409004249999995},{\"x\":-37.3,\"y\":43.409004249999995},{\"x\":-37.3,\"y\":43.80900425},{\"x\":-37.3,\"y\":43.80900425,\"via\":true,\"fromLayer\":\"inner2\",\"toLayer\":\"bottom\"},{\"x\":-37.3,\"y\":43.80900425},{\"x\":-35,\"y\":43.80900425},{\"x\":-35,\"y\":43.80900425,\"via\":true,\"fromLayer\":\"bottom\",\"toLayer\":\"inner2\"},{\"x\":-35,\"y\":43.80900425},{\"x\":-35,\"y\":45.159004249999995},{\"x\":-34.4,\"y\":45.159004249999995},{\"x\":-34.4,\"y\":45.159004249999995,\"via\":true,\"fromLayer\":\"inner2\",\"toLayer\":\"top\"},{\"x\":-34.4,\"y\":45.159004249999995}]",
+    width: 0.1,
+    innerRoute: [
+      {"route_type":"wire","x":25.6399503,"y":-24.800000000000004,"layer":"top"},
+      {"route_type":"via","x":25.6399503,"y":-24.800000000000004,"from_layer":"top","to_layer":"inner1"},
+      {"route_type":"wire","x":25.6399503,"y":-24.800000000000004,"layer":"inner1"},
+      {"route_type":"wire","x":25.6399503,"y":-29.300000000000004,"layer":"inner1"},
+      {"route_type":"wire","x":-11,"y":-29.300000000000004,"layer":"inner1"},
+      {"route_type":"via","x":-11,"y":-29.300000000000004,"from_layer":"inner1","to_layer":"bottom"},
+      {"route_type":"wire","x":-11,"y":-29.300000000000004,"layer":"bottom"},
+      {"route_type":"wire","x":-11,"y":11.899999999999995,"layer":"bottom"},
+      {"route_type":"via","x":-11,"y":11.899999999999995,"from_layer":"bottom","to_layer":"inner2"},
+      {"route_type":"wire","x":-11,"y":11.899999999999995,"layer":"inner2"},
+      {"route_type":"wire","x":-7.299999999999997,"y":11.899999999999995,"layer":"inner2"},
+      {"route_type":"wire","x":-7.299999999999997,"y":12.3,"layer":"inner2"},
+      {"route_type":"via","x":-7.299999999999997,"y":12.3,"from_layer":"inner2","to_layer":"bottom"},
+      {"route_type":"wire","x":-7.299999999999997,"y":12.3,"layer":"bottom"},
+      {"route_type":"wire","x":-5,"y":12.3,"layer":"bottom"},
+      {"route_type":"via","x":-5,"y":12.3,"from_layer":"bottom","to_layer":"inner2"},
+      {"route_type":"wire","x":-5,"y":12.3,"layer":"inner2"},
+      {"route_type":"wire","x":-5,"y":13.649999999999995,"layer":"inner2"},
+      {"route_type":"wire","x":-4.399999999999999,"y":13.649999999999995,"layer":"inner2"},
+      {"route_type":"via","x":-4.399999999999999,"y":13.649999999999995,"from_layer":"inner2","to_layer":"top"},
+      {"route_type":"wire","x":-4.399999999999999,"y":13.649999999999995,"layer":"top"},
+    ],
+  },
+  SD_CS: {
+    jsx: "[{\"x\":1.1399647000000002,\"y\":3.9090042499999953},{\"x\":1.1399647000000002,\"y\":3.9090042499999953,\"via\":true,\"fromLayer\":\"top\",\"toLayer\":\"inner1\"},{\"x\":1.1399647000000002,\"y\":3.9090042499999953},{\"x\":1.1399647000000002,\"y\":0.3090042499999974},{\"x\":-42.75,\"y\":0.3090042499999974},{\"x\":-42.75,\"y\":0.3090042499999974,\"via\":true,\"fromLayer\":\"inner1\",\"toLayer\":\"bottom\"},{\"x\":-42.75,\"y\":0.3090042499999974},{\"x\":-42.75,\"y\":42.80900425},{\"x\":-42.75,\"y\":42.80900425,\"via\":true,\"fromLayer\":\"bottom\",\"toLayer\":\"inner2\"},{\"x\":-42.75,\"y\":42.80900425},{\"x\":-37.9,\"y\":42.80900425},{\"x\":-37.9,\"y\":42.80900425,\"via\":true,\"fromLayer\":\"inner2\",\"toLayer\":\"bottom\"},{\"x\":-37.9,\"y\":42.80900425},{\"x\":-37.9,\"y\":43.38900425},{\"x\":-36.5,\"y\":43.38900425},{\"x\":-36.5,\"y\":43.38900425,\"via\":true,\"fromLayer\":\"bottom\",\"toLayer\":\"inner1\"},{\"x\":-36.5,\"y\":43.38900425},{\"x\":-35.55,\"y\":43.38900425},{\"x\":-35.55,\"y\":44.60900425},{\"x\":-34.75,\"y\":44.60900425},{\"x\":-34.75,\"y\":44.60900425,\"via\":true,\"fromLayer\":\"inner1\",\"toLayer\":\"top\"},{\"x\":-34.75,\"y\":44.60900425}]",
+    width: 0.1,
+    innerRoute: [
+      {"route_type":"wire","x":31.1399647,"y":-27.600000000000005,"layer":"top"},
+      {"route_type":"via","x":31.1399647,"y":-27.600000000000005,"from_layer":"top","to_layer":"inner1"},
+      {"route_type":"wire","x":31.1399647,"y":-27.600000000000005,"layer":"inner1"},
+      {"route_type":"wire","x":31.1399647,"y":-31.200000000000003,"layer":"inner1"},
+      {"route_type":"wire","x":-12.75,"y":-31.200000000000003,"layer":"inner1"},
+      {"route_type":"via","x":-12.75,"y":-31.200000000000003,"from_layer":"inner1","to_layer":"bottom"},
+      {"route_type":"wire","x":-12.75,"y":-31.200000000000003,"layer":"bottom"},
+      {"route_type":"wire","x":-12.75,"y":11.3,"layer":"bottom"},
+      {"route_type":"via","x":-12.75,"y":11.3,"from_layer":"bottom","to_layer":"inner2"},
+      {"route_type":"wire","x":-12.75,"y":11.3,"layer":"inner2"},
+      {"route_type":"wire","x":-7.899999999999999,"y":11.3,"layer":"inner2"},
+      {"route_type":"via","x":-7.899999999999999,"y":11.3,"from_layer":"inner2","to_layer":"bottom"},
+      {"route_type":"wire","x":-7.899999999999999,"y":11.3,"layer":"bottom"},
+      {"route_type":"wire","x":-7.899999999999999,"y":11.879999999999999,"layer":"bottom"},
+      {"route_type":"wire","x":-6.5,"y":11.879999999999999,"layer":"bottom"},
+      {"route_type":"via","x":-6.5,"y":11.879999999999999,"from_layer":"bottom","to_layer":"inner1"},
+      {"route_type":"wire","x":-6.5,"y":11.879999999999999,"layer":"inner1"},
+      {"route_type":"wire","x":-5.549999999999997,"y":11.879999999999999,"layer":"inner1"},
+      {"route_type":"wire","x":-5.549999999999997,"y":13.099999999999998,"layer":"inner1"},
+      {"route_type":"wire","x":-4.75,"y":13.099999999999998,"layer":"inner1"},
+      {"route_type":"via","x":-4.75,"y":13.099999999999998,"from_layer":"inner1","to_layer":"top"},
+      {"route_type":"wire","x":-4.75,"y":13.099999999999998,"layer":"top"},
+    ],
+  },
   // Clearance-adjusted pcbPaths for two completed decoupling connections.
   // Native/static checked at the original widths; no automatic preloads.
   SD_DECOUPLING: {
@@ -1360,7 +1455,14 @@ export const manualPaths: Record<string, {
   SD_DAT0_PULLUP_V3V3: { jsx: '[".C_SD > .pin1"]', width: 0.1 },
   SD_CS_PULLUP_V3V3: { jsx: '[".R_SD_DAT2 > .pin2"]', width: 0.1 },
   C_QSPI_USB_P: { jsx: '[".U1 > .IOVDD6"]', width: 0.1 },
-  FLASH_VCC: { jsx: '[".C_QSPI_USB > .pin1"]', width: 0.1 },
+  FLASH_VCC: {
+    jsx: "[{ x: -0.750062, y: 2.8 }, \".C_QSPI_USB > .pin1\"]",
+    width: 0.1,
+    innerRoute: [
+      {"route_type":"wire","x":4.249938,"y":8.8,"layer":"top"},
+      {"route_type":"wire","x":4.520116,"y":10,"layer":"top"},
+    ],
+  },
   C_VREG_IN_P: { jsx: '[".C_FLASH > .pin1"]', width: 0.1 },
   SD_DAT1_PULLUP_V3V3: { jsx: '[".R_SD_DAT2 > .pin2"]', width: 0.1 },
   // U1's footprint frame is rotated 180 degrees about (0.2, 15.15).
@@ -1658,19 +1760,20 @@ export const manualPaths: Record<string, {
   // SD1's inner1 shoulders clear the SD2 and SCLK physical drill spans.
   // Keep the exact Core-emitted coordinates, including their last bits.
   QSPI_SD1: {
-    jsx: '[{ x: -2.400046, y: 2.65 }, { x: -2.400046, y: 2.65, via: true, fromLayer: "top", toLayer: "inner1" }, { x: -2.400046, y: 2.65 }, { x: -2.4000460000000006, y: 6.75 }, { x: -3.6, y: 6.75 }, { x: -4.3, y: 8.45 }, { x: -5.6, y: 9.8 }, { x: -5.6, y: 9.8, via: true, fromLayer: "inner1", toLayer: "top" }, { x: -5.6, y: 9.8 }, { x: -4.550064, y: 9.95 }]',
+    jsx: "[{ x: -2.400046, y: 2.65 }, { x: -2.400046, y: 2.65, via: true, fromLayer: \"top\", toLayer: \"inner1\" }, { x: -2.400046, y: 2.65 }, { x: -2.425, y: 3.15 }, { x: -2.425, y: 6.75 }, { x: -3.6, y: 6.75 }, { x: -4.3, y: 8.45 }, { x: -5.6, y: 9.8 }, { x: -5.6, y: 9.8, via: true, fromLayer: \"inner1\", toLayer: \"top\" }, { x: -5.6, y: 9.8 }, { x: -4.550064, y: 9.95 }]",
     width: 0.1,
     innerRoute: [
-      { route_type: "wire", x: 2.600046, y: 12.5, layer: "top" },
-      { route_type: "via", x: 2.600046, y: 12.5, from_layer: "top", to_layer: "inner1" },
-      { route_type: "wire", x: 2.600046, y: 12.5, layer: "inner1" },
-      { route_type: "wire", x: 2.600046, y: 8.4, layer: "inner1" },
-      { route_type: "wire", x: 3.7999999999999994, y: 8.4, layer: "inner1" },
-      { route_type: "wire", x: 4.499999999999999, y: 6.700000000000001, layer: "inner1" },
-      { route_type: "wire", x: 5.799999999999999, y: 5.35, layer: "inner1" },
-      { route_type: "via", x: 5.799999999999999, y: 5.35, from_layer: "inner1", to_layer: "top" },
-      { route_type: "wire", x: 5.799999999999999, y: 5.35, layer: "top" },
-      { route_type: "wire", x: 4.750063999999999, y: 5.200000000000001, layer: "top" },
+      {"route_type":"wire","x":2.600046,"y":12.5,"layer":"top"},
+      {"route_type":"via","x":2.600046,"y":12.5,"from_layer":"top","to_layer":"inner1"},
+      {"route_type":"wire","x":2.600046,"y":12.5,"layer":"inner1"},
+      {"route_type":"wire","x":2.6249999999999996,"y":12,"layer":"inner1"},
+      {"route_type":"wire","x":2.624999999999999,"y":8.4,"layer":"inner1"},
+      {"route_type":"wire","x":3.7999999999999994,"y":8.4,"layer":"inner1"},
+      {"route_type":"wire","x":4.499999999999999,"y":6.700000000000001,"layer":"inner1"},
+      {"route_type":"wire","x":5.799999999999999,"y":5.35,"layer":"inner1"},
+      {"route_type":"via","x":5.799999999999999,"y":5.35,"from_layer":"inner1","to_layer":"top"},
+      {"route_type":"wire","x":5.799999999999999,"y":5.35,"layer":"top"},
+      {"route_type":"wire","x":4.750063999999999,"y":5.200000000000001,"layer":"top"},
     ],
   },
   PSRAM_SIO1: {
@@ -2131,8 +2234,9 @@ const netRoutingPhases = [
   // No battery search pairs remain, so do not schedule a redundant net pass.
 ]
 
-// Clock, switching-power, power-branches, battery, USB and LCD/touch paths are manual.
-export const expectedAutomaticPhaseNames = ["power-rails", "sd-psram-controls", "remaining-connections"]
+// Clock, switching-power, power-branches, battery, USB, LCD/touch and SD paths are manual.
+// All eight SD/PSRAM controls have fixed copper; their declared phase is empty.
+export const expectedAutomaticPhaseNames = ["power-rails", "remaining-connections"]
 
 export function applyRoutingPlan(source: string): string {
   let result = source
